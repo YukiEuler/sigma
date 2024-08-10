@@ -29,4 +29,17 @@ class KalenderAkademik extends Model
     {
         return $this->belongsTo(Fakultas::class, 'id_fakultas');
     }
+
+    public static function getTahunAkademik()
+    {
+        $dateNow = now();
+
+        $tahunAkademik = KalenderAkademik::where('keterangan', 'Periode Tahun Akademik')
+            ->whereDate('tanggal_mulai', '<=', $dateNow)
+            ->whereDate('tanggal_selesai', '>=', $dateNow)
+            ->first()
+            ->tahun_akademik;
+
+        return $tahunAkademik;
+    }
 }

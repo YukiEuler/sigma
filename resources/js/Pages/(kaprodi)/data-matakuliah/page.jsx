@@ -361,7 +361,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                 >
                                                     JENIS
                                                 </th>
-                                                <th
+                                                {/* <th
                                                     scope="col"
                                                     className="px-4 py-3"
                                                     style={{
@@ -371,7 +371,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                     }}
                                                 >
                                                     Action
-                                                </th>
+                                                </th> */}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -399,7 +399,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                         <td className="px-4 py-2 text-[14px] text-center">
                                                             {mk.jenis}
                                                         </td>
-                                                        <td className="flex items-center justify-center py-3">
+                                                        {/* <td className="flex items-center justify-center py-3">
                                                             <button
                                                                 onClick={() =>
                                                                     handleDelete(
@@ -410,7 +410,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                             >
                                                                 Delete
                                                             </button>
-                                                        </td>
+                                                        </td> */}
                                                     </tr>
                                                 )
                                             )}

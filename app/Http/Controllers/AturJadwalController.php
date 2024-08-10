@@ -9,6 +9,7 @@ use App\Models\Fakultas;
 use App\Models\MataKuliah;
 use App\Models\Kelas;
 use App\Models\ProgramStudi;
+use App\Models\KalenderAkademik;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,19 +35,18 @@ class AturJadwalController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $dosen = Dosen::where('user_id', $user->id)->get()->first();
-    
-        if (!$user) {
-            return redirect()->route('login');
-        } elseif ($user->role !== 'Dosen'){
-            return redirect()->route('home');
-        }
+        $kaprodi = Dosen::where('user_id', $user->id)->get()->first();
+        $tahunAkademik = KalenderAkademik::getTahunAkademik();
 
         // Mengambil data dosen, mata kuliah, dan kelas
-        $dosen = Dosen::all(['nip', 'nama']);
-        $mataKuliah = MataKuliah::all(['kode_mk', 'nama', 'sks']);
-        $kelas = Kelas::all(['id', 'kode_kelas']);
-        $jadwalKuliah = JadwalKuliah::all(); // Ambil semua jadwal kulia
+        $dosen = Dosen::where('id_prodi', $kaprodi->id_prodi)->get(['nip', 'nama']);
+        $mataKuliah = MataKuliah::where('id_prodi', $kaprodi->id_prodi)->get(['kode_mk', 'nama', 'sks']);
+        $kelas = Kelas::join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
+            ->where('id_prodi', '=', $kaprodi->id_prodi)
+            ->get(['kelas.id', 'kelas.kode_kelas', 'mata_kuliah.nama as nama_mata_kuliah']);
+        $jadwalKuliah = Kelas::join('jadwal_kuliah', 'kelas.id', '=', 'jadwal_kuliah.id_kelas')
+            ->whereIn('kelas.id', $kelas->pluck('id'))
+            ->get(['kelas.id', 'kelas.kode_kelas', 'jadwal_kuliah.hari', 'jadwal_kuliah.waktu_mulai', 'jadwal_kuliah.waktu_selesai']);
 
         return Inertia::render('(kaprodi)/atur-jadwal/page', [
             'dosen' => $dosen,
