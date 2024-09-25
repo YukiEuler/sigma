@@ -4,17 +4,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\HomeController;
 
-
-Route::get('/', function () {
-    return Inertia::render('Home', [
-        'user' => Auth::user(),
-        // 'mahasiswa' => [
-        //     'id' => 1,
-        //     'name' => 'John Doe'
-        // ]
-    ]);
-})->name('home')->middleware('auth');
+Route::get('/', [HomeController::class, 'index'])->name('home')->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------

@@ -43,7 +43,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-user"></i> Register</button>
                 <hr>
-                <p class="text-center"><a href="{{ route('login') }}"></a></p>
+                <p class="text-center"><a href="{{ route('login') }}">Login</a></p>
             </form>
         </div>
     </div>
