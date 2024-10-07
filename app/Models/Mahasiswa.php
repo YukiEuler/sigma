@@ -36,9 +36,28 @@ class Mahasiswa extends Model
         'ipk' => 'float',
     ];
     
-    // Relasi ke model Prodi
-    // public function prodi()
-    // {
-    //     return $this->belongsTo(Prodi::class, 'id_prodi');
-    // }
+    public function programStudi()
+    {
+        return $this->belongsTo(ProgramStudi::class, 'id_prodi');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function historyPembayaran()
+    {
+        return $this->hasMany(HistoryPembayaran::class, 'nim_mhs');
+    }
+
+    public function irs()
+    {
+        return $this->hasMany(Irs::class, 'nim_mhs');
+    }
+
+    public function khs()
+    {
+        return $this->hasMany(Khs::class, 'nim_mhs');
+    }
 }
