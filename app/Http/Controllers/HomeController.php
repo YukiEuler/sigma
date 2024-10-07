@@ -18,15 +18,12 @@ class HomeController extends Controller
         // Check if user is authenticated
         if (!$user) {
             return redirect()->route('login');
+        } elseif ($user->role === 'Mahasiswa'){
+            return redirect()->route('mahasiswa.dashboard');
+        } elseif ($user->role === 'Dosen'){
+            return redirect()->route('dosen.dashboard');
+        } elseif ($user->role === 'Bagian Akademik'){
+            return redirect()->route('bagianAkademik.dashboard');
         }
-
-        // Retrieve Mahasiswa with the same user_id
-        $mahasiswa = \App\Models\Mahasiswa::where('user_id', $user->id)->first();
-
-        // Pass the user to the Inertia view
-        return Inertia::render('Home', [
-            'user' => $user,
-            'mahasiswa' => $mahasiswa,
-        ]);
     }
 }
