@@ -22,6 +22,11 @@ const DashboardDosen = () => {
             ) : (
                 <p>Loading...</p>
             )}
+            {dosen.dekan === 1 && (
+                <div>
+                    <button onClick={() => window.location.href = '/dekan/dashboard'}>Dashboard Dekan</button>
+                </div>
+            )}
         <button onClick={() => window.location.href = '/actionlogout'}>Logout</button>
         </DosenLayout>
     );

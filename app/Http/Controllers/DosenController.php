@@ -10,6 +10,8 @@ class DosenController extends Controller
 {
     public function index()
     {
-        return Inertia::render('(dosen)/dashboard-dosen/page');
+        $user = Auth::user();
+        $dosen = \App\Models\Dosen::where('user_id', $user->id)->get()->first();
+        return Inertia::render('(dosen)/dashboard-dosen/page', ['dosen' => $dosen]);
     }
 }

@@ -1,6 +1,7 @@
 import React from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { Icon } from "@iconify/react";
+import Swal from "sweetalert2";
 
 const Login = () => {
     const handleSubmit = (e) => {
@@ -8,7 +9,15 @@ const Login = () => {
         const form = e.target;
         const formData = new FormData(form);
 
-        Inertia.post("/actionlogin", formData);
+        Inertia.post("/actionlogin", formData, {
+            onError: (errors) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Gagal',
+                    text: 'Periksa Kembali Email dan Password',
+                });
+            },
+        });
     };
 
     return (
