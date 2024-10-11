@@ -19,13 +19,13 @@ class Mahasiswa extends Model
         'nama', 
         'alamat', 
         'no_telp', 
-        'email', 
         'angkatan', 
         'jalur_masuk', 
         'status', 
         'sks_kumulatif', 
         'ipk', 
-        'id_prodi'
+        'id_prodi',
+        'nip_dosen_wali'
     ];
     public $timestamps = false;
 
@@ -35,6 +35,11 @@ class Mahasiswa extends Model
         'sks_kumulatif' => 'integer',
         'ipk' => 'float',
     ];
+    
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'nip_dosen_wali', 'nip');
+    }
     
     public function programStudi()
     {

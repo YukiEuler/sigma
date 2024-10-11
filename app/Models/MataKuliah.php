@@ -9,7 +9,7 @@ class MataKuliah extends Model
     protected $primaryKey = 'kodemk';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['kode_mk', 'nama', 'sks', 'semester'];
+    protected $fillable = ['kode_mk', 'nama', 'sks', 'semester', 'jenis', 'id_prodi'];
 
     public function dosen()
     {

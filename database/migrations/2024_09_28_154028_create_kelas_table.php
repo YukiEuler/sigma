@@ -9,15 +9,14 @@ class CreateKelasTable extends Migration
     public function up()
     {
         Schema::create('kelas', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('kode_mk', 30);
+            $table->id();
             $table->char('kode_kelas', 1);
+            $table->string('kode_mk', 30);
             $table->integer('tahun');
-            $table->enum('semester', ['1', '2']);
+            $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
             $table->integer('kuota');
-            $table->string('id_ruang', 30);
+
             $table->foreign('kode_mk')->references('kode_mk')->on('mata_kuliah')->onDelete('cascade');
-            $table->foreign('id_ruang')->references('id_ruang')->on('ruangan')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -25,5 +24,8 @@ class CreateKelasTable extends Migration
     public function down()
     {
         Schema::dropIfExists('kelas');
+        Schema::table('kelas', function (Blueprint $table) {
+            $table->dropForeign(['kode_mk']);
+        });
     }
 }

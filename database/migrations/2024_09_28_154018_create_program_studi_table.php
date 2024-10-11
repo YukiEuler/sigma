@@ -13,6 +13,7 @@ class CreateProgramStudiTable extends Migration
             $table->string('nama_prodi', 100);
             $table->string('id_fakultas', 30);
             $table->string('jenjang', 10);
+            
             $table->foreign('id_fakultas')->references('id_fakultas')->on('fakultas')->onDelete('cascade');
             $table->timestamps();
         });
@@ -21,5 +22,9 @@ class CreateProgramStudiTable extends Migration
     public function down()
     {
         Schema::dropIfExists('program_studi');
+
+        Schema::table('dosen', function (Blueprint $table) {
+            $table->dropForeign(['id_prodi']);
+        });
     }
 }

@@ -13,12 +13,12 @@ class HistoryPembayaran extends Model
     protected $table = 'history_pembayaran';
 
     protected $fillable = [
-        'nim_mhs',
         'tahun_akademik',
         'golongan_ukt',
         'pembayaran',
         'tanggal_bayar',
         'keterangan',
+        'nim',
     ];
 
     public function mahasiswa()

@@ -14,6 +14,7 @@ class CreateBagianAkademikTable extends Migration
             $table->string('alamat', 200);
             $table->string('no_telp', 30);
             $table->unsignedBigInteger('user_id');
+
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
@@ -22,5 +23,8 @@ class CreateBagianAkademikTable extends Migration
     public function down()
     {
         Schema::dropIfExists('bagian_akademik');
+        Schema::table('bagian_akademik', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+        });
     }
 }

@@ -13,9 +13,11 @@ class Irs extends Model
     protected $table = 'irs';
 
     protected $fillable = [
-        'nim',
         'id_kelas',
+        'semester',
+        'tahun',
         'status',
+        'nim',
     ];
 
     public function mahasiswa()

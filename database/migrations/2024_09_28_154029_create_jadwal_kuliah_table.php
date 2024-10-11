@@ -9,12 +9,13 @@ class CreateJadwalKuliahTable extends Migration
     public function up()
     {
         Schema::create('jadwal_kuliah', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('id_kelas');
+            $table->id();
             $table->string('hari', 10);
-            $table->string('id_ruang', 30);
             $table->time('waktu_mulai');
             $table->time('waktu_selesai');
+            $table->string('id_ruang', 30);
+            $table->unsignedBigInteger('id_kelas');
+
             $table->foreign('id_kelas')->references('id')->on('kelas')->onDelete('cascade');
             $table->foreign('id_ruang')->references('id_ruang')->on('ruangan')->onDelete('cascade');
             $table->timestamps();
@@ -24,5 +25,9 @@ class CreateJadwalKuliahTable extends Migration
     public function down()
     {
         Schema::dropIfExists('jadwal_kuliah');
+        Schema::table('jadwal_kuliah', function (Blueprint $table) {
+            $table->dropForeign(['id_kelas']);
+            $table->dropForeign(['id_ruang']);
+        });
     }
 }

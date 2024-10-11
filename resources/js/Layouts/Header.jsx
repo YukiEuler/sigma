@@ -1,6 +1,6 @@
 import React from "react";
 
-const DekanLayout = ({ children }) => {
+const Header = ({ children }) => {
     return (
         <>
             <header className="bg-indigo-500 text-white py-2">
@@ -23,4 +23,4 @@ const DekanLayout = ({ children }) => {
     );
 };
 
-export default DekanLayout;
+export default Header;
