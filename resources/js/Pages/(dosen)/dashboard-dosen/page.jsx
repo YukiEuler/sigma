@@ -12,7 +12,7 @@ const DashboardDosen = () => {
     }, [dosenData]);
 
     return (
-        <DosenLayout>
+        <DosenLayout dosen={dosen}>
             <h2>Dashboard Dosen</h2>
             {dosen ? (
                 <div>

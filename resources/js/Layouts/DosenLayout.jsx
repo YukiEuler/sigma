@@ -1,24 +1,24 @@
-import React from "react";
-import Header from "./Header";
-import SidebarDosen from "./SidebarDosen";
-import MarginWithWrapper from "./MarginWithWrapper";
-import PageWrapper from "./PageWrapper";
+// resources/js/Layouts/DosenLayout.jsx
 
-const DosenLayout = ({ children }) => {
+import React from 'react';
+import SidebarDosen from './SidebarDosen';
+import MarginWithWrapper from './MarginWithWrapper';
+import Header from './Header';
+import PageWrapper from './PageWrapper';
+
+const DosenLayout = ({ children, dosen }) => {
     return (
-        <html lang="en">
-            <body className="bg-white">
-                <div className="flex">
-                    <SidebarDosen />
-                    <main className="flex-1">
-                        <MarginWithWrapper>
-                            <Header />
-                            <PageWrapper>{children}</PageWrapper>
-                        </MarginWithWrapper>
-                    </main>
-                </div>
-            </body>
-        </html>
+        <div className="bg-white">
+            <div className="flex">
+                <SidebarDosen dosen={dosen} />
+                <main className="flex-1">
+                    <MarginWithWrapper>
+                        <Header />
+                        <PageWrapper>{children}</PageWrapper>
+                    </MarginWithWrapper>
+                </main>
+            </div>
+        </div>
     );
 };
 
