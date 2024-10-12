@@ -3,15 +3,21 @@ import React from "react";
 const BagianAkademikLayout = ({ children }) => {
     return (
         <>
-            <header className="bg-black/60 py-20">
+            <header className="bg-indigo-500 text-white py-2">
                 <div className="container mx-auto">
-                    <h2>Nav</h2>
+                    <div className="flex justify-center items-center">
+                        <img
+                            src="/logoundip.png"
+                            style={{ width: "50px", height: "40px" }}
+                        />
+                        <span className="font-semibold text-2xl text-black ">
+                            SIGMA UNDIP
+                        </span>
+                    </div>
                 </div>
             </header>
             <main>
-                <div className="container mx-auto">
-                    {children}
-                </div>
+                <div className="container mx-auto py-2">{children}</div>
             </main>
         </>
     );

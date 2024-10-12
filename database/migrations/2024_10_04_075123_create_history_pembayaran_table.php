@@ -9,14 +9,15 @@ class CreateHistoryPembayaranTable extends Migration
     public function up()
     {
         Schema::create('history_pembayaran', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('nim_mhs', 30);
+            $table->id();
             $table->string('tahun_akademik',6);
             $table->string('golongan_ukt', 10);
             $table->integer('pembayaran');
             $table->date('tanggal_bayar');
             $table->text('keterangan');
-            $table->foreign('nim_mhs')->references('nim')->on('mahasiswa')->onDelete('cascade');
+            $table->string('nim', 30);
+
+            $table->foreign('nim')->references('nim')->on('mahasiswa')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,5 +25,8 @@ class CreateHistoryPembayaranTable extends Migration
     public function down()
     {
         Schema::dropIfExists('history_pembayaran');
+        Schema::table('history_pembayaran', function (Blueprint $table) {
+            $table->dropForeign(['nim']);
+        });
     }
 }

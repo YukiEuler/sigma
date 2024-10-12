@@ -18,17 +18,11 @@ class Kelas extends Model
         'tahun',
         'semester',
         'kuota',
-        'id_ruang',
     ];
 
     public function mataKuliah()
     {
         return $this->belongsTo(MataKuliah::class, 'kode_mk', 'kode_mk');
-    }
-
-    public function ruangan()
-    {
-        return $this->belongsTo(Ruangan::class, 'id_ruang', 'id_ruang');
     }
 
     public function irs()

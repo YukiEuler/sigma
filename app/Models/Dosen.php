@@ -9,7 +9,7 @@ class Dosen extends Model
     protected $primaryKey = 'nip';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['nip', 'nama', 'alamat', 'no_telp', 'email', 'id_prodi', 'dekan', 'kaprodi', 'user_id'];
+    protected $fillable = ['nip', 'nama', 'alamat', 'no_telp', 'id_prodi', 'dekan', 'kaprodi', 'user_id'];
 
     public function programStudi()
     {
@@ -24,5 +24,10 @@ class Dosen extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function mahasiswa()
+    {
+        return $this->hasMany(Mahasiswa::class, 'nip_wali');
     }
 }
