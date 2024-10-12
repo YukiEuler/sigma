@@ -1,24 +1,25 @@
 import React from "react";
+import Header from "./Header";
+import SidebarDekan from "./SidebarDekan";
+import MarginWithWrapper from "./MarginWithWrapper";
+import PageWrapper from "./PageWrapper";
 
 const DekanLayout = ({ children }) => {
     return (
         <>
-            <header className="bg-indigo-500 text-white py-2">
-                <div className="container mx-auto">
-                    <div className="flex justify-center items-center">
-                        <img
-                            src="/logoundip.png"
-                            style={{ width: "50px", height: "40px" }}
-                        />
-                        <span className="font-semibold text-2xl text-black ">
-                            SIGMA UNDIP
-                        </span>
+            <html lang="en">
+                <body className="bg-white">
+                    <div className="flex">
+                        <SidebarDekan />
+                        <main className="flex-1">
+                            <MarginWithWrapper>
+                                <Header />
+                                <PageWrapper>{children}</PageWrapper>
+                            </MarginWithWrapper>
+                        </main>
                     </div>
-                </div>
-            </header>
-            <main>
-                <div className="container mx-auto py-2">{children}</div>
-            </main>
+                </body>
+            </html>
         </>
     );
 };

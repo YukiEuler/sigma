@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { usePage } from '@inertiajs/inertia-react';
+import { usePage } from "@inertiajs/inertia-react";
 import MahasiswaLayout from "../../../Layouts/MahasiswaLayout";
 
 const DashboardMahasiswa = () => {
@@ -22,7 +22,6 @@ const DashboardMahasiswa = () => {
             ) : (
                 <p>Loading...</p>
             )}
-        <button onClick={() => window.location.href = '/actionlogout'}>Logout</button>
         </MahasiswaLayout>
     );
 };
