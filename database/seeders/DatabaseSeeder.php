@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             'jenjang' => 'S1',
         ]);
 
+        
         $userDosen = User::create([
             'username' => '197308291998022001',
             'email' => 'arispw@gmail.com',
@@ -39,11 +40,18 @@ class DatabaseSeeder extends Seeder
             'role' => 'Dosen',
         ]);
 
-        $userMahasiswa = User::create([
-            'username' => '24060122120034',
-            'email' => 'sunan@gmail.com',
+        $userDekan = User::create([
+            'username' => '197312202000121005',
+            'email' => 'farikhin@gmail.com',
             'password' => Hash::make('password'),
-            'role' => 'Mahasiswa',
+            'role' => 'Dosen',
+        ]);
+
+        $userKaprodi = User::create([
+            'username' => '197312202000121018',
+            'email' => 'aris@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'Dosen',
         ]);
 
         $userBagianAkademik = User::create([
@@ -52,7 +60,15 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'Bagian Akademik',
         ]);
+        
+        $userMahasiswa = User::create([
+            'username' => '24060122120034',
+            'email' => 'sunan@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'Mahasiswa',
+        ]);
 
+       
         Dosen::create([
             'nip' => $userDosen->username,
             'nama' => 'Aris Puji Widodo', 
@@ -60,6 +76,26 @@ class DatabaseSeeder extends Seeder
             'no_telp' => '081234567890',
             'id_prodi' => $ProgramStudi->id_prodi,
             'user_id' => $userDosen->id
+        ]);
+
+        Dosen::create([
+            'nip' => $userDekan->username,
+            'nama' => 'Farikhin', 
+            'alamat' => 'Jl. Raya Kedungwaru No. 5',
+            'no_telp' => '081234567291',
+            'dekan' => true,
+            'id_prodi' => $ProgramStudi->id_prodi,
+            'user_id' => $userDekan->id
+        ]);
+
+        Dosen::create([
+            'nip' => $userKaprodi->username,
+            'nama' => 'Aris Sugiharto', 
+            'alamat' => 'Jl. Raya Kedungwaru No. 7',
+            'no_telp' => '081234567869',
+            'kaprodi' => true,
+            'id_prodi' => $ProgramStudi->id_prodi,
+            'user_id' => $userKaprodi->id
         ]);
 
         BagianAkademik::create([

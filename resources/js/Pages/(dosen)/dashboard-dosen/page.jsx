@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { usePage } from '@inertiajs/inertia-react';
+import { usePage } from "@inertiajs/inertia-react";
 import DosenLayout from "../../../Layouts/DosenLayout";
 
 const DashboardDosen = () => {
@@ -16,7 +16,9 @@ const DashboardDosen = () => {
             <h2>Dashboard Dosen</h2>
             {dosen ? (
                 <div>
-                    <p>Welcome, {dosen.nama}</p>
+                    <p>Welcome, {dosen.nama} <br />
+                    {dosen.nip} <br />
+                    </p>
                     {/* Display other mahasiswa data as needed */}
                 </div>
             ) : (
@@ -24,10 +26,15 @@ const DashboardDosen = () => {
             )}
             {dosen.dekan === 1 && (
                 <div>
-                    <button onClick={() => window.location.href = '/dekan/dashboard'}>Dashboard Dekan</button>
+                    <button
+                        onClick={() =>
+                            (window.location.href = "/dekan/dashboard")
+                        }
+                    >
+                        Dashboard Dekan
+                    </button>
                 </div>
             )}
-        <button onClick={() => window.location.href = '/actionlogout'}>Logout</button>
         </DosenLayout>
     );
 };
