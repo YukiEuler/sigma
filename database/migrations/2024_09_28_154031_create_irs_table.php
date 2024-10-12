@@ -24,10 +24,10 @@ class CreateIrsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('irs');
         Schema::table('irs', function (Blueprint $table) {
             $table->dropForeign(['nim']);
             $table->dropForeign(['id_kelas']);
         });
+        Schema::dropIfExists('irs');
     }
 }

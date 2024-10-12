@@ -23,10 +23,10 @@ class CreateDosenMkTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('dosen_mk');
         Schema::table('dosen_mk', function (Blueprint $table) {
             $table->dropForeign(['nip']);
             $table->dropForeign(['kode_mk']);
         });
+        Schema::dropIfExists('dosen_mk');
     }
 }

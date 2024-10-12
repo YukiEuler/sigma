@@ -24,9 +24,9 @@ class CreateHistoryPembayaranTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('history_pembayaran');
         Schema::table('history_pembayaran', function (Blueprint $table) {
             $table->dropForeign(['nim']);
         });
+        Schema::dropIfExists('history_pembayaran');
     }
 }

@@ -31,12 +31,11 @@ class CreateMahasiswaTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('mahasiswa');
-
         Schema::table('mahasiswa', function (Blueprint $table) {
             $table->dropForeign(['id_prodi']);
             $table->dropForeign(['nip_dosen_wali']);
             $table->dropForeign(['user_id']);
         });
+        Schema::dropIfExists('mahasiswa');
     }
 }

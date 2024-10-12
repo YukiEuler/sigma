@@ -21,10 +21,9 @@ class CreateProgramStudiTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('program_studi');
-
-        Schema::table('dosen', function (Blueprint $table) {
-            $table->dropForeign(['id_prodi']);
+        Schema::table('program_studi', function (Blueprint $table) {
+            $table->dropForeign(['id_fakultas']);
         });
+        Schema::dropIfExists('program_studi');
     }
 }

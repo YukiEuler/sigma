@@ -26,10 +26,10 @@ class CreateKhsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('khs');
         Schema::table('khs', function (Blueprint $table) {
             $table->dropForeign(['nim']);
             $table->dropForeign(['kode_mk']);
         });
+        Schema::dropIfExists('khs');
     }
 }

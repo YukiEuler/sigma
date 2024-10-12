@@ -22,9 +22,9 @@ class CreateBagianAkademikTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('bagian_akademik');
         Schema::table('bagian_akademik', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
         });
+        Schema::dropIfExists('bagian_akademik');
     }
 }

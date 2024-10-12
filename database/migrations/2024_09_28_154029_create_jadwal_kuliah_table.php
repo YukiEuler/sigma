@@ -24,10 +24,10 @@ class CreateJadwalKuliahTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('jadwal_kuliah');
         Schema::table('jadwal_kuliah', function (Blueprint $table) {
             $table->dropForeign(['id_kelas']);
             $table->dropForeign(['id_ruang']);
         });
+        Schema::dropIfExists('jadwal_kuliah');
     }
 }

@@ -23,9 +23,9 @@ class CreateKelasTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('kelas');
         Schema::table('kelas', function (Blueprint $table) {
             $table->dropForeign(['kode_mk']);
         });
+        Schema::dropIfExists('kelas');
     }
 }

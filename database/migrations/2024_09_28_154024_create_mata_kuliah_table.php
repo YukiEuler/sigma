@@ -15,15 +15,16 @@ class CreateMataKuliahTable extends Migration
             $table->enum('semester', ['1', '2','3','4','5','6','7','8']);
             $table->enum('jenis', ['Wajib', 'Pilihan']);
             $table->string('id_prodi', 30);
+            $table->foreign('id_prodi')->references('id_prodi')->on('program_studi')->onDelete('cascade');
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('mata_kuliah');
         Schema::table('mata_kuliah', function (Blueprint $table) {
             $table->dropForeign(['id_prodi']);
         });
+        Schema::dropIfExists('mata_kuliah');
     }
 }

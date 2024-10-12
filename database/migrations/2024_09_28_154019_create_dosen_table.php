@@ -26,10 +26,10 @@ class CreateDosenTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('dosen');
-        Schema::table('program_studi', function (Blueprint $table) {
+        Schema::table('dosen', function (Blueprint $table) {
             $table->dropForeign(['id_prodi']);
             $table->dropForeign(['user_id']);
         });
+        Schema::dropIfExists('dosen');
     }
 }
