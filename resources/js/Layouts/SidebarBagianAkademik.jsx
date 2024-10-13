@@ -45,6 +45,19 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
                     </li>
                     <li>
                         <a
+                            href="/bagian-akademik/atur-ruang"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        >
+                            <Icon
+                                icon="streamline:group-meeting-call-solid"
+                                width="24"
+                                height="24"
+                            />
+                            <span className="ms-3">Ruangan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
                             href="/actionlogout"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                         >

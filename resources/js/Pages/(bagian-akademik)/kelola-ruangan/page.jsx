@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Inertia } from "@inertiajs/inertia";
 import { InertiaLink, usePage } from "@inertiajs/inertia-react";
 import BagianAkademikLayout from "../../../Layouts/BagianAkademikLayout";
 
 const KelolaRuangan = ({ ruangan }) => {
     const [data, setData] = useState([]);
+    const { props } = usePage();
+    const bagian_akademikData = props.bagian_akademik;
+    const [bagian_akademik, setBagian_akademik] = useState(bagian_akademikData);
 
     useEffect(() => {
         setData(ruangan);
-    }, [ruangan]);
+        setBagian_akademik(bagian_akademikData);
+    }, [ruangan, bagian_akademikData]);
 
     return (
-        <BagianAkademikLayout>
+        <BagianAkademikLayout bagian_akademik={bagian_akademik}>
             <div>
                 <h1>Kelola Ruangan</h1>
                 <table>
