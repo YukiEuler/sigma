@@ -15,7 +15,7 @@ const KelolaRuangan = ({ ruangan }) => {
 
     return (
         <BagianAkademikLayout bagian_akademik={bagian_akademik}>
-            <main className="flex-1 max-h-full p-5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ...">
+            <main className="min-h-screen p-5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ...">
                 <h1 className="text-xl font-bold text-white capitalize dark:text-white">
                     Kelola Ruangan
                 </h1>
@@ -67,7 +67,7 @@ const KelolaRuangan = ({ ruangan }) => {
                     </table>
                 </div>
             </main>
-            <div>
+            {/* <div>
                 <h1>Kelola Ruangan</h1>
                 <table>
                     <thead>
@@ -99,7 +99,7 @@ const KelolaRuangan = ({ ruangan }) => {
                         ))}
                     </tbody>
                 </table>
-            </div>
+            </div> */}
         </BagianAkademikLayout>
     );
 };
