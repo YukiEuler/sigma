@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 
 const SidebarBagianAkademik = ({ bagian_akademik }) => {
-    useEffect(() => {
-        console.log(bagian_akademik);
-    }, [bagian_akademik]);
     return (
         <aside
             id="default-sidebar"
@@ -23,13 +20,13 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
                         />
                         <div className="flex flex-col p-2 mb-3">
                             <span className="dark:text-white text-xl">
-                                {/* {bagian_akademik.nama} */}
+                                {bagian_akademik.nama}
                             </span>
                             <span className="dark:text-slate-300 text-l">
-                                {/* {bagian_akademik.nip} */}
+                                {bagian_akademik.nip}
                             </span>
                             <span className="dark:text-slate-300 text-m">
-                                {/* {bagian_akademik.nama_fakultas} */}
+                                {bagian_akademik.nama_fakultas}
                             </span>
                         </div>
                     </li>

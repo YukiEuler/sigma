@@ -16,6 +16,7 @@ class BagianAkademikController extends Controller
         $bagian_akademik = BagianAkademik::where('user_id', $user->id)->get()->first();
         $fakultas = Fakultas::where('id_fakultas', $bagian_akademik->id_fakultas)->first();
         $bagian_akademik->nama_fakultas = $fakultas->nama_fakultas;
-        return Inertia::render('(bagian-akademik)/dashboard-bagian-akademik/page', ['bagianakademik' => $bagian_akademik]);
+        error_log($bagian_akademik);
+        return Inertia::render('(bagian-akademik)/dashboard-bagian-akademik/page', ['bagian_akademik' => $bagian_akademik]);
     }
 }

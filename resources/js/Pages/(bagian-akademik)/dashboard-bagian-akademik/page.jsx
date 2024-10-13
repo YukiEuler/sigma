@@ -10,6 +10,7 @@ const DashboardBagianAkademik = () => {
     useEffect(() => {
         setBagian_akademik(bagian_akademikData);
     }, [bagian_akademikData]);
+    
     return (
         <BagianAkademikLayout bagian_akademik={bagian_akademik}>
             <h2>Dashboard Bagian Akademik</h2>

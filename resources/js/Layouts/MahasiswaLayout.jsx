@@ -4,12 +4,12 @@ import SidebarMahasiswa from "./SidebarMahasiswa";
 import MarginWithWrapper from "./MarginWithWrapper";
 import PageWrapper from "./PageWrapper";
 
-const MahasiswaLayout = ({ children }) => {
+const MahasiswaLayout = ({ children, mahasiswa }) => {
     return (
         <html lang="en">
             <body className="bg-white">
                 <div className="flex">
-                    <SidebarMahasiswa />
+                    <SidebarMahasiswa mahasiswa={mahasiswa} />
                     <main className="flex-1">
                         <MarginWithWrapper>
                             <Header />

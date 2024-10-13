@@ -12,7 +12,7 @@ const DashboardMahasiswa = () => {
     }, [mahasiswaData]);
 
     return (
-        <MahasiswaLayout>
+        <MahasiswaLayout mahasiswa={mahasiswa}>
             <h2>Dashboard Mahasiswa</h2>
             {mahasiswa ? (
                 <div>

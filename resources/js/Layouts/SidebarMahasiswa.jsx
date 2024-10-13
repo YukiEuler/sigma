@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "@iconify/react";
 
-const SidebarMahasiswa = () => {
+const SidebarMahasiswa = ({ mahasiswa }) => {
     return (
         <aside
             id="default-sidebar"
@@ -20,13 +20,13 @@ const SidebarMahasiswa = () => {
                         />
                         <div className="flex flex-col p-2 mb-3">
                             <span className="dark:text-white text-xl">
-                                Dzu Sunan Muhammad
+                                {mahasiswa.nama}
                             </span>
                             <span className="dark:text-slate-300 text-l">
-                                24060122120034
+                                {mahasiswa.nim}
                             </span>
                             <span className="dark:text-slate-300 text-m">
-                                S1 Informatika
+                                {mahasiswa.nama_prodi}
                             </span>
                         </div>
                     </li>
