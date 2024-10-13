@@ -69,7 +69,7 @@ const DashboardBagianAkademik = () => {
                                                     },
                                                     {
                                                         id: 1,
-                                                        value: 15,
+                                                        value: 20,
                                                         label: "Ruang Tidak Tersedia",
                                                         color: "#6366F1",
                                                     },
