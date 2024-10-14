@@ -45,9 +45,6 @@ const KelolaRuangan = ({ ruangan }) => {
                                     Nama
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Ruangan
-                                </th>
-                                <th scope="col" className="px-6 py-3">
                                     Program Studi
                                 </th>
                                 <th scope="col" className="px-6 py-3">
@@ -59,14 +56,15 @@ const KelolaRuangan = ({ ruangan }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {Array.from({ length: 20 }, (_, index) => (
-                                <tr
-                                    key={index}
-                                    className="bg-gray-100 border-b"
-                                >
-                                    <td className="px-4 py-2">{index + 1}</td>
-                                    <td className="px-4 py-2">
-                                        Nama {index + 1}
+                            {data.map((item, index) => (
+                                <tr key={item.id_ruang}>
+                                    <td>{index + 1}</td>
+                                    <td>{item.nama_ruang}</td>
+                                    <td>{item.nama_prodi}</td>
+                                    <td>
+                                        {item.disetujui === 0
+                                            ? "Belum Disetujui"
+                                            : "Disetujui"}
                                     </td>
                                     <td className="px-4 py-2">
                                         Ruangan {index + 1}
@@ -82,39 +80,6 @@ const KelolaRuangan = ({ ruangan }) => {
                     </table>
                 </div>
             </main>
-            {/* <div>
-                <h1>Kelola Ruangan</h1>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nama Ruangan</th>
-                            <th>Prodi</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((item) => (
-                            <tr key={item.id_ruang}>
-                                <td>{item.nama_ruang}</td>
-                                <td>{item.nama_prodi}</td>
-                                <td>
-                                    {item.disetujui === 0
-                                        ? "Belum Disetujui"
-                                        : "Disetujui"}
-                                </td>
-                                <td>
-                                    <InertiaLink
-                                        href={`/bagian-akademik/atur-ruang/edit/${item.id_ruang}`}
-                                    >
-                                        Edit
-                                    </InertiaLink>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div> */}
         </BagianAkademikLayout>
     );
 };
