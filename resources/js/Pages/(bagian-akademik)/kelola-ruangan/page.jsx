@@ -45,6 +45,9 @@ const KelolaRuangan = ({ ruangan }) => {
                                     Nama
                                 </th>
                                 <th scope="col" className="px-6 py-3">
+                                    Ruangan
+                                </th>
+                                <th scope="col" className="px-6 py-3">
                                     Program Studi
                                 </th>
                                 <th scope="col" className="px-6 py-3">
@@ -56,7 +59,26 @@ const KelolaRuangan = ({ ruangan }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map((item, index) => (
+                            {Array.from({ length: 20 }, (_, index) => (
+                                <tr
+                                    key={index}
+                                    className="bg-gray-100 border-b"
+                                >
+                                    <td className="px-4 py-2">{index + 1}</td>
+                                    <td className="px-4 py-2">
+                                        Nama {index + 1}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        Ruangan {index + 1}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        Program Studi {index + 1}
+                                    </td>
+                                    <td className="px-4 py-2">Aktif</td>
+                                    <td className="px-4 py-2">Aksi</td>
+                                </tr>
+                            ))}
+                            {/* {data.map((item, index) => (
                                 <tr key={item.id_ruang}>
                                     <td>{index + 1}</td>
                                     <td>{item.nama_ruang}</td>
@@ -75,7 +97,7 @@ const KelolaRuangan = ({ ruangan }) => {
                                     <td className="px-4 py-2">Aktif</td>
                                     <td className="px-4 py-2">Aksi</td>
                                 </tr>
-                            ))}
+                            ))} */}
                         </tbody>
                     </table>
                 </div>
