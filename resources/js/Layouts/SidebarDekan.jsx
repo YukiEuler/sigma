@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "@iconify/react";
 
-const SidebarDekan = ({dosen}) => {
+const SidebarDekan = ({ dosen }) => {
     return (
         <aside
             id="default-sidebar"
@@ -41,6 +41,28 @@ const SidebarDekan = ({dosen}) => {
                                 height="24"
                             />
                             <span class="ms-3">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="/dekan/setujui-ruang"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        >
+                            <Icon
+                                icon="streamline:group-meeting-call-solid"
+                                width="24"
+                                height="24"
+                            />
+                            <span class="ms-3">Setujui Ruang</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="/"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        >
+                            <Icon icon="mdi:lecture" width="24" height="24" />
+                            <span class="ms-3">Dosen Page</span>
                         </a>
                     </li>
                     <li>
