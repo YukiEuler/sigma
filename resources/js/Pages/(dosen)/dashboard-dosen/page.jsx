@@ -14,27 +14,6 @@ const DashboardDosen = () => {
     return (
         <DosenLayout dosen={dosen}>
             <h2>Dashboard Dosen</h2>
-            {dosen ? (
-                <div>
-                    <p>Welcome, {dosen.nama} <br />
-                    {dosen.nip} <br />
-                    </p>
-                    {/* Display other mahasiswa data as needed */}
-                </div>
-            ) : (
-                <p>Loading...</p>
-            )}
-            {dosen.dekan === 1 && (
-                <div>
-                    <button
-                        onClick={() =>
-                            (window.location.href = "/dekan/dashboard")
-                        }
-                    >
-                        Dashboard Dekan
-                    </button>
-                </div>
-            )}
         </DosenLayout>
     );
 };
