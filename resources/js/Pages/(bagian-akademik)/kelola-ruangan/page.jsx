@@ -15,14 +15,28 @@ const KelolaRuangan = ({ ruangan }) => {
 
     return (
         <BagianAkademikLayout bagian_akademik={bagian_akademik}>
-            <main className="min-h-screen p-5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ...">
-                <h1 className="text-xl font-bold text-white capitalize dark:text-white">
-                    Kelola Ruangan
-                </h1>
+            <main
+                className="flex-1 px-5 pb-4 pt-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ... "
+                style={{ minHeight: `calc(100vh - 6.5rem)`, overflow: "auto" }}
+            >
+                <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
+                    <h1 className="text-2xl font-semibold whitespace-nowrap text-white">
+                        Kelola Ruangan
+                    </h1>
+                </div>
 
-                <div className="relative overflow-x-auto mt-6 rounded-lg">
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <div className="relative overflow-x-auto mt-6 rounded-lg overflow-auto h-[500px] scrollbar-hide">
+                    <style jsx>{`
+                        .scrollbar-hide::-webkit-scrollbar {
+                            display: none;
+                        }
+                        .scrollbar-hide {
+                            -ms-overflow-style: none;
+                            scrollbar-width: none;
+                        }
+                    `}</style>
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
+                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
                             <tr>
                                 <th scope="col" className="px-6 py-3">
                                     No
@@ -45,22 +59,23 @@ const KelolaRuangan = ({ ruangan }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map((item) => (
-                                <tr key={item.id_ruang}>
-                                    <td>{item.nama_ruang}</td>
-                                    <td>{item.nama_prodi}</td>
-                                    <td>
-                                        {item.disetujui === 0
-                                            ? "Belum Disetujui"
-                                            : "Disetujui"}
+                            {Array.from({ length: 20 }, (_, index) => (
+                                <tr
+                                    key={index}
+                                    className="bg-gray-100 border-b"
+                                >
+                                    <td className="px-4 py-2">{index + 1}</td>
+                                    <td className="px-4 py-2">
+                                        Nama {index + 1}
                                     </td>
-                                    <td>
-                                        <InertiaLink
-                                            href={`/bagian-akademik/atur-ruang/edit/${item.id_ruang}`}
-                                        >
-                                            Edit
-                                        </InertiaLink>
+                                    <td className="px-4 py-2">
+                                        Ruangan {index + 1}
                                     </td>
+                                    <td className="px-4 py-2">
+                                        Program Studi {index + 1}
+                                    </td>
+                                    <td className="px-4 py-2">Aktif</td>
+                                    <td className="px-4 py-2">Aksi</td>
                                 </tr>
                             ))}
                         </tbody>
