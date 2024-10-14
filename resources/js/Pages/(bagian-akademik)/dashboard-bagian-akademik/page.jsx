@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/inertia-react";
 import BagianAkademikLayout from "../../../Layouts/BagianAkademikLayout";
+import { PieChart } from "@mui/x-charts/PieChart";
 
 const DashboardBagianAkademik = () => {
     const { props } = usePage();
@@ -10,20 +11,80 @@ const DashboardBagianAkademik = () => {
     useEffect(() => {
         setBagian_akademik(bagian_akademikData);
     }, [bagian_akademikData]);
-    
+
     return (
         <BagianAkademikLayout bagian_akademik={bagian_akademik}>
-            <h2>Dashboard Bagian Akademik</h2>
-            {bagian_akademik ? (
-                <div>
-                    <p>Welcome, {bagian_akademik.nama} <br />
-                    {bagian_akademik.nip} <br />
-                    </p>
-                    {/* Display other mahasiswa data as needed */}
+            <main className="flex-1 max-h-full p-5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ...">
+                <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
+                    <h1 className="text-2xl font-semibold whitespace-nowrap text-white">
+                        Dashboard
+                    </h1>
                 </div>
-            ) : (
-                <p>Loading...</p>
-            )}
+                <div className="grid grid-cols-1 gap-5 mt-6 lg:grid-cols-2">
+                    <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
+                        <div className="flex items-start justify-between p-2 border rounded-lg shadow-lg bg-white">
+                            <div className="flex flex-col space-y-2">
+                                <span className="text-gray-400">
+                                    Ruang Kuliah Tersedia
+                                </span>
+                                <span className="text-lg font-semibold">
+                                    10
+                                </span>
+                            </div>
+                            <div className="p-8"></div>
+                        </div>
+                    </div>
+                    <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
+                        <div className="flex items-start justify-between p-2 border rounded-lg shadow-lg bg-white">
+                            <div className="flex flex-col space-y-2">
+                                <span className="text-gray-400">
+                                    Ruang Kuliah Tidak Tersedia
+                                </span>
+                                <span className="text-lg font-semibold">
+                                    20
+                                </span>
+                            </div>
+                            <div className="p-8"></div>
+                        </div>
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 gap-5 mt-6 lg:grid-cols-1">
+                    <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
+                        <div className="flex items-center justify-center p-2 border rounded-lg shadow-lg bg-white">
+                            <div className="flex flex-col space-y-2 items-center">
+                                <h2 className="text-gray-400">
+                                    Status Mahasiswa
+                                </h2>
+                                <div className="py-6 grid place-items-center px-2">
+                                    <PieChart
+                                        colors={['#6366F1', '#A855F7']}
+                                        series={[
+                                            {
+                                                data: [
+                                                    {
+                                                        id: 0,
+                                                        value: 10,
+                                                        label: "Ruang Tersedia",
+                                                        color: "#A855F7",
+                                                    },
+                                                    {
+                                                        id: 1,
+                                                        value: 20,
+                                                        label: "Ruang Tidak Tersedia",
+                                                        color: "#6366F1",
+                                                    },
+                                                ],
+                                            },
+                                        ]}
+                                        width={600}
+                                        height={200}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </BagianAkademikLayout>
     );
 };

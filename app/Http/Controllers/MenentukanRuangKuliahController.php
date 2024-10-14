@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BagianAkademik;
+use App\Models\Fakultas;
+use App\Models\ProgramStudi;
+use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -20,23 +24,25 @@ class MenentukanRuangKuliahController extends Controller
         }
 
         // Retrieve the bagian_akademik from the session
-        $bagian_akademik = \App\Models\BagianAkademik::where('user_id', $user->id)->first();
+        $bagian_akademik = BagianAkademik::where('user_id', $user->id)->first();
         // Retrieve the id_fakultas of the authenticated user
+        $fakultas = Fakultas::where('id_fakultas', $bagian_akademik->id_fakultas)->first();
+        $bagian_akademik->nama_fakultas = $fakultas->nama_fakultas;
         $id_fakultas = $bagian_akademik->id_fakultas;
 
         // Get the rooms where id_fakultas matches the user's id_fakultas
-        $ruangan = \App\Models\Ruangan::where('id_fakultas', $id_fakultas)->get();
+        $ruangan = Ruangan::where('id_fakultas', $id_fakultas)->get();
     
         // Sort the rooms by 'nama_ruang'
         $ruangan = $ruangan->sortBy('nama_ruang');
         // Join ruangan with ProgramStudi where id_prodi matches
         $ruangan = $ruangan->map(callback: function ($room) {
-            $programStudi = \App\Models\ProgramStudi::where('id_prodi', $room->id_prodi)->first();
+            $programStudi = ProgramStudi::where('id_prodi', $room->id_prodi)->first();
             $room->nama_prodi = $programStudi ? $programStudi->nama_prodi : null;
             return $room;
         })->values()->all();
         // Return the view with the retrieved rooms
-        return Inertia::render('(bagian-akademik)/kelola-ruangan/page', ['ruangan' => $ruangan]);
+        return Inertia::render('(bagian-akademik)/kelola-ruangan/page', ['ruangan' => $ruangan, 'bagian_akademik' => $bagian_akademik]);
     }
 
     public function editPage($id){
@@ -50,7 +56,7 @@ class MenentukanRuangKuliahController extends Controller
         }
 
         // Retrieve the room by id
-        $ruangan = \App\Models\Ruangan::find($id);
+        $ruangan = Ruangan::find($id);
         // Print the room details to the console
 
         // Check if the room exists
@@ -59,14 +65,14 @@ class MenentukanRuangKuliahController extends Controller
         }
 
         // Retrieve the program studi associated with the room
-        $programStudi = \App\Models\ProgramStudi::where('id_prodi', $ruangan->id_prodi)->first();
+        $programStudi = ProgramStudi::where('id_prodi', $ruangan->id_prodi)->first();
         $ruangan->nama_prodi = $programStudi ? $programStudi->nama_prodi : null;
 
         // Retrieve the bagian_akademik from the session
-        $bagianAkademik = \App\Models\BagianAkademik::where('user_id', $user->id)->first();
+        $bagianAkademik = BagianAkademik::where('user_id', $user->id)->first();
 
         // Get all program studi where id_fakultas matches the bagian_akademik's id_fakultas
-        $programStudiList = \App\Models\ProgramStudi::where('id_fakultas', $bagianAkademik->id_fakultas)->get();
+        $programStudiList = ProgramStudi::where('id_fakultas', $bagianAkademik->id_fakultas)->get();
 
         // Pass the program studi list to the view
         return Inertia::render('(bagian-akademik)/kelola-ruangan/edit', [
@@ -90,7 +96,7 @@ class MenentukanRuangKuliahController extends Controller
         }
 
         // Retrieve the room by id
-        $ruangan = \App\Models\Ruangan::find($id_ruang);
+        $ruangan = Ruangan::find($id_ruang);
 
         // Check if the room exists
         if (!$ruangan) {
@@ -98,7 +104,7 @@ class MenentukanRuangKuliahController extends Controller
         }
 
         // Retrieve the program studi associated with the room
-        $programStudi = \App\Models\ProgramStudi::where('id_prodi', $id_prodi)->first();
+        $programStudi = ProgramStudi::where('id_prodi', $id_prodi)->first();
         if ($programStudi->id_fakultas !== $ruangan->id_fakultas){
             return redirect()->route('bagianAkademik.aturRuang')->with('error', 'Fakultas tidak sama.');
         }
