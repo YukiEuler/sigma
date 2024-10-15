@@ -47,6 +47,32 @@ const SidebarDosen = ({ dosen }) => {
                         </a>
                     </li>
                     <li>
+                        <a
+                            href="dashboard"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        >
+                            <Icon
+                                icon="ic:baseline-people"
+                                width="24"
+                                height="24"
+                            />
+                            <span className="ms-3">Perwalian</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="dashboard"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        >
+                            <Icon
+                                icon="solar:notebook-bookmark-bold"
+                                width="24"
+                                height="24"
+                            />
+                            <span className="ms-3">Nilai</span>
+                        </a>
+                    </li>
+                    <li>
                         {dosen.dekan === 1 && (
                             <a
                                 href="/dekan/dashboard"
