@@ -56,7 +56,7 @@ const DashboardBagianAkademik = () => {
                         <div className="flex items-center justify-center p-2 border rounded-lg shadow-lg bg-white">
                             <div className="flex flex-col space-y-2 items-center">
                                 <h2 className="text-gray-400">
-                                    Status Mahasiswa
+                                    Status Ruang Kuliah
                                 </h2>
                                 <div className="py-6 grid place-items-center px-2">
                                     <PieChart
