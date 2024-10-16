@@ -88,6 +88,21 @@ const SidebarDosen = ({ dosen }) => {
                         )}
                     </li>
                     <li>
+                        {dosen.kaprodi === 1 && (
+                            <a
+                                href="/kaprodi/dashboard"
+                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            >
+                                <Icon
+                                    icon="vaadin:academy-cap"
+                                    width="24"
+                                    height="24"
+                                />
+                                <span className="ms-3">Kaprodi Page</span>
+                            </a>
+                        )}
+                    </li>
+                    <li>
                         <a
                             href="/actionlogout"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"

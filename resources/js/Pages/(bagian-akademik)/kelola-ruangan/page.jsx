@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { InertiaLink, usePage } from "@inertiajs/inertia-react";
+import { usePage } from "@inertiajs/inertia-react";
 import BagianAkademikLayout from "../../../Layouts/BagianAkademikLayout";
 
 const KelolaRuangan = ({ ruangan }) => {
@@ -59,45 +59,33 @@ const KelolaRuangan = ({ ruangan }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {Array.from({ length: 20 }, (_, index) => (
+                            {data.map((item, index) => (
                                 <tr
-                                    key={index}
+                                    key={item.id_ruang}
                                     className="bg-gray-100 border-b"
                                 >
                                     <td className="px-4 py-2">{index + 1}</td>
                                     <td className="px-4 py-2">
-                                        Nama {index + 1}
+                                        {item.nama_ruang}
                                     </td>
                                     <td className="px-4 py-2">
                                         Ruangan {index + 1}
                                     </td>
                                     <td className="px-4 py-2">
-                                        Program Studi {index + 1}
+                                        {item.nama_prodi}
                                     </td>
-                                    <td className="px-4 py-2">Aktif</td>
-                                    <td className="px-4 py-2">Aksi</td>
-                                </tr>
-                            ))}
-                            {/* {data.map((item, index) => (
-                                <tr key={item.id_ruang}>
-                                    <td>{index + 1}</td>
-                                    <td>{item.nama_ruang}</td>
-                                    <td>{item.nama_prodi}</td>
-                                    <td>
+                                    <td className="px-4 py-2">
                                         {item.disetujui === 0
                                             ? "Belum Disetujui"
                                             : "Disetujui"}
                                     </td>
-                                    <td className="px-4 py-2">
-                                        Ruangan {index + 1}
-                                    </td>
-                                    <td className="px-4 py-2">
-                                        Program Studi {index + 1}
-                                    </td>
-                                    <td className="px-4 py-2">Aktif</td>
                                     <td className="px-4 py-2">Aksi</td>
+                                    {/* <td className="px-4 py-2">
+                                        {item.nama_prodi}
+                                    </td> */}
+                                    {/* <td className="px-4 py-2">Aktif</td> */}
                                 </tr>
-                            ))} */}
+                            ))}
                         </tbody>
                     </table>
                 </div>
