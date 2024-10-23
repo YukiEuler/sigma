@@ -79,11 +79,11 @@ const KelolaRuangan = ({ ruangan }) => {
                                             ? "Belum Disetujui"
                                             : "Disetujui"}
                                     </td>
-                                    <td className="px-4 py-2">Aksi</td>
-                                    {/* <td className="px-4 py-2">
-                                        {item.nama_prodi}
-                                    </td> */}
-                                    {/* <td className="px-4 py-2">Aktif</td> */}
+                                    <td className="px-4 py-2">
+                                        <a href={`/bagian-akademik/atur-ruang/edit/${item.id_ruang}`} className="text-blue-500 hover:underline">
+                                            Edit
+                                        </a>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
