@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AturJadwalController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\BagianAkademikController;
@@ -16,6 +17,8 @@ use App\Http\Controllers\KaprodiController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PerwalianController;
 use App\Http\Controllers\AkademikMhsController;
+use App\Http\Controllers\DataMahasiswaController;
+use App\Http\Controllers\DataMKController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,3 +65,6 @@ Route::get('dosen/nilai', [NilaiController::class, 'index'])->name('dosen.nilai'
 Route::get('dosen/perwalian', [PerwalianController::class, 'index'])->name('dosen.perwalian')->middleware(['auth', 'validateRole:Dosen']);
 
 Route::get('kaprodi/dashboard', [KaprodiController::class, 'index'])->name('kaprodi.dashboard')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::get('kaprodi/data-mahasiswa', [DataMahasiswaController::class, 'index'])->name('kaprodi.dataMahasiswa')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::get('kaprodi/data-matakuliah', [DataMKController::class, 'index'])->name('kaprodi.dataMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
