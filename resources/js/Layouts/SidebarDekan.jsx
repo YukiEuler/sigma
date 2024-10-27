@@ -8,7 +8,7 @@ const SidebarDekan = ({ dosen }) => {
             class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
             aria-label="Sidebar"
         >
-            <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800 ,t">
+            <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50" style={{ backgroundColor: "#1EAADF" }}>
                 <ul class="space-y-2 font-medium">
                     <li>
                         <Icon
@@ -33,7 +33,7 @@ const SidebarDekan = ({ dosen }) => {
                     <li>
                         <a
                             href="dashboard"
-                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="ic:baseline-pie-chart"
@@ -46,7 +46,7 @@ const SidebarDekan = ({ dosen }) => {
                     <li>
                         <a
                             href="/dekan/setujui-ruang"
-                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="streamline:group-meeting-call-solid"
@@ -59,7 +59,7 @@ const SidebarDekan = ({ dosen }) => {
                     <li>
                         <a
                             href="/"
-                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon icon="mdi:lecture" width="24" height="24" />
                             <span class="ms-3">Dosen Page</span>
@@ -68,7 +68,7 @@ const SidebarDekan = ({ dosen }) => {
                     <li>
                         <a
                             href="/actionlogout"
-                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="ri:logout-box-r-fill"

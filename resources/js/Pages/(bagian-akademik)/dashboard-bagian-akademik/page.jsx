@@ -15,11 +15,11 @@ const DashboardBagianAkademik = () => {
     return (
         <BagianAkademikLayout bagian_akademik={bagian_akademik}>
             <main
-                className="flex-1 px-5 pb-5 pt-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ..."
+                className="flex-1 px-5 pb-5 pt-4"
                 style={{ minHeight: `calc(100vh - 6.5rem)`, overflow: "auto" }}
             >
                 <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
-                    <h1 className="text-2xl font-semibold whitespace-nowrap text-white">
+                    <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
                         Dashboard
                     </h1>
                 </div>

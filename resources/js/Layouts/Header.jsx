@@ -3,7 +3,7 @@ import React from "react";
 const Header = () => {
     return (
         <>
-            <header className="fixed top-0 left-0 right-0 dark:bg-gray-800 text-white py-2 md:ml-64">
+            <header className="fixed top-0 left-0 right-0 text-white py-2 md:ml-64" style={{ backgroundColor: "#1EAADF" }}>
                 <div className="container mx-auto">
                     <div className="flex justify-center items-center">
                         <a href="dashboard">
