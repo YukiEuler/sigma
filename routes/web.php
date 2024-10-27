@@ -13,6 +13,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KaprodiController;
+use App\Http\Controllers\NilaiController;
+use App\Http\Controllers\PerwalianController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,5 +55,7 @@ Route::get('dekan/setujui-ruang', [MenyetujuiRuangKuliah::class, 'index'])->name
 Route::get('dekan/setujui-ruang/{id}', [MenyetujuiRuangKuliah::class, 'update'])->name('dekan.updateStatusRuang')->middleware(['auth', 'validateRole:Dekan']);
 
 Route::get('dosen/dashboard', [DosenController::class, 'index'])->name('dosen.dashboard')->middleware(['auth', 'validateRole:Dosen']);
+Route::get('dosen/nilai', [NilaiController::class, 'index'])->name('dosen.nilai')->middleware(['auth', 'validateRole:Dosen']);
+Route::get('dosen/perwalian', [PerwalianController::class, 'index'])->name('dosen.perwalian')->middleware(['auth', 'validateRole:Dosen']);
 
 Route::get('kaprodi/dashboard', [KaprodiController::class, 'index'])->name('kaprodi.dashboard')->middleware(['auth', 'validateRole:Kaprodi']);

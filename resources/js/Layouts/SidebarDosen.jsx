@@ -11,7 +11,7 @@ const SidebarDosen = ({ dosen }) => {
             className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
             aria-label="Sidebar"
         >
-            <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50" style={{ backgroundColor: "#1EAADF" }}>
                 <ul className="space-y-2 font-medium">
                     <li>
                         <Icon
@@ -36,7 +36,7 @@ const SidebarDosen = ({ dosen }) => {
                     <li>
                         <a
                             href="dashboard"
-                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="ic:baseline-pie-chart"
@@ -48,8 +48,8 @@ const SidebarDosen = ({ dosen }) => {
                     </li>
                     <li>
                         <a
-                            href="dashboard"
-                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            href="/dosen/perwalian"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="ic:baseline-people"
@@ -61,8 +61,8 @@ const SidebarDosen = ({ dosen }) => {
                     </li>
                     <li>
                         <a
-                            href="dashboard"
-                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            href="/dosen/nilai"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="solar:notebook-bookmark-bold"
@@ -76,7 +76,7 @@ const SidebarDosen = ({ dosen }) => {
                         {dosen.dekan === 1 && (
                             <a
                                 href="/dekan/dashboard"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                             >
                                 <Icon
                                     icon="vaadin:academy-cap"
@@ -91,7 +91,7 @@ const SidebarDosen = ({ dosen }) => {
                         {dosen.kaprodi === 1 && (
                             <a
                                 href="/kaprodi/dashboard"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                             >
                                 <Icon
                                     icon="vaadin:academy-cap"
@@ -105,7 +105,7 @@ const SidebarDosen = ({ dosen }) => {
                     <li>
                         <a
                             href="/actionlogout"
-                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="ri:logout-box-r-fill"

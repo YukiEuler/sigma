@@ -8,7 +8,7 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
             className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
             aria-label="Sidebar"
         >
-            <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50" style={{ backgroundColor: "#1EAADF" }}>
                 <ul className="space-y-2 font-medium">
                     <li>
                         <Icon
@@ -33,7 +33,7 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
                     <li>
                         <a
                             href="dashboard"
-                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="ic:baseline-pie-chart"
@@ -46,7 +46,7 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
                     <li>
                         <a
                             href="/bagian-akademik/atur-ruang"
-                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="streamline:group-meeting-call-solid"
@@ -59,7 +59,7 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
                     <li>
                         <a
                             href="/actionlogout"
-                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
                                 icon="ri:logout-box-r-fill"

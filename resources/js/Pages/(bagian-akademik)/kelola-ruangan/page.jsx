@@ -16,11 +16,11 @@ const KelolaRuangan = ({ ruangan }) => {
     return (
         <BagianAkademikLayout bagian_akademik={bagian_akademik}>
             <main
-                className="flex-1 px-5 pb-4 pt-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ... "
+                className="flex-1 px-5 pb-4 pt-4 bg-gradient-to-r "
                 style={{ minHeight: `calc(100vh - 6.5rem)`, overflow: "auto" }}
             >
                 <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
-                    <h1 className="text-2xl font-semibold whitespace-nowrap text-white">
+                    <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
                         Kelola Ruangan
                     </h1>
                 </div>
@@ -36,16 +36,16 @@ const KelolaRuangan = ({ ruangan }) => {
                         }
                     `}</style>
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
+                        <thead className="text-xs text-white uppercase bg-gray-50 dark:text-gray-400 sticky top-0" style={{ backgroundColor: "#1EAADF" }}>
                             <tr>
                                 <th scope="col" className="px-6 py-3">
                                     No
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Nama
+                                    ID Ruangan
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Ruangan
+                                    Nama Ruangan
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     Program Studi
