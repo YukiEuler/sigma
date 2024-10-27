@@ -15,6 +15,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KaprodiController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PerwalianController;
+use App\Http\Controllers\AkademikMhsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,8 @@ Route::get('bagian-akademik/atur-ruang/edit/{id}', [MenentukanRuangKuliahControl
 Route::post('bagian-akademik/atur-ruang/update', [MenentukanRuangKuliahController::class, 'update'])->name('bagianAkademik.updateRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 
 Route::get('mahasiswa/dashboard', [MahasiswaController::class, 'index'])->name('mahasiswa.dashboard')->middleware(['auth', 'validateRole:Mahasiswa']);
+Route::get('mahasiswa/akademik', [AkademikMhsController::class, 'index'])->name('mahasiswa.akademik')->middleware(['auth', 'validateRole:Mahasiswa']);
+
 
 Route::get('dekan/dashboard', [DekanController::class, 'index'])->name('dekan.dashboard')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-ruang', [MenyetujuiRuangKuliah::class, 'index'])->name('dekan.setujuiRuang')->middleware(['auth', 'validateRole:Dekan']);
