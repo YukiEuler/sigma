@@ -141,216 +141,348 @@ const Perwalian = () => {
 
     return (
         <DosenLayout dosen={dosen}>
-            <main
-                className="flex-1 px-5 pb-5 pt-4"
-                style={{ minHeight: `calc(100vh - 6.5rem)`, overflow: "auto" }}
-            >
+            <main className="flex-1 max-h-full">
                 <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
                     <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
                         Perwalian
                     </h1>
                 </div>
-                <form className="max-w-sm mt-6">
-                    <table className="w-full">
-                        <tr>
-                            <td className="text-sm font-medium text-gray-900">
-                                Angkatan
-                            </td>
-                            <td>
-                                <select
-                                    id="angkatan"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                >
-                                    <option selected>Select an option</option>
-                                    <option value="2022">2022</option>
-                                    <option value="2021">2021</option>
-                                    <option value="2020">2020</option>
-                                    <option value="2019">2019</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="text-sm font-medium text-gray-900">
-                                Prodi
-                            </td>
-                            <td>
-                                <select
-                                    id="prodi"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                >
-                                    <option selected>Select an option</option>
-                                    <option value="TI">
-                                        Teknik Informatika
-                                    </option>
-                                    <option value="SI">Sistem Informasi</option>
-                                    <option value="MI">
-                                        Manajemen Informatika
-                                    </option>
-                                    <option value="KA">
-                                        Komputer Akuntansi
-                                    </option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                    <div className="mt-4 flex space-x-2">
-                        <button
-                            type="button"
-                            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            Filter Data
-                        </button>
-                        <button
-                            type="button"
-                            className="px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        >
-                            Reset Filter
-                        </button>
-                    </div>
-                </form>
-                <div className="border-b w-full mt-4"></div>
-                <div className="mt-4 flex space-x-2">
-                    <button
-                        type="button"
-                        className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        Setujui IRS
-                    </button>
-                    <button
-                        type="button"
-                        className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                    >
-                        Batalkan Persutujan IRS
-                    </button>
-                    <button
-                        type="button"
-                        className="px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                    >
-                        Berikan Izin Melakukan Perubahan IRS
-                    </button>
-                </div>
-                <span className="block mt- text-sm text-gray-700">
-                    <span className="block mt-1 text-sm text-gray-700">
-                        <strong>
-                            *Memberikan izin melakukan perubahan IRS
-                        </strong>{" "}
-                        berarti dianggap telah menyetujui IRS awal mahasiswa dan
-                        <br />
-                        sekaligus mengijinkan mahasiswa melakukan perubahan IRS
-                        pada periode penggantian IRS.
-                    </span>
-                </span>
+                <div className="grid grid-cols-1 gap-5 mt-6">
+                    <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
+                        <div className="justify-between px-4 pb-4 border rounded-lg shadow-lg bg-white">
+                            <div className="flex flex-col space-y-2">
+                                <form className="max-w-sm mt-6">
+                                    <table className="w-full">
+                                        <tr>
+                                            <td className="text-sm font-medium text-gray-900">
+                                                Angkatan
+                                            </td>
+                                            <td>
+                                                <select
+                                                    id="angkatan"
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                >
+                                                    <option selected>
+                                                        Select an option
+                                                    </option>
+                                                    <option value="2022">
+                                                        2022
+                                                    </option>
+                                                    <option value="2021">
+                                                        2021
+                                                    </option>
+                                                    <option value="2020">
+                                                        2020
+                                                    </option>
+                                                    <option value="2019">
+                                                        2019
+                                                    </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="text-sm font-medium text-gray-900">
+                                                Prodi
+                                            </td>
+                                            <td>
+                                                <select
+                                                    id="prodi"
+                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                >
+                                                    <option selected>
+                                                        Select an option
+                                                    </option>
+                                                    <option value="TI">
+                                                        Teknik Informatika
+                                                    </option>
+                                                    <option value="SI">
+                                                        Sistem Informasi
+                                                    </option>
+                                                    <option value="MI">
+                                                        Manajemen Informatika
+                                                    </option>
+                                                    <option value="KA">
+                                                        Komputer Akuntansi
+                                                    </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div className="mt-4 flex space-x-2">
+                                        <button
+                                            type="button"
+                                            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            Filter Data
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                        >
+                                            Reset Filter
+                                        </button>
+                                    </div>
+                                </form>
+                                <div className="border-b w-full mt-4"></div>
+                                <div className="mt-4 flex space-x-2">
+                                    <button
+                                        type="button"
+                                        className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        Setujui IRS
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                    >
+                                        Batalkan Persutujan IRS
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                    >
+                                        Berikan Izin Melakukan Perubahan IRS
+                                    </button>
+                                </div>
+                                <span className="block mt- text-sm text-gray-700 mb-2">
+                                    <span className="block mt-1 text-sm text-gray-700">
+                                        <strong>
+                                            *Memberikan izin melakukan perubahan
+                                            IRS
+                                        </strong>{" "}
+                                        berarti dianggap telah menyetujui IRS
+                                        awal mahasiswa dan
+                                        <br />
+                                        sekaligus mengijinkan mahasiswa
+                                        melakukan perubahan IRS pada periode
+                                        penggantian IRS.
+                                    </span>
+                                </span>
 
-                <div class="flex rounded-md border border-blue-500 overflow-hidden max-w-md mx-auto font-[sans-serif] mt-6">
-                    <input
-                        type="text"
-                        placeholder="NIM/Nama"
-                        class="w-full outline-none bg-white text-gray-600 text-xs px-2 py-2"
-                    />
-                    <button
-                        type="button"
-                        class="flex items-center justify-center bg-[#007bff] hover:bg-blue-600 px-3"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 192.904 192.904"
-                            width="12px"
-                            class="fill-white"
-                        >
-                            <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div className="mt-2">
-                    <span className="text-lg font-medium text-gray-900">
-                        Total: 10
-                    </span>
-                </div>
-                <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[500px] scrollbar-hide">
-                    <style jsx>{`
-                        .scrollbar-hide::-webkit-scrollbar {
-                            display: none;
-                        }
-                        .scrollbar-hide {
-                            -ms-overflow-style: none;
-                            scrollbar-width: none;
-                        }
-                    `}</style>
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
-                        <thead className="text-xs text-white uppercase bg-blue-500 dark:text-gray-400 sticky top-0">
-                            <tr>
-                                <th scope="col" className="px-6 py-3">
-                                    <label className="flex items-center">
-                                        <input
-                                            type="checkbox"
-                                            className="form-checkbox"
-                                            checked={selectAll}
-                                            onChange={handleSelectAllChange}
-                                        />
-                                        <span className="ml-2">Semua</span>
-                                    </label>
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    No
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Nama
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    NIM
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Prodi
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Angkatan
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Jalur Masuk
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    IP Lalu
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    SKS Diambil
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Status
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((item, index) => (
-                                <tr
-                                    key={index}
-                                    className="bg-gray-100 border-b"
-                                >
-                                    <td className="px-6 py-4">
-                                        <div className="flex justify-center">
-                                            <input
-                                                type="checkbox"
-                                                checked={checkedItems[index]}
-                                                onChange={() =>
-                                                    handleCheckboxChange(index)
-                                                }
-                                            />
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">{item.no}</td>
-                                    <td className="px-6 py-4">{item.nama}</td>
-                                    <td className="px-6 py-4">{item.nim}</td>
-                                    <td className="px-6 py-4">{item.prodi}</td>
-                                    <td className="px-6 py-4">
-                                        {item.angkatan}
-                                    </td>
-                                    <td className="px-6 py-4">{item.jalur}</td>
-                                    <td className="px-6 py-4">{item.ip}</td>
-                                    <td className="px-6 py-4">{item.sks}</td>
-                                    <td className="px-6 py-4">{item.status}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                <div class="flex rounded-md border border-blue-500 overflow-hidden max-w-md mx-auto font-[sans-serif]">
+                                    <input
+                                        type="text"
+                                        placeholder="NIM/Nama"
+                                        class="w-full outline-none bg-white text-gray-600 text-base px-2 py-2"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="flex items-center justify-center bg-[#007bff] hover:bg-blue-600 px-3"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 192.904 192.904"
+                                            width="20px"
+                                            class="fill-white"
+                                        >
+                                            <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div className="mt-2">
+                                    <span className="text-lg font-medium text-gray-900">
+                                        Total: 10
+                                    </span>
+                                </div>
+                                <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[500px] scrollbar-hide">
+                                    <style jsx>{`
+                                        .scrollbar-hide::-webkit-scrollbar {
+                                            display: none;
+                                        }
+                                        .scrollbar-hide {
+                                            -ms-overflow-style: none;
+                                            scrollbar-width: none;
+                                        }
+                                    `}</style>
+                                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
+                                        <thead className="text-xs text-white uppercase bg-blue-500 dark:text-gray-400 sticky top-0">
+                                            <tr>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "30px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    <label className="flex items-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="form-checkbox"
+                                                            checked={selectAll}
+                                                            onChange={
+                                                                handleSelectAllChange
+                                                            }
+                                                        />
+                                                        <span className="ml-2">
+                                                            Semua
+                                                        </span>
+                                                    </label>
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "30px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    No
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "250px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    Nama
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"style={{
+                                                        width: "50px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    NIM
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "150px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    Prodi
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "30px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    Angkatan
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "30px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    IP Lalu
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "30px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    SKS Diambil
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "50px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    Status
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "50px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    Keterangan
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                    style={{
+                                                        width: "30px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    Detail
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {data.map((item, index) => (
+                                                <tr
+                                                    key={index}
+                                                    className="bg-gray-100 border-b"
+                                                >
+                                                    <td className="px-6 py-3">
+                                                        <div className="flex justify-center">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={
+                                                                    checkedItems[
+                                                                        index
+                                                                    ]
+                                                                }
+                                                                onChange={() =>
+                                                                    handleCheckboxChange(
+                                                                        index
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {item.no}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {item.nama}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {item.nim}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {item.prodi}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {item.angkatan}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {item.ip}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {item.sks}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {item.status}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        <p>IRS Sudah Disetujui</p>
+                                                    </td>
+                                                    <td className="flex items-center mr-1 ml-3 py-3">
+                                                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+                                                            Detail
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </main>
         </DosenLayout>
