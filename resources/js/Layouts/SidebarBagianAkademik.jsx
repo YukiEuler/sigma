@@ -56,6 +56,19 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
                             <span className="ms-3">Ruangan</span>
                         </a>
                     </li>
+                    {/* <li>
+                        <a
+                            href="/bagian-akademik/tambah-user"
+                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <Icon
+                                icon="streamline:group-meeting-call-solid"
+                                width="24"
+                                height="24"
+                            />
+                            <span className="ms-3">Tambah Akun</span>
+                        </a>
+                    </li> */}
                     <li>
                         <a
                             href="/actionlogout"

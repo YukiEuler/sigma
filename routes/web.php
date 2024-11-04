@@ -73,4 +73,11 @@ Route::get('kaprodi/dashboard', [KaprodiController::class, 'index'])->name('kapr
 Route::get('kaprodi/data-mahasiswa', [DataMahasiswaController::class, 'index'])->name('kaprodi.dataMahasiswa')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/data-matakuliah', [DataMKController::class, 'index'])->name('kaprodi.dataMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('kaprodi/data-matakuliah', [DataMKController::class, 'store'])->name('mataKuliah.store');
-Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
+
+// Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'create'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
+
+// Route POST untuk menyimpan data jadwal
+Route::post('/kaprodi/atur-jadwal', [AturJadwalController::class, 'store'])->name('aturJadwal.store');
+
+
