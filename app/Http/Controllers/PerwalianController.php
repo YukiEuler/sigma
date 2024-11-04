@@ -22,4 +22,17 @@ class PerwalianController extends Controller
 
         return Inertia::render('(dosen)/perwalian/page', ['dosen' => $dosen]);
     }
+
+    public function detail(){
+        $user = Auth::user();
+        $dosen = Dosen::where('user_id', $user->id)->get()->first();
+
+        if (!$user) {
+            return redirect()->route('login');
+        } elseif ($user->role !== 'Dosen'){
+            return redirect()->route('home');
+        }
+
+        return Inertia::render('(dosen)/perwalian/detail', ['dosen' => $dosen]);
+    }
 }

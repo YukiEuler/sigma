@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/inertia-react";
+import { Inertia } from '@inertiajs/inertia';
 import DosenLayout from "../../../Layouts/DosenLayout";
 import { PieChart } from "@mui/x-charts/PieChart";
 
@@ -471,9 +472,11 @@ const Perwalian = () => {
                                                         <p>IRS Sudah Disetujui</p>
                                                     </td>
                                                     <td className="flex items-center mr-1 ml-3 py-3">
-                                                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
-                                                            Detail
-                                                        </button>
+                                                        <td className="px-4 py-2">
+                                                            <a href={`/dosen/perwalian/detail/`} className="text-blue-500 hover:underline">
+                                                                Detail
+                                                            </a>
+                                                        </td>
                                                     </td>
                                                 </tr>
                                             ))}

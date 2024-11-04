@@ -114,7 +114,7 @@ const DashboardMahasiswa = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                     <button
-                        onClick={() => Inertia.get('')}
+                        onClick={() => Inertia.get('/mahasiswa/registrasi')}
                         className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg focus:outline-none"
                     >
                         <Icon icon="mdi:account" width="40" height="40" className="text-blue-500" />
@@ -122,7 +122,7 @@ const DashboardMahasiswa = () => {
                         <p className="text-green-600 mt-1">Sudah Registrasi</p>
                     </button>
                     <button
-                        onClick={() => Inertia.get('')}
+                        onClick={() => Inertia.get('/mahasiswa/biaya')}
                         className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg focus:outline-none"
                     >
                         <Icon icon="mdi:cash-multiple" width="40" height="40" className="text-blue-500" />
