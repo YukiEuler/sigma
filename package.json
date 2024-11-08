@@ -10,7 +10,7 @@
         "@babel/preset-react": "^7.24.7",
         "@vitejs/plugin-react": "^4.3.1",
         "autoprefixer": "^10.4.20",
-        "axios": "^1.1.2",
+        "axios": "^1.7.7",
         "babel-loader": "^9.2.1",
         "laravel-mix": "^6.0.49",
         "laravel-vite-plugin": "^0.7.8",

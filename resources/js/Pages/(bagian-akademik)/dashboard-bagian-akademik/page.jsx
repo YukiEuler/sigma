@@ -110,8 +110,9 @@ const DashboardBagianAkademik = ({ ruangan }) => {
                                             ]}
                                             options={{
                                                 labels: [
+                                                    "Belum Diajukan",
+                                                    "Sudah Diajukan",
                                                     "Sudah Disetujui",
-                                                    "Belum Disetujui",
                                                 ],
                                                 colors: ["#03045e", "#0077b6", "#00b4d8"],
                                                 legend: {

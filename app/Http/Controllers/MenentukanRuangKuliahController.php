@@ -121,4 +121,76 @@ class MenentukanRuangKuliahController extends Controller
         // Redirect back with success message
         return redirect()->back()->with('success', 'Ruangan updated successfully.');
     }
+
+//     public function ajukanRuang($id)
+//     {
+//     $user = Auth::user();
+
+//     // Check if user is authenticated
+//     if (!$user) {
+//         return redirect()->route('login');
+//     } elseif ($user->role !== 'Bagian Akademik'){
+//         return redirect()->route('home');
+//     }
+
+//     // Retrieve the room by id
+//     $ruangan = Ruangan::find($id);
+
+//     // Check if the room exists
+//     if (!$ruangan) {
+//         return response()->json([
+//             'message' => 'Ruangan tidak ditemukan.'
+//         ], 404);
+//     }
+
+//     // Check if room is already submitted
+//     if ($ruangan->diajukan == 1) {
+//         return response()->json([
+//             'message' => 'Ruangan sudah diajukan sebelumnya.'
+//         ], 400);
+//     }
+
+//     // Update the room's submission status
+//     $ruangan->diajukan = 1;
+//     $ruangan->save();
+
+//     return response()->json([
+//         'message' => 'Ruangan berhasil diajukan untuk persetujuan.',
+//         'ruangan' => $ruangan
+//     ]);
+// }
+  public function ajukanRuang($id)
+  {
+    $user = Auth::user();
+
+    // Check if user is authenticated
+    if (!$user) {
+        return redirect()->route('login');
+    } elseif ($user->role !== 'Bagian Akademik'){
+        return redirect()->route('home');
+    }
+
+    // Retrieve the room by id
+    $ruangan = Ruangan::find($id);
+
+    // Check if the room exists
+    if (!$ruangan) {
+        return back()->with('error', 'Ruangan tidak ditemukan.');
+    }
+
+    // Check if room is already submitted
+    if ($ruangan->diajukan == 1) {
+        return back()->with('error', 'Ruangan sudah diajukan sebelumnya.');
+    }
+
+    try {
+        // Update the room's submission status
+        $ruangan->diajukan = 1;
+        $ruangan->save();
+
+        return back()->with('success', 'Ruangan berhasil diajukan untuk persetujuan.');
+    } catch (\Exception $e) {
+        return back()->with('error', 'Terjadi kesalahan saat mengajukan ruangan.');
+    }
+ }
 }
