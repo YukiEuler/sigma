@@ -12,7 +12,7 @@ const MahasiswaLayout = ({ children, mahasiswa }) => {
                     <SidebarMahasiswa mahasiswa={mahasiswa} />
                     <main className="flex-1">
                         <MarginWithWrapper>
-                            <Header />
+                            {/* <Header /> */}
                             <PageWrapper>{children}</PageWrapper>
                         </MarginWithWrapper>
                     </main>

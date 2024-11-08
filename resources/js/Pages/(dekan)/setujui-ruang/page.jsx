@@ -45,10 +45,7 @@ const SetujuiRuang = ({ruangan}) => {
 
     return (
         //<DekanLayout dosen={dosen}>
-            <main
-                className="flex-1 px-5 pb-5 pt-4"
-                style={{ minHeight: `calc(100vh - 6.5rem)`, overflow: "auto" }}>
-                <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
+            z
                 <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
                 Setujui Ruangan</h1>
                 </div>

@@ -13,7 +13,7 @@ const DosenLayout = ({ children, dosen }) => {
                 <SidebarDosen dosen={dosen} />
                 <main className="flex-1">
                     <MarginWithWrapper>
-                        <Header />
+                        {/* <Header /> */}
                         <PageWrapper>{children}</PageWrapper>
                     </MarginWithWrapper>
                 </main>

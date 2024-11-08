@@ -13,6 +13,7 @@ return new class extends Migration
         Schema::table('ruangan', function (Blueprint $table) {
             $table->string('id_fakultas', 30);
             $table->string('id_prodi', 30)->nullable();
+            $table->boolean('diajukan')->default(false);
             $table->boolean('disetujui')->default(false);
 
             $table->foreign('id_fakultas')->references('id_fakultas')->on('fakultas')->onDelete('cascade');
