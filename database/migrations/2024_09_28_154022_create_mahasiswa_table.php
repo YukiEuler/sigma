@@ -18,6 +18,7 @@ class CreateMahasiswaTable extends Migration
             $table->enum('status', ['Aktif', 'Lulus', 'DO', 'Cuti'])->default('Aktif');
             $table->integer('sks_kumulatif');
             $table->float('ipk', 3, 2);
+            $table->integer('semester');
             $table->string('id_prodi', 30);
             $table->string('nip_dosen_wali', 30);
             $table->unsignedBigInteger('user_id');

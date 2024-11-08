@@ -24,6 +24,7 @@ class Mahasiswa extends Model
         'status', 
         'sks_kumulatif', 
         'ipk', 
+        'semester',
         'id_prodi',
         'nip_dosen_wali'
     ];
