@@ -112,7 +112,7 @@ const DashboardMahasiswa = () => {
                     </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                     <button
                         onClick={() => Inertia.get('/mahasiswa/registrasi')}
                         className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg focus:outline-none"
@@ -137,7 +137,7 @@ const DashboardMahasiswa = () => {
                         <h3 className="text-lg font-semibold text-blue-900 mt-2">Akademik</h3>
                         <p className="text-gray-500 mt-1">TA 2024/2025 Ganjil</p>
                     </button>
-                </div>
+                </div> */}
 
 
             </main>
