@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/inertia-react";
+import { Inertia } from "@inertiajs/inertia";
+import Swal from "sweetalert2";
+import axios from "axios";
 import BagianAkademikLayout from "../../../Layouts/BagianAkademikLayout";
 
 const KelolaRuangan = ({ ruangan }) => {
@@ -7,6 +10,69 @@ const KelolaRuangan = ({ ruangan }) => {
     const { props } = usePage();
     const bagian_akademikData = props.bagian_akademik;
     const [bagian_akademik, setBagian_akademik] = useState(bagian_akademikData);
+    const [loading, setLoading] = useState(false);
+
+    // const handleAjukan = async (id_ruang) => {
+    //     try {
+    //         setLoading(true);
+    //         const response = await axios.post(
+    //             `/bagian-akademik/atur-ruang/ajukan/${id_ruang}`
+    //         );
+
+    //         // Update the local state to reflect the change
+    //         setData((prevData) =>
+    //             prevData.map((item) =>
+    //                 item.id_ruang === id_ruang ? { ...item, diajukan: 1 } : item
+    //             )
+    //         );
+
+    //         // Show success message
+    //         alert(response.data.message);
+    //     } catch (error) {
+    //         alert(
+    //             error.response?.data?.message ||
+    //                 "Terjadi kesalahan saat mengajukan ruangan."
+    //         );
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    const handleAjukan = (id_ruang) => {
+        setLoading(true);
+
+        Inertia.post(
+            `/bagian-akademik/atur-ruang/ajukan/${id_ruang}`,
+            {},
+            {
+                onSuccess: () => {
+                    setLoading(false);
+                    Swal.fire({
+                        icon: "success",
+                        title: "Pengajuan Berhasil",
+                        text: "Ruangan berhasil diajukan untuk persetujuan",
+                    });
+
+                    // Update local state
+                    setData((prevData) =>
+                        prevData.map((item) =>
+                            item.id_ruang === id_ruang
+                                ? { ...item, diajukan: 1 }
+                                : item
+                        )
+                    );
+                },
+                onError: () => {
+                    setLoading(false);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Pengajuan Gagal",
+                        text: "Terjadi kesalahan saat mengajukan ruangan",
+                    });
+                },
+            }
+        );
+    };
 
     useEffect(() => {
         setData(ruangan);
@@ -116,26 +182,55 @@ const KelolaRuangan = ({ ruangan }) => {
                                                         {item.nama_prodi}
                                                     </td>
                                                     <td className="px-4 py-2 text-[14px] text-center">
-                                                        {item.diajukan === 0 && item.disetujui === 0
+                                                        {item.diajukan === 0 &&
+                                                        item.disetujui === 0
                                                             ? "Belum Diajukan"
                                                             : item.diajukan ===
-                                                              1 && item.disetujui === 0
+                                                                  1 &&
+                                                              item.disetujui ===
+                                                                  0
                                                             ? "Sudah Diajukan"
                                                             : "Sudah Disetujui"}
                                                     </td>
                                                     <td className="px-4 py-2 flex justify-center">
-                                                        <a
-                                                            href={`/bagian-akademik/atur-ruang/edit/${item.id_ruang}`}
-                                                            className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-[14px] text-center w-20 mr-3"
+                                                        <button
+                                                            onClick={() =>
+                                                                (window.location.href = `/bagian-akademik/atur-ruang/edit/${item.id_ruang}`)
+                                                            }
+                                                            disabled={
+                                                                item.diajukan ===
+                                                                    1 || loading
+                                                            }
+                                                            className={`${
+                                                                item.diajukan ===
+                                                                1
+                                                                    ? "bg-gray-400"
+                                                                    : "bg-blue-500 hover:bg-blue-600"
+                                                            } text-white px-2 py-1 mr-2 rounded text-[14px] text-center w-20`}
                                                         >
                                                             Edit
-                                                        </a>
-                                                        <a
-                                                            href="#"
-                                                            className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[14px] text-center w-20"
+                                                        </button>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleAjukan(
+                                                                    item.id_ruang
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                item.diajukan ===
+                                                                    1 || loading
+                                                            }
+                                                            className={`${
+                                                                item.diajukan ===
+                                                                1
+                                                                    ? "bg-gray-400"
+                                                                    : "bg-green-500 hover:bg-green-600"
+                                                            } text-white px-2 py-1 rounded text-[14px] text-center w-20`}
                                                         >
-                                                            Ajukan
-                                                        </a>
+                                                            {item.diajukan === 1
+                                                                ? "Diajukan"
+                                                                : "Ajukan"}
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))}

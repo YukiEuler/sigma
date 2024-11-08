@@ -73,7 +73,16 @@ const SidebarDekan = ({ dosen }) => {
                                 width="24"
                                 height="24"
                             />
-                            <span class="ms-3">Setujui Ruang</span>
+                            <span class="ms-3">Persetujuan Ruang</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <Icon icon="ion:calendar" width="24" height="24" />
+                            <span class="ms-3">Persetujuan Jadwal</span>
                         </a>
                     </li>
                     <li>
