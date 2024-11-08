@@ -27,7 +27,7 @@ class BagianAkademikSeeder extends Seeder
 
         BagianAkademik::create([
             'nip' => $user->username,
-            'nama' => $faker->name,
+            'nama' => "Yesaya Rudolf",
             'alamat' => $faker->address(),
             'no_telp' => $faker->phoneNumber(),
             'user_id' => $user->id,

@@ -55,6 +55,12 @@ class MenentukanRuangKuliahController extends Controller
             return redirect()->route('home');
         }
 
+        // Retrieve the bagian_akademik from the session
+        $bagian_akademik = BagianAkademik::where('user_id', $user->id)->first();
+        // Retrieve the id_fakultas of the authenticated user
+        $fakultas = Fakultas::where('id_fakultas', $bagian_akademik->id_fakultas)->first();
+        $bagian_akademik->nama_fakultas = $fakultas->nama_fakultas;
+
         // Retrieve the room by id
         $ruangan = Ruangan::find($id);
         // Print the room details to the console
@@ -67,17 +73,16 @@ class MenentukanRuangKuliahController extends Controller
         // Retrieve the program studi associated with the room
         $programStudi = ProgramStudi::where('id_prodi', $ruangan->id_prodi)->first();
         $ruangan->nama_prodi = $programStudi ? $programStudi->nama_prodi : null;
-
-        // Retrieve the bagian_akademik from the session
-        $bagianAkademik = BagianAkademik::where('user_id', $user->id)->first();
+        $ruangan->nama_fakultas = $fakultas->nama_fakultas;
 
         // Get all program studi where id_fakultas matches the bagian_akademik's id_fakultas
-        $programStudiList = ProgramStudi::where('id_fakultas', $bagianAkademik->id_fakultas)->get();
+        $programStudiList = ProgramStudi::where('id_fakultas', $bagian_akademik->id_fakultas)->get();
 
         // Pass the program studi list to the view
         return Inertia::render('(bagian-akademik)/kelola-ruangan/edit', [
             'ruangan' => $ruangan,
-            'programStudiList' => $programStudiList
+            'programStudiList' => $programStudiList,
+            'bagian_akademik' => $bagian_akademik
         ]);
     }
 

@@ -9,7 +9,7 @@ class Ruangan extends Model
     protected $primaryKey = 'id_ruang';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['id_ruang', 'nama_ruang', 'kuota', 'id_fakultas', 'id_prodi', 'disetujui'];
+    protected $fillable = ['id_ruang', 'nama_ruang', 'kuota', 'id_fakultas', 'id_prodi', 'diajukan', 'disetujui'];
 
     public function fakultas()
     {
