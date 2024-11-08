@@ -21,11 +21,6 @@ class MataKuliah extends Model
         return $this->hasMany(Khs::class, 'kode_mk');
     }
 
-    public function irs()
-    {
-        return $this->hasMany(Irs::class, 'kode_mk');
-    }
-
     public function programStudi()
     {
         return $this->belongsTo(ProgramStudi::class, 'id_prodi');
