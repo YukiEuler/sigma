@@ -30,6 +30,10 @@ class ProgramStudi extends Model
     {
         return $this->hasMany(Ruangan::class, 'id_prodi');
     }
+    public function kalenderAkademik()
+    {
+        return $this->hasMany(KalenderAkademik::class, 'id_prodi');
+    }
 
     public function mataKuliah()
     {

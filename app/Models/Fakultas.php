@@ -24,4 +24,8 @@ class Fakultas extends Model
     {
         return $this->hasMany(Ruangan::class, 'id_fakultas');
     }
+    public function kalenderAkademik()
+    {
+        return $this->hasMany(KalenderAkademik::class, 'id_fakultas');
+    }
 }

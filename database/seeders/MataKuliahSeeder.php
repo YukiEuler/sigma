@@ -19,7 +19,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 2,
             'semester' => 1,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6102',
@@ -27,7 +27,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 1,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6103',
@@ -35,7 +35,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 1,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6104',
@@ -43,7 +43,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 1,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6105',
@@ -51,7 +51,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 4,
             'semester' => 1,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6201',
@@ -59,7 +59,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 2,
             'semester' => 2,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6202',
@@ -67,7 +67,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 4,
             'semester' => 2,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6203',
@@ -75,7 +75,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 2,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6204',
@@ -83,7 +83,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 2,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6301',
@@ -91,7 +91,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 4,
             'semester' => 3,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6302',
@@ -99,7 +99,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 3,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6303',
@@ -107,7 +107,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 4,
             'semester' => 3,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6304',
@@ -115,7 +115,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 3,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6305',
@@ -123,7 +123,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 3,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6401',
@@ -131,7 +131,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 4,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6402',
@@ -139,7 +139,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 4,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6403',
@@ -147,7 +147,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 4,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6404',
@@ -155,7 +155,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 4,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6405',
@@ -163,7 +163,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 4,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6406',
@@ -171,7 +171,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 4,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6501',
@@ -179,7 +179,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 5,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6502',
@@ -187,7 +187,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 5,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6503',
@@ -195,7 +195,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 5,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6504',
@@ -203,7 +203,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 5,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6505',
@@ -211,7 +211,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 5,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6506',
@@ -219,7 +219,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 5,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6601',
@@ -227,7 +227,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 6,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6602',
@@ -235,7 +235,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 6,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6603',
@@ -243,7 +243,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 6,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6604',
@@ -251,7 +251,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 6,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6605',
@@ -259,7 +259,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 6,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6701',
@@ -267,7 +267,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 2,
             'semester' => 7,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6702',
@@ -275,7 +275,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 7,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'PAIK6801',
@@ -283,7 +283,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 6,
             'semester' => 8,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'UNW00003',
@@ -291,7 +291,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 1,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'UNW00004',
@@ -299,7 +299,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 2,
             'semester' => 2,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'UNW00005',
@@ -307,7 +307,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 1,
             'semester' => 1,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'UNW00006',
@@ -315,7 +315,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 2,
             'semester' => 2,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'UNW00007',
@@ -323,7 +323,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 2,
             'semester' => 1,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'UNW00008',
@@ -331,7 +331,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 3,
             'semester' => 7,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'UNW00009',
@@ -339,7 +339,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 2,
             'semester' => 5,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);
         MataKuliah::create([
             'kode_mk' => 'UNW00011',
@@ -347,7 +347,7 @@ class MataKuliahSeeder extends Seeder
             'sks' => 2,
             'semester' => 2,
             'jenis' => 'Wajib',
-            'id_prodi' => '1',
+            'id_prodi' => '62',
         ]);                
     }
 }
