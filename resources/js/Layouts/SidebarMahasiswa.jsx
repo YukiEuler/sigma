@@ -45,11 +45,37 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
                     </li>
                     <li>
                         <a
+                            href="/mahasiswa/registrasi"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <Icon
+                                icon="ic:round-app-registration"
+                                width="24"
+                                height="24"
+                            />
+                            <span class="ms-3">Registrasi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="/mahasiswa/biaya"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <Icon
+                                icon="ic:round-monetization-on"
+                                width="24"
+                                height="24"
+                            />
+                            <span class="ms-3">Biaya Kuliah</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
                             href="/mahasiswa/akademik"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <Icon
-                                icon="ic:baseline-pie-chart"
+                                icon="ic:round-library-books"
                                 width="24"
                                 height="24"
                             />
