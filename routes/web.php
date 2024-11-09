@@ -54,6 +54,10 @@ Route::get('bagian-akademik/atur-ruang', [MenentukanRuangKuliahController::class
 Route::get('bagian-akademik/atur-ruang/edit/{id}', [MenentukanRuangKuliahController::class, 'editPage'])->name('bagianAkademik.editRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 Route::post('bagian-akademik/atur-ruang/update', [MenentukanRuangKuliahController::class, 'update'])->name('bagianAkademik.updateRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 Route::post('bagian-akademik/atur-ruang/ajukan/{id}', [MenentukanRuangKuliahController::class, 'ajukanRuang'])->name('bagianAkademik.ajukanRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
+Route::post('bagian-akademik/atur-ruang/ajukan-multiple', [MenentukanRuangKuliahController::class, 'ajukanMultipleRuang'])
+    ->name('bagianAkademik.ajukanMultipleRuang')
+    ->middleware(['auth', 'validateRole:Bagian Akademik']);
+ROute::post('bagian-akademik/atur-ruang/batalkan/{id}', [MenentukanRuangKuliahController::class, 'batalkanRuang'])->name('bagianAkademik.batalkanRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 
 Route::get('mahasiswa/dashboard', [MahasiswaController::class, 'index'])->name('mahasiswa.dashboard')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/akademik', [AkademikMhsController::class, 'index'])->name('mahasiswa.akademik')->middleware(['auth', 'validateRole:Mahasiswa']);
