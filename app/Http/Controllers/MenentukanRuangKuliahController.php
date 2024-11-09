@@ -183,9 +183,7 @@ class MenentukanRuangKuliahController extends Controller
          DB::beginTransaction();
 
          // Get all rooms that match the IDs and belong to the user's fakultas
-         $rooms = Ruangan::whereIn('id_ruang', $request->room_ids)
-                       ->where('id_fakultas', $bagian_akademik->id_fakultas)
-                       ->get();
+         $rooms = Ruangan::whereIn('id_ruang', $request->room_ids)->where('id_fakultas', $bagian_akademik->id_fakultas)->get();
 
          // Validate that all rooms exist and belong to the correct fakultas
          if ($rooms->count() !== count($request->room_ids)) {
