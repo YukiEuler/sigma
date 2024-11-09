@@ -8,6 +8,7 @@ use App\Models\ProgramStudi;
 use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class MenyetujuiRuangKuliah extends Controller
@@ -50,6 +51,15 @@ class MenyetujuiRuangKuliah extends Controller
 
     public function update($id_ruang)
     {
+        $user = Auth::user();
+
+        // Check if user is authenticated
+        if (!$user) {
+            return redirect()->route('login');
+        } elseif ($user->role !== 'Dosen'){
+            return redirect()->route('home');
+        }
+
         // Find the room by id_ruang
         $ruangan = Ruangan::find($id_ruang);
 
@@ -58,11 +68,64 @@ class MenyetujuiRuangKuliah extends Controller
             return redirect()->back()->with('error', 'Ruangan tidak dapat ditemukan.');
         }
 
-        // Update the 'disetujui' attribute to true
-        $ruangan->disetujui = true;
-        $ruangan->save();
+        if ($ruangan->disetujui == 1) {
+            return redirect()->back()->with('error', 'Ruangan sudah disetujui.');
+        }
+        
+        try{
+            // Update the 'disetujui' attribute to true
+            $ruangan->disetujui = 1;
+            $ruangan->save();
 
-        // Redirect back with success message
-        return redirect()->back()->with('success', 'Ruangan berhasil diupdate.');
+            return back()->with('success', 'Ruangan berhasil disetujui.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan saat menyetujui ruangan.');
+        }
+    }
+    public function setujuiMultipleRuang(Request $request)
+    {
+        $user = Auth::user();
+
+        // Check if user is authenticated and has proper role
+        if (!$user) {
+            return redirect()->route('login');
+        } elseif ($user->role !== 'Dosen'){
+            return redirect()->route('home');
+        }
+
+        // Validate the request
+        $request->validate([
+            'room_ids' => 'required|array',
+            'room_ids.*' => 'required|exists:ruangan,id_ruang'
+        ]);
+
+        try {
+            // Begin transaction
+            DB::beginTransaction();
+
+            // Get all rooms that match the IDs, are already proposed (diajukan = 1),
+            // and not yet approved (disetujui = 0)
+            $rooms = Ruangan::whereIn('id_ruang', $request->room_ids)
+                          ->where('diajukan', 1)
+                          ->where('disetujui', 0)
+                          ->get();
+
+            // Update all matching rooms
+            foreach ($rooms as $room) {
+                $room->disetujui = 1;
+                $room->save();
+            }
+
+            // Commit transaction
+            DB::commit();
+
+            return back()->with('success', 'Ruangan berhasil disetujui.');
+
+        } catch (\Exception $e) {
+            // Rollback in case of error
+            DB::rollBack();
+            
+            return back()->with('error', 'Terjadi kesalahan saat menyetujui ruangan.');
+        }
     }
 }

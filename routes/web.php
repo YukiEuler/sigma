@@ -54,9 +54,7 @@ Route::get('bagian-akademik/atur-ruang', [MenentukanRuangKuliahController::class
 Route::get('bagian-akademik/atur-ruang/edit/{id}', [MenentukanRuangKuliahController::class, 'editPage'])->name('bagianAkademik.editRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 Route::post('bagian-akademik/atur-ruang/update', [MenentukanRuangKuliahController::class, 'update'])->name('bagianAkademik.updateRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 Route::post('bagian-akademik/atur-ruang/ajukan/{id}', [MenentukanRuangKuliahController::class, 'ajukanRuang'])->name('bagianAkademik.ajukanRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
-Route::post('bagian-akademik/atur-ruang/ajukan-multiple', [MenentukanRuangKuliahController::class, 'ajukanMultipleRuang'])
-    ->name('bagianAkademik.ajukanMultipleRuang')
-    ->middleware(['auth', 'validateRole:Bagian Akademik']);
+Route::post('bagian-akademik/atur-ruang/ajukan-multiple', [MenentukanRuangKuliahController::class, 'ajukanMultipleRuang'])->name('bagianAkademik.ajukanMultipleRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 ROute::post('bagian-akademik/atur-ruang/batalkan/{id}', [MenentukanRuangKuliahController::class, 'batalkanRuang'])->name('bagianAkademik.batalkanRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 
 Route::get('mahasiswa/dashboard', [MahasiswaController::class, 'index'])->name('mahasiswa.dashboard')->middleware(['auth', 'validateRole:Mahasiswa']);
@@ -68,6 +66,7 @@ Route::get('mahasiswa/biaya', [BiayaController::class, 'index'])->name('mahasisw
 Route::get('dekan/dashboard', [DekanController::class, 'index'])->name('dekan.dashboard')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-ruang', [MenyetujuiRuangKuliah::class, 'index'])->name('dekan.setujuiRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-ruang/{id}', [MenyetujuiRuangKuliah::class, 'update'])->name('dekan.updateStatusRuang')->middleware(['auth', 'validateRole:Dekan']);
+Route::post('dekan/setujui-ruang/setujui-multiple', [MenyetujuiRuangKuliah::class, 'setujuiMultipleRuang'])->name('dekan.setujuiMultipleRuang')->middleware(['auth', 'validateRole:Dekan']);
 
 Route::get('dosen/dashboard', [DosenController::class, 'index'])->name('dosen.dashboard')->middleware(['auth', 'validateRole:Dosen']);
 Route::get('dosen/nilai', [NilaiController::class, 'index'])->name('dosen.nilai')->middleware(['auth', 'validateRole:Dosen']);
