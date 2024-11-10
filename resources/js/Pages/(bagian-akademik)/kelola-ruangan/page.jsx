@@ -42,6 +42,8 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
         return matchesSearch && matchesProdi && matchesStatus;
     });
 
+    const totalRooms = filteredData.length;
+
     const handleSelectAll = (e) => {
         setSelectAll(e.target.checked);
         if (e.target.checked) {
@@ -99,7 +101,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
             if (result.isConfirmed) {
                 setLoading(true);
                 Inertia.post(
-                   "/bagian-akademik/atur-ruang/ajukan-multiple",
+                    "/bagian-akademik/atur-ruang/ajukan-multiple",
                     { room_ids: selectedRooms },
                     {
                         onSuccess: () => {
@@ -329,7 +331,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="flex justify-start items-center mt-4 gap-72">
+                                <div className="flex justify-between items-center mt-4">
                                     <button
                                         onClick={handleAjukanSelected}
                                         disabled={
@@ -365,6 +367,11 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                                 className="w-full pl-10 pr-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             />
                                         </div>
+                                    </div>
+                                    <div className="pt-3 pr-3">
+                                        <span className="font-semibold">
+                                            Total Ruang: {totalRooms}
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[385px] scrollbar-hide">
