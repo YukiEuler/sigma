@@ -20,6 +20,7 @@ use App\Http\Controllers\AkademikMhsController;
 use App\Http\Controllers\DataMahasiswaController;
 use App\Http\Controllers\DataMKController;
 use App\Http\Controllers\BiayaController;
+use App\Http\Controllers\MenyetujuiJadwalController;
 use App\Http\Controllers\RegistrasiController;
 
 /*
@@ -62,11 +63,11 @@ Route::get('mahasiswa/akademik', [AkademikMhsController::class, 'index'])->name(
 Route::get('mahasiswa/registrasi', [RegistrasiController::class, 'index'])->name('mahasiswa.registrasi')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/biaya', [BiayaController::class, 'index'])->name('mahasiswa.biaya')->middleware(['auth', 'validateRole:Mahasiswa']);
 
-
 Route::get('dekan/dashboard', [DekanController::class, 'index'])->name('dekan.dashboard')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-ruang', [MenyetujuiRuangKuliah::class, 'index'])->name('dekan.setujuiRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::post('dekan/setujui-ruang/{id}', [MenyetujuiRuangKuliah::class, 'update'])->name('dekan.updateStatusRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::post('dekan/setujui-ruang/setujui-multiple', [MenyetujuiRuangKuliah::class, 'setujuiMultipleRuang'])->name('dekan.setujuiMultipleRuang')->middleware(['auth', 'validateRole:Dekan']);
+Route::get('dekan/setujui-jadwal', [MenyetujuiJadwalController::class, 'index'])->name('dekan.setujuiJadwal')->middleware(['auth', 'validateRole:Dekan']);
 
 Route::get('dosen/dashboard', [DosenController::class, 'index'])->name('dosen.dashboard')->middleware(['auth', 'validateRole:Dosen']);
 Route::get('dosen/nilai', [NilaiController::class, 'index'])->name('dosen.nilai')->middleware(['auth', 'validateRole:Dosen']);

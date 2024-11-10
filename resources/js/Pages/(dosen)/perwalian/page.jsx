@@ -214,7 +214,7 @@ const Perwalian = () => {
                                         Total: {filteredMahasiswa.length}
                                     </span>
                                 </div>
-                                <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[500px] scrollbar-hide">
+                                <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[370px] scrollbar-hide">
                                     <style jsx>{`
                                         .scrollbar-hide::-webkit-scrollbar {
                                             display: none;
