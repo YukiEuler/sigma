@@ -71,7 +71,7 @@ Route::post('dekan/setujui-ruang/setujui-multiple', [MenyetujuiRuangKuliah::clas
 Route::get('dosen/dashboard', [DosenController::class, 'index'])->name('dosen.dashboard')->middleware(['auth', 'validateRole:Dosen']);
 Route::get('dosen/nilai', [NilaiController::class, 'index'])->name('dosen.nilai')->middleware(['auth', 'validateRole:Dosen']);
 Route::get('dosen/perwalian', [PerwalianController::class, 'index'])->name('dosen.perwalian')->middleware(['auth', 'validateRole:Dosen']);
-Route::get('dosen/perwalian/detail', [PerwalianController::class, 'detail'])->name('dosen.detail')->middleware(['auth', 'validateRole:Dosen']);
+Route::get('dosen/perwalian/detail/{id}', [PerwalianController::class, 'detail'])->name('dosen.detailmhs')->middleware(['auth', 'validateRole:Dosen']);
 
 Route::get('kaprodi/dashboard', [KaprodiController::class, 'index'])->name('kaprodi.dashboard')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/data-mahasiswa', [DataMahasiswaController::class, 'index'])->name('kaprodi.dataMahasiswa')->middleware(['auth', 'validateRole:Kaprodi']);
