@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Icon } from "@iconify/react";
+import { MdOutlineDashboard } from "react-icons/md";
+import { CgProfile } from "react-icons/cg";
+import { BsPeople } from "react-icons/bs";
+import { RiContactsBook2Line } from "react-icons/ri";
+import { HiOutlineAcademicCap } from "react-icons/hi2";
+import { IoIosLogOut } from "react-icons/io";
 
 const SidebarDosen = ({ dosen }) => {
     useEffect(() => {
@@ -13,7 +18,7 @@ const SidebarDosen = ({ dosen }) => {
         >
             <div className="container mx-auto py-[13px] bg-[#1EAADF]">
                 <div className="flex justify-center items-center    ">
-                    <a href="dashboard">
+                    <a href="/dosen/dashboard">
                         <img
                             src="/logoundip.png"
                             style={{ width: "35px", height: "25px" }}
@@ -34,12 +39,9 @@ const SidebarDosen = ({ dosen }) => {
             >
                 <ul className="space-y-2 font-medium">
                     <li>
-                        <Icon
-                            icon="gg:profile"
-                            color="white"
-                            width="150"
-                            height="150"
-                            className="mx-auto mt-4"
+                        <CgProfile
+                            className="mx-auto text-white"
+                            style={{ fontSize: "150px" }}
                         />
                         <div className="flex flex-col p-2 mb-3">
                             <span className="dark:text-white text-xl">
@@ -58,11 +60,7 @@ const SidebarDosen = ({ dosen }) => {
                             href="/dosen/dashboard"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ic:baseline-pie-chart"
-                                width="24"
-                                height="24"
-                            />
+                            <MdOutlineDashboard style={{ fontSize: "24px" }} />
                             <span className="ms-3">Dashboard</span>
                         </a>
                     </li>
@@ -71,25 +69,17 @@ const SidebarDosen = ({ dosen }) => {
                             href="/dosen/perwalian"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ic:baseline-people"
-                                width="24"
-                                height="24"
-                            />
+                            <BsPeople style={{ fontSize: "24px" }} />
                             <span className="ms-3">Perwalian</span>
                         </a>
                     </li>
                     <li>
                         <a
-                            href="/dosen/nilai"
+                            href="/dosen/rekap-irs"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="solar:notebook-bookmark-bold"
-                                width="24"
-                                height="24"
-                            />
-                            <span className="ms-3">Nilai</span>
+                            <RiContactsBook2Line style={{ fontSize: "24px" }} />
+                            <span className="ms-3">Rekap IRS</span>
                         </a>
                     </li>
                     <li>
@@ -98,10 +88,8 @@ const SidebarDosen = ({ dosen }) => {
                                 href="/dekan/dashboard"
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                             >
-                                <Icon
-                                    icon="vaadin:academy-cap"
-                                    width="24"
-                                    height="24"
+                                <HiOutlineAcademicCap
+                                    style={{ fontSize: "24px" }}
                                 />
                                 <span className="ms-3">Dekan Page</span>
                             </a>
@@ -113,10 +101,8 @@ const SidebarDosen = ({ dosen }) => {
                                 href="/kaprodi/dashboard"
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                             >
-                                <Icon
-                                    icon="vaadin:academy-cap"
-                                    width="24"
-                                    height="24"
+                                <HiOutlineAcademicCap
+                                    style={{ fontSize: "24px" }}
                                 />
                                 <span className="ms-3">Kaprodi Page</span>
                             </a>
@@ -127,11 +113,7 @@ const SidebarDosen = ({ dosen }) => {
                             href="/actionlogout"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ri:logout-box-r-fill"
-                                width="24"
-                                height="24"
-                            />
+                            <IoIosLogOut style={{ fontSize: "24px" }} />
                             <span className="flex-1 ms-3 whitespace-nowrap">
                                 Logout
                             </span>

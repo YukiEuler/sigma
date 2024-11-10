@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Icon } from "@iconify/react";
+import { MdOutlineDashboard } from "react-icons/md";
+import { MdMeetingRoom } from "react-icons/md";
+import { CgProfile } from "react-icons/cg";
+import { IoIosLogOut } from "react-icons/io";
 
 const SidebarBagianAkademik = ({ bagian_akademik }) => {
     return (
@@ -10,14 +13,14 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
         >
             <div className="container mx-auto py-[13px] bg-[#1EAADF]">
                 <div className="flex justify-center items-center    ">
-                    <a href="dashboard">
+                    <a href="/bagian-akademik/dashboard">
                         <img
                             src="/logoundip.png"
                             style={{ width: "35px", height: "25px" }}
                         />
                     </a>
                     <a
-                        href="dashboard"
+                        href="/bagian-akademik/dashboard"
                         className="font-serif font-semibold text-xl text-white"
                     >
                         SIGMA UNDIP
@@ -31,12 +34,9 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
             >
                 <ul className="space-y-2 font-medium">
                     <li>
-                        <Icon
-                            icon="gg:profile"
-                            color="white"
-                            width="150"
-                            height="150"
-                            className="mx-auto mt-4"
+                        <CgProfile
+                            className="mx-auto text-white"
+                            style={{ fontSize: "150px" }}
                         />
                         <div className="flex flex-col p-2 mb-3">
                             <span className="dark:text-white text-xl">
@@ -55,11 +55,7 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
                             href="/bagian-akademik/dashboard"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ic:baseline-pie-chart"
-                                width="24"
-                                height="24"
-                            />
+                            <MdOutlineDashboard style={{ fontSize: "24px" }} />
                             <span className="ms-3">Dashboard</span>
                         </a>
                     </li>
@@ -68,37 +64,16 @@ const SidebarBagianAkademik = ({ bagian_akademik }) => {
                             href="/bagian-akademik/atur-ruang"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="streamline:group-meeting-call-solid"
-                                width="24"
-                                height="24"
-                            />
+                            <MdMeetingRoom style={{ fontSize: "24px" }} />
                             <span className="ms-3">Ruangan</span>
                         </a>
                     </li>
-                    {/* <li>
-                        <a
-                            href="/bagian-akademik/tambah-user"
-                            className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
-                        >
-                            <Icon
-                                icon="streamline:group-meeting-call-solid"
-                                width="24"
-                                height="24"
-                            />
-                            <span className="ms-3">Tambah Akun</span>
-                        </a>
-                    </li> */}
                     <li>
                         <a
                             href="/actionlogout"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ri:logout-box-r-fill"
-                                width="24"
-                                height="24"
-                            />
+                            <IoIosLogOut style={{ fontSize: "24px" }} />
                             <span className="flex-1 ms-3 whitespace-nowrap">
                                 Logout
                             </span>

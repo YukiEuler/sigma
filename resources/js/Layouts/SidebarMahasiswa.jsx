@@ -1,5 +1,10 @@
 import React from "react";
-import { Icon } from "@iconify/react";
+import { CgProfile } from "react-icons/cg";
+import { MdOutlineDashboard } from "react-icons/md";
+import { PiNotePencilDuotone } from "react-icons/pi";
+import { TbCashRegister } from "react-icons/tb";
+import { SiHtmlacademy } from "react-icons/si";
+import { IoIosLogOut } from "react-icons/io";
 
 const SidebarMahasiswa = ({ mahasiswa }) => {
     return (
@@ -10,14 +15,14 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
         >
             <div className="container mx-auto py-[13px] bg-[#1EAADF]">
                 <div className="flex justify-center items-center    ">
-                    <a href="dashboard">
+                    <a href="/mahasiswa/dashboard">
                         <img
                             src="/logoundip.png"
                             style={{ width: "35px", height: "25px" }}
                         />
                     </a>
                     <a
-                        href="dashboard"
+                        href="/mahasiswa/dashboard"
                         className="font-serif font-semibold text-xl text-white"
                     >
                         SIGMA UNDIP
@@ -31,12 +36,9 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
             >
                 <ul class="space-y-2 font-medium">
                     <li>
-                        <Icon
-                            icon="gg:profile"
-                            color="white"
-                            width="150"
-                            height="150"
-                            className="mx-auto mt-4"
+                        <CgProfile
+                            className="mx-auto text-white"
+                            style={{ fontSize: "150px" }}
                         />
                         <div className="flex flex-col p-2 mb-3">
                             <span className="dark:text-white text-xl">
@@ -55,11 +57,7 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
                             href="/mahasiswa/dashboard"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ic:baseline-pie-chart"
-                                width="24"
-                                height="24"
-                            />
+                            <MdOutlineDashboard style={{ fontSize: "24px" }} />
                             <span class="ms-3">Dashboard</span>
                         </a>
                     </li>
@@ -68,11 +66,7 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
                             href="/mahasiswa/registrasi"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ic:round-app-registration"
-                                width="24"
-                                height="24"
-                            />
+                            <PiNotePencilDuotone style={{ fontSize: "24px" }} />
                             <span class="ms-3">Registrasi</span>
                         </a>
                     </li>
@@ -81,11 +75,7 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
                             href="/mahasiswa/biaya"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ic:round-monetization-on"
-                                width="24"
-                                height="24"
-                            />
+                            <TbCashRegister style={{ fontSize: "24px" }} />
                             <span class="ms-3">Biaya Kuliah</span>
                         </a>
                     </li>
@@ -94,11 +84,7 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
                             href="/mahasiswa/akademik"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ic:round-library-books"
-                                width="24"
-                                height="24"
-                            />
+                            <SiHtmlacademy style={{ fontSize: "24px" }} />
                             <span class="ms-3">Akademik</span>
                         </a>
                     </li>
@@ -107,11 +93,7 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
                             href="/actionlogout"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ri:logout-box-r-fill"
-                                width="24"
-                                height="24"
-                            />
+                            <IoIosLogOut style={{ fontSize: "24px" }} />
                             <span class="flex-1 ms-3 whitespace-nowrap">
                                 Logout
                             </span>

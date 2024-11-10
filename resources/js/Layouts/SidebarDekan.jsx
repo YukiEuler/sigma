@@ -1,5 +1,4 @@
 import React from "react";
-import { Icon } from "@iconify/react";
 import { MdOutlineDashboard } from "react-icons/md";
 import { SiGoogleclassroom } from "react-icons/si";
 import { CgProfile } from "react-icons/cg";
@@ -16,14 +15,14 @@ const SidebarDekan = ({ dosen }) => {
         >
             <div className="container mx-auto py-[13px] bg-[#1EAADF]">
                 <div className="flex justify-center items-center    ">
-                    <a href="dashboard">
+                    <a href="/dekan/dashboard">
                         <img
                             src="/logoundip.png"
                             style={{ width: "35px", height: "25px" }}
                         />
                     </a>
                     <a
-                        href="dashboard"
+                        href="/dekan/dashboard"
                         className="font-serif font-semibold text-xl text-white"
                     >
                         SIGMA UNDIP
@@ -41,13 +40,6 @@ const SidebarDekan = ({ dosen }) => {
                             className="mx-auto text-white"
                             style={{ fontSize: "150px" }}
                         />
-                        {/* <Icon
-                            icon="gg:profile"
-                            color="white"
-                            width="150"
-                            height="150"
-                            className="mx-auto mt-4"
-                        /> */}
                         <div className="flex flex-col p-2 mb-3">
                             <span className="dark:text-white text-xl">
                                 {dosen.nama}
@@ -65,11 +57,6 @@ const SidebarDekan = ({ dosen }) => {
                             href="/dekan/dashboard"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            {/* <Icon
-                                icon="ic:baseline-pie-chart"
-                                width="24"
-                                height="24"
-                            /> */}
                             <MdOutlineDashboard style={{ fontSize: "24px" }} />
                             <span class="ms-3">Dashboard</span>
                         </a>
@@ -79,11 +66,6 @@ const SidebarDekan = ({ dosen }) => {
                             href="/dekan/setujui-ruang"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            {/* <Icon
-                                icon="streamline:group-meeting-call-solid"
-                                width="24"
-                                height="24"
-                            /> */}
                             <SiGoogleclassroom style={{ fontSize: "24px" }} />
                             <span class="ms-3">Persetujuan Ruang</span>
                         </a>
@@ -93,7 +75,6 @@ const SidebarDekan = ({ dosen }) => {
                             href="/dekan/setujui-jadwal"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            {/* <Icon icon="ion:calendar" width="24" height="24" /> */}
                             <RiCalendarScheduleLine
                                 style={{ fontSize: "24px" }}
                             />
@@ -105,8 +86,7 @@ const SidebarDekan = ({ dosen }) => {
                             href="/"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            {/* <Icon icon="mdi:lecture" width="24" height="24" /> */}
-                            <FaChalkboardTeacher style={{ fontSize: "24px" }}/>
+                            <FaChalkboardTeacher style={{ fontSize: "24px" }} />
                             <span class="ms-3">Dosen Page</span>
                         </a>
                     </li>
@@ -115,12 +95,7 @@ const SidebarDekan = ({ dosen }) => {
                             href="/actionlogout"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            {/* <Icon
-                                icon="ri:logout-box-r-fill"
-                                width="24"
-                                height="24"
-                            /> */}
-                            <IoIosLogOut style={{ fontSize: "24px" }}/>
+                            <IoIosLogOut style={{ fontSize: "24px" }} />
                             <span class="flex-1 ms-3 whitespace-nowrap">
                                 Logout
                             </span>

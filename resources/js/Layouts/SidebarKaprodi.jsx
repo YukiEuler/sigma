@@ -1,5 +1,11 @@
 import React from "react";
-import { Icon } from "@iconify/react";
+import { CgProfile } from "react-icons/cg";
+import { MdOutlineDashboard } from "react-icons/md";
+import { PiStudent } from "react-icons/pi";
+import { LuBookMarked } from "react-icons/lu";
+import { RiCalendarScheduleLine } from "react-icons/ri";
+import { FaChalkboardTeacher } from "react-icons/fa";
+import { IoIosLogOut } from "react-icons/io";
 
 const SidebarKaprodi = ({ dosen }) => {
     return (
@@ -10,7 +16,7 @@ const SidebarKaprodi = ({ dosen }) => {
         >
             <div className="container mx-auto py-[13px] bg-[#1EAADF]">
                 <div className="flex justify-center items-center    ">
-                    <a href="dashboard">
+                    <a href="/kaprodi/dashboard">
                         <img
                             src="/logoundip.png"
                             style={{ width: "35px", height: "25px" }}
@@ -31,12 +37,9 @@ const SidebarKaprodi = ({ dosen }) => {
             >
                 <ul class="space-y-2 font-medium">
                     <li>
-                        <Icon
-                            icon="gg:profile"
-                            color="white"
-                            width="150"
-                            height="150"
-                            className="mx-auto mt-4"
+                        <CgProfile
+                            className="mx-auto text-white"
+                            style={{ fontSize: "150px" }}
                         />
                         <div className="flex flex-col p-2 mb-3">
                             <span className="dark:text-white text-xl">
@@ -52,14 +55,10 @@ const SidebarKaprodi = ({ dosen }) => {
                     </li>
                     <li>
                         <a
-                            href="dashboard"
+                            href="/kaprodi/dashboard"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ic:baseline-pie-chart"
-                                width="24"
-                                height="24"
-                            />
+                            <MdOutlineDashboard style={{ fontSize: "24px" }} />
                             <span class="ms-3">Dashboard</span>
                         </a>
                     </li>
@@ -68,11 +67,7 @@ const SidebarKaprodi = ({ dosen }) => {
                             href="/kaprodi/data-mahasiswa"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="fluent:people-team-32-filled"
-                                width="24"
-                                height="24"
-                            />
+                            <PiStudent style={{ fontSize: "24px" }} />
                             <span class="ms-3">Data Mahasiswa</span>
                         </a>
                     </li>
@@ -81,11 +76,7 @@ const SidebarKaprodi = ({ dosen }) => {
                             href="/kaprodi/data-matakuliah"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="mage:book-fill"
-                                width="24"
-                                height="24"
-                            />
+                            <LuBookMarked style={{ fontSize: "24px" }} />
                             <span class="ms-3">Data Matakuliah</span>
                         </a>
                     </li>
@@ -94,7 +85,9 @@ const SidebarKaprodi = ({ dosen }) => {
                             href="/kaprodi/atur-jadwal"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon icon="ion:calendar" width="24" height="24" />
+                            <RiCalendarScheduleLine
+                                style={{ fontSize: "24px" }}
+                            />
                             <span class="ms-3">Atur Jadwal</span>
                         </a>
                     </li>
@@ -103,7 +96,7 @@ const SidebarKaprodi = ({ dosen }) => {
                             href="/"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon icon="mdi:lecture" width="24" height="24" />
+                            <FaChalkboardTeacher style={{ fontSize: "24px" }} />
                             <span class="ms-3">Dosen Page</span>
                         </a>
                     </li>
@@ -112,11 +105,7 @@ const SidebarKaprodi = ({ dosen }) => {
                             href="/actionlogout"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
-                            <Icon
-                                icon="ri:logout-box-r-fill"
-                                width="24"
-                                height="24"
-                            />
+                            <IoIosLogOut style={{ fontSize: "24px" }} />
                             <span class="flex-1 ms-3 whitespace-nowrap">
                                 Logout
                             </span>
