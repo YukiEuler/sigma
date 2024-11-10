@@ -40,10 +40,13 @@ class MenentukanRuangKuliahController extends Controller
         $ruangan = $ruangan->map(callback: function ($room) {
             $programStudi = ProgramStudi::where('id_prodi', $room->id_prodi)->first();
             $room->nama_prodi = $programStudi ? $programStudi->nama_prodi : null;
+            $room->jenjang = $programStudi ? $programStudi->jenjang : null;
             return $room;
         })->values()->all();
+
+        $programStudiList = ProgramStudi::where('id_fakultas', $bagian_akademik->id_fakultas)->get();
         // Return the view with the retrieved rooms
-        return Inertia::render('(bagian-akademik)/kelola-ruangan/page', ['ruangan' => $ruangan, 'bagian_akademik' => $bagian_akademik]);
+        return Inertia::render('(bagian-akademik)/kelola-ruangan/page', ['ruangan' => $ruangan, 'programStudiList' => $programStudiList,'bagian_akademik' => $bagian_akademik]);
     }
 
     public function editPage($id){

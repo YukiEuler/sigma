@@ -12,7 +12,6 @@ class CreateProgramStudiTable extends Migration
             $table->string('id_prodi', 30)->primary();
             $table->string('nama_prodi', 100);
             $table->string('id_fakultas', 30);
-            $table->string('jenjang', 10);
             
             $table->foreign('id_fakultas')->references('id_fakultas')->on('fakultas')->onDelete('cascade');
             $table->timestamps();
