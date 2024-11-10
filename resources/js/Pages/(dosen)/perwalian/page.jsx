@@ -23,7 +23,6 @@ const Perwalian = () => {
         ...new Set(mahasiswaData.map((item) => item.nama_prodi)),
     ].sort((a, b) => a.localeCompare(b)); // Mengurutkan secara alfabetis
 
-    const jumlahMahasiswa = props.jumlahMahasiswa;
     const [filters, setFilters] = useState({
         angkatan: "all",
         prodi: "all",

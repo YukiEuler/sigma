@@ -22,6 +22,7 @@ use App\Http\Controllers\DataMKController;
 use App\Http\Controllers\BiayaController;
 use App\Http\Controllers\MenyetujuiJadwalController;
 use App\Http\Controllers\RegistrasiController;
+use App\Http\Controllers\RekapIRSController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,7 +71,7 @@ Route::post('dekan/setujui-ruang/setujui-multiple', [MenyetujuiRuangKuliah::clas
 Route::get('dekan/setujui-jadwal', [MenyetujuiJadwalController::class, 'index'])->name('dekan.setujuiJadwal')->middleware(['auth', 'validateRole:Dekan']);
 
 Route::get('dosen/dashboard', [DosenController::class, 'index'])->name('dosen.dashboard')->middleware(['auth', 'validateRole:Dosen']);
-Route::get('dosen/nilai', [NilaiController::class, 'index'])->name('dosen.nilai')->middleware(['auth', 'validateRole:Dosen']);
+Route::get('dosen/rekap-irs', [RekapIRSController::class, 'index'])->name('dosen.rekapIRS')->middleware(['auth', 'validateRole:Dosen']);
 Route::get('dosen/perwalian', [PerwalianController::class, 'index'])->name('dosen.perwalian')->middleware(['auth', 'validateRole:Dosen']);
 Route::get('dosen/perwalian/detail/{id}', [PerwalianController::class, 'detail'])->name('dosen.detailmhs')->middleware(['auth', 'validateRole:Dosen']);
 
