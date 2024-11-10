@@ -1,20 +1,89 @@
 import React, { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/inertia-react";
-import { Inertia } from '@inertiajs/inertia';
 import DosenLayout from "../../../Layouts/DosenLayout";
-import { PieChart } from "@mui/x-charts/PieChart";
+import { Icon } from "@iconify/react";
 
 const Perwalian = () => {
     const { props } = usePage();
     const dosenData = props.dosen;
+    const mahasiswaData = props.mahasiswa;
     const [dosen, setDosen] = useState(dosenData);
+    const [mahasiswa, setMahasiswa] = useState(mahasiswaData);
+    const [filteredMahasiswa, setFilteredMahasiswa] = useState(mahasiswaData);
     const [selectAll, setSelectAll] = useState(false);
-    const [checkedItems, setCheckedItems] = useState(new Array(10).fill(false));
+    const [checkedItems, setCheckedItems] = useState(
+        new Array(mahasiswaData.length).fill(false)
+    );
+
+    const uniqueAngkatan = [
+        ...new Set(mahasiswaData.map((item) => item.angkatan)),
+    ].sort((a, b) => b - a); // Mengurutkan dari yang terbaru
+
+    const uniqueProdi = [
+        ...new Set(mahasiswaData.map((item) => item.nama_prodi)),
+    ].sort((a, b) => a.localeCompare(b)); // Mengurutkan secara alfabetis
+
+    const jumlahMahasiswa = props.jumlahMahasiswa;
+    const [filters, setFilters] = useState({
+        angkatan: "all",
+        prodi: "all",
+        search: "",
+    });
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    // Apply all filters
+    const applyFilters = () => {
+        let result = [...mahasiswaData];
+
+        // Apply angkatan filter only if not "all"
+        if (filters.angkatan && filters.angkatan !== "all") {
+            result = result.filter(
+                (item) => item.angkatan.toString() === filters.angkatan
+            );
+        }
+
+        // Apply prodi filter only if not "all"
+        if (filters.prodi && filters.prodi !== "all") {
+            result = result.filter((item) =>
+                item.nama_prodi
+                    .toLowerCase()
+                    .includes(filters.prodi.toLowerCase())
+            );
+        }
+
+        // Apply search filter
+        if (filters.search) {
+            result = result.filter(
+                (item) =>
+                    item.nama
+                        .toLowerCase()
+                        .includes(filters.search.toLowerCase()) ||
+                    item.nim
+                        .toLowerCase()
+                        .includes(filters.search.toLowerCase()) ||
+                    item.nama_prodi
+                        .toLowerCase()
+                        .includes(filters.search.toLowerCase())
+            );
+        }
+
+        setFilteredMahasiswa(result);
+        // Reset checked items when filters change
+        setCheckedItems(new Array(result.length).fill(false));
+        setSelectAll(false);
+    };
 
     const handleSelectAllChange = () => {
         const newSelectAll = !selectAll;
         setSelectAll(newSelectAll);
-        setCheckedItems(new Array(10).fill(newSelectAll));
+        setCheckedItems(new Array(filteredMahasiswa.length).fill(newSelectAll));
     };
 
     const handleCheckboxChange = (index) => {
@@ -24,126 +93,20 @@ const Perwalian = () => {
         setSelectAll(newCheckedItems.every((item) => item));
     };
 
-    const data = [
-        {
-            no: 1,
-            nama: "John Doe",
-            nim: "123456789",
-            prodi: "Teknik Informatika",
-            angkatan: 2020,
-            jalur: "SNMPTN",
-            ip: 3.5,
-            sks: 20,
-            status: "Aktif",
-        },
-        {
-            no: 2,
-            nama: "Jane Smith",
-            nim: "987654321",
-            prodi: "Sistem Informasi",
-            angkatan: 2019,
-            jalur: "SBMPTN",
-            ip: 3.8,
-            sks: 22,
-            status: "Aktif",
-        },
-        {
-            no: 3,
-            nama: "Alice Johnson",
-            nim: "112233445",
-            prodi: "Manajemen Informatika",
-            angkatan: 2021,
-            jalur: "Mandiri",
-            ip: 3.2,
-            sks: 18,
-            status: "Aktif",
-        },
-        {
-            no: 4,
-            nama: "Bob Brown",
-            nim: "556677889",
-            prodi: "Komputer Akuntansi",
-            angkatan: 2022,
-            jalur: "SNMPTN",
-            ip: 3.9,
-            sks: 24,
-            status: "Aktif",
-        },
-        {
-            no: 5,
-            nama: "Charlie Davis",
-            nim: "998877665",
-            prodi: "Teknik Informatika",
-            angkatan: 2018,
-            jalur: "SBMPTN",
-            ip: 3.4,
-            sks: 21,
-            status: "Aktif",
-        },
-        {
-            no: 6,
-            nama: "Diana Evans",
-            nim: "443322110",
-            prodi: "Sistem Informasi",
-            angkatan: 2020,
-            jalur: "Mandiri",
-            ip: 3.7,
-            sks: 23,
-            status: "Aktif",
-        },
-        {
-            no: 7,
-            nama: "Evan Foster",
-            nim: "667788990",
-            prodi: "Manajemen Informatika",
-            angkatan: 2019,
-            jalur: "SNMPTN",
-            ip: 3.1,
-            sks: 19,
-            status: "Aktif",
-        },
-        {
-            no: 8,
-            nama: "Fiona Green",
-            nim: "334455667",
-            prodi: "Komputer Akuntansi",
-            angkatan: 2021,
-            jalur: "SBMPTN",
-            ip: 3.6,
-            sks: 20,
-            status: "Aktif",
-        },
-        {
-            no: 9,
-            nama: "George Harris",
-            nim: "776655443",
-            prodi: "Teknik Informatika",
-            angkatan: 2022,
-            jalur: "Mandiri",
-            ip: 3.3,
-            sks: 22,
-            status: "Aktif",
-        },
-        {
-            no: 10,
-            nama: "Hannah White",
-            nim: "554433221",
-            prodi: "Sistem Informasi",
-            angkatan: 2018,
-            jalur: "SNMPTN",
-            ip: 3.9,
-            sks: 24,
-            status: "Aktif",
-        },
-    ];
+    useEffect(() => {
+        applyFilters();
+    }, [filters]);
+
     useEffect(() => {
         setDosen(dosenData);
-    }, [dosenData]);
+        setMahasiswa(mahasiswaData);
+        setFilteredMahasiswa(mahasiswaData);
+    }, [dosenData, mahasiswaData]);
 
     return (
         <DosenLayout dosen={dosen}>
             <main className="flex-1 max-h-full">
-                <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
+                <div className="flex flex-col items-start justify-between mt-2 pb-3 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
                     <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
                         Perwalian
                     </h1>
@@ -161,23 +124,26 @@ const Perwalian = () => {
                                             <td>
                                                 <select
                                                     id="angkatan"
+                                                    name="angkatan"
+                                                    value={filters.angkatan}
+                                                    onChange={
+                                                        handleFilterChange
+                                                    }
                                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                 >
-                                                    <option selected>
-                                                        Select an option
+                                                    <option value="all">
+                                                        Semua Angkatan
                                                     </option>
-                                                    <option value="2022">
-                                                        2022
-                                                    </option>
-                                                    <option value="2021">
-                                                        2021
-                                                    </option>
-                                                    <option value="2020">
-                                                        2020
-                                                    </option>
-                                                    <option value="2019">
-                                                        2019
-                                                    </option>
+                                                    {uniqueAngkatan.map(
+                                                        (angkatan) => (
+                                                            <option
+                                                                key={angkatan}
+                                                                value={angkatan.toString()}
+                                                            >
+                                                                {angkatan}
+                                                            </option>
+                                                        )
+                                                    )}
                                                 </select>
                                             </td>
                                         </tr>
@@ -188,101 +154,64 @@ const Perwalian = () => {
                                             <td>
                                                 <select
                                                     id="prodi"
+                                                    name="prodi"
+                                                    value={filters.prodi}
+                                                    onChange={
+                                                        handleFilterChange
+                                                    }
                                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                 >
-                                                    <option selected>
-                                                        Select an option
+                                                    <option value="all">
+                                                        Semua Program Studi
                                                     </option>
-                                                    <option value="TI">
-                                                        Teknik Informatika
-                                                    </option>
-                                                    <option value="SI">
-                                                        Sistem Informasi
-                                                    </option>
-                                                    <option value="MI">
-                                                        Manajemen Informatika
-                                                    </option>
-                                                    <option value="KA">
-                                                        Komputer Akuntansi
-                                                    </option>
+                                                    {uniqueProdi.map(
+                                                        (prodi) => (
+                                                            <option
+                                                                key={prodi}
+                                                                value={prodi}
+                                                            >
+                                                                {prodi}
+                                                            </option>
+                                                        )
+                                                    )}
                                                 </select>
                                             </td>
                                         </tr>
                                     </table>
-                                    <div className="mt-4 flex space-x-2">
-                                        <button
-                                            type="button"
-                                            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        >
-                                            Filter Data
+                                </form>
+                                <div className="flex justify-between items-center mt-2">
+                                    <div className="flex gap-2">
+                                        <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-[14px] w-40`">
+                                            Setujui IRS
                                         </button>
-                                        <button
-                                            type="button"
-                                            className="px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                        >
-                                            Reset Filter
+                                        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-[14px] w-40`">
+                                            Batalkan Persetujuan IRS
                                         </button>
                                     </div>
-                                </form>
-                                <div className="border-b w-full mt-4"></div>
-                                <div className="mt-4 flex space-x-2">
-                                    <button
-                                        type="button"
-                                        className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        Setujui IRS
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                    >
-                                        Batalkan Persutujan IRS
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                    >
-                                        Berikan Izin Melakukan Perubahan IRS
-                                    </button>
-                                </div>
-                                <span className="block mt- text-sm text-gray-700 mb-2">
-                                    <span className="block mt-1 text-sm text-gray-700">
-                                        <strong>
-                                            *Memberikan izin melakukan perubahan
-                                            IRS
-                                        </strong>{" "}
-                                        berarti dianggap telah menyetujui IRS
-                                        awal mahasiswa dan
-                                        <br />
-                                        sekaligus mengijinkan mahasiswa
-                                        melakukan perubahan IRS pada periode
-                                        penggantian IRS.
-                                    </span>
-                                </span>
-
-                                <div class="flex rounded-md border border-blue-500 overflow-hidden max-w-md mx-auto font-[sans-serif]">
-                                    <input
-                                        type="text"
-                                        placeholder="NIM/Nama"
-                                        class="w-full outline-none bg-white text-gray-600 text-base px-2 py-2"
-                                    />
-                                    <button
-                                        type="button"
-                                        class="flex items-center justify-center bg-[#007bff] hover:bg-blue-600 px-3"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 192.904 192.904"
-                                            width="20px"
-                                            class="fill-white"
-                                        >
-                                            <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z"></path>
-                                        </svg>
-                                    </button>
+                                    <div className="flex justify-center items-center w-64">
+                                        <div className="relative w-full">
+                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <Icon
+                                                    icon="ri:search-line"
+                                                    style={{
+                                                        color: "gray",
+                                                    }}
+                                                />
+                                            </span>
+                                            <input
+                                                type="text"
+                                                name="search"
+                                                value={filters.search}
+                                                onChange={handleFilterChange}
+                                                placeholder="Cari mahasiswa..."
+                                                className="w-full pl-10 pr-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="mt-2">
                                     <span className="text-lg font-medium text-gray-900">
-                                        Total: 10
+                                        Total: {filteredMahasiswa.length}
                                     </span>
                                 </div>
                                 <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[500px] scrollbar-hide">
@@ -302,7 +231,7 @@ const Perwalian = () => {
                                                     scope="col"
                                                     className="px-6 py-3"
                                                     style={{
-                                                        width: "30px",
+                                                        width: "5%",
                                                         textAlign: "center",
                                                     }}
                                                 >
@@ -315,106 +244,106 @@ const Perwalian = () => {
                                                                 handleSelectAllChange
                                                             }
                                                         />
-                                                        <span className="ml-2">
+                                                        <span className="ml-2 text-[10px]">
                                                             Semua
                                                         </span>
                                                     </label>
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-6 py-3"
+                                                    className="px-4 py-2"
                                                     style={{
-                                                        width: "30px",
+                                                        width: "3%",
                                                         textAlign: "center",
+                                                        fontSize: "12px",
                                                     }}
                                                 >
                                                     No
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-6 py-3"
+                                                    className="px-4 py-2"
                                                     style={{
-                                                        width: "250px",
+                                                        width: "15%",
                                                         textAlign: "center",
+                                                        fontSize: "12px",
                                                     }}
                                                 >
                                                     Nama
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-6 py-3"style={{
-                                                        width: "50px",
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "10%",
                                                         textAlign: "center",
+                                                        fontSize: "12px",
                                                     }}
                                                 >
                                                     NIM
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-6 py-3"
+                                                    className="px-4 py-2"
                                                     style={{
-                                                        width: "150px",
+                                                        width: "15%",
                                                         textAlign: "center",
+                                                        fontSize: "12px",
                                                     }}
                                                 >
                                                     Prodi
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-6 py-3"
+                                                    className="px-4 py-2"
                                                     style={{
-                                                        width: "30px",
+                                                        width: "10%",
                                                         textAlign: "center",
+                                                        fontSize: "12px",
                                                     }}
                                                 >
                                                     Angkatan
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-6 py-3"
+                                                    className="px-4 py-2"
                                                     style={{
-                                                        width: "30px",
+                                                        width: "5%",
                                                         textAlign: "center",
+                                                        fontSize: "12px",
                                                     }}
                                                 >
                                                     IP Lalu
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-6 py-3"
+                                                    className="px-4 py-2"
                                                     style={{
-                                                        width: "30px",
+                                                        width: "3%",
                                                         textAlign: "center",
+                                                        fontSize: "12px",
                                                     }}
                                                 >
                                                     SKS Diambil
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-6 py-3"
+                                                    className="px-4 py-2"
                                                     style={{
-                                                        width: "50px",
+                                                        width: "10%",
                                                         textAlign: "center",
+                                                        fontSize: "12px",
                                                     }}
                                                 >
-                                                    Status
+                                                    Status Mahasiswa
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-6 py-3"
+                                                    className="px-4 py-2"
                                                     style={{
-                                                        width: "50px",
+                                                        width: "10%",
                                                         textAlign: "center",
-                                                    }}
-                                                >
-                                                    Keterangan
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                    style={{
-                                                        width: "30px",
-                                                        textAlign: "center",
+                                                        fontSize: "12px",
                                                     }}
                                                 >
                                                     Detail
@@ -422,64 +351,66 @@ const Perwalian = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {data.map((item, index) => (
-                                                <tr
-                                                    key={index}
-                                                    className="bg-gray-100 border-b"
-                                                >
-                                                    <td className="px-6 py-3">
-                                                        <div className="flex justify-center">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={
-                                                                    checkedItems[
-                                                                        index
-                                                                    ]
-                                                                }
-                                                                onChange={() =>
-                                                                    handleCheckboxChange(
-                                                                        index
-                                                                    )
-                                                                }
-                                                            />
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {item.no}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {item.nama}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {item.nim}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {item.prodi}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {item.angkatan}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {item.ip}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {item.sks}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {item.status}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        <p>IRS Sudah Disetujui</p>
-                                                    </td>
-                                                    <td className="flex items-center mr-1 ml-3 py-3">
-                                                        <td className="px-4 py-2">
-                                                            <a href={`/dosen/perwalian/detail/`} className="text-blue-500 hover:underline">
+                                            {filteredMahasiswa.map(
+                                                (item, index) => (
+                                                    <tr
+                                                        key={index}
+                                                        className="bg-gray-100 border-b"
+                                                    >
+                                                        <td className="px-6 py-3">
+                                                            <div className="flex justify-center">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={
+                                                                        checkedItems[
+                                                                            index
+                                                                        ]
+                                                                    }
+                                                                    onChange={() =>
+                                                                        handleCheckboxChange(
+                                                                            index
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {index + 1}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px]">
+                                                            {item.nama}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px]">
+                                                            {item.nim}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px]">
+                                                            {item.nama_prodi}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {item.angkatan}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {item.ipk.toFixed(
+                                                                2
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {item.sks_kumulatif}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {item.status}
+                                                        </td>
+                                                        <td className="flex items-center justify-center py-3">
+                                                            <a
+                                                                href={`/dosen/perwalian/detail/${item.nim}`}
+                                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
+                                                            >
                                                                 Detail
                                                             </a>
                                                         </td>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                                    </tr>
+                                                )
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
