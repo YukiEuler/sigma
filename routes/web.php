@@ -61,6 +61,9 @@ ROute::post('bagian-akademik/atur-ruang/batalkan/{id}', [MenentukanRuangKuliahCo
 
 Route::get('mahasiswa/dashboard', [MahasiswaController::class, 'index'])->name('mahasiswa.dashboard')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/akademik', [AkademikMhsController::class, 'index'])->name('mahasiswa.akademik')->middleware(['auth', 'validateRole:Mahasiswa']);
+Route::get('mahasiswa/akademik/insert/{id_kelas}', [AkademikMhsController::class, 'insert'])->name('mahasiswa.insertirs')->middleware(['auth', 'validateRole:Mahasiswa']);
+Route::get('mahasiswa/akademik/update/{id_kelas}', [AkademikMhsController::class, 'delete'])->name('mahasiswa.deleteirs')->middleware(['auth', 'validateRole:Mahasiswa']);
+Route::get('mahasiswa/akademik/ubah-status', [AkademikMhsController::class, 'ubahstatus'])->name('mahasiswa.ubahstatus')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/registrasi', [RegistrasiController::class, 'index'])->name('mahasiswa.registrasi')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/biaya', [BiayaController::class, 'index'])->name('mahasiswa.biaya')->middleware(['auth', 'validateRole:Mahasiswa']);
 
@@ -81,9 +84,9 @@ Route::get('kaprodi/data-matakuliah', [DataMKController::class, 'index'])->name(
 Route::post('kaprodi/data-matakuliah', [DataMKController::class, 'store'])->name('mataKuliah.store');
 
 // Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
-Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'create'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
 
-// Route POST untuk menyimpan data jadwal
-Route::post('/kaprodi/atur-jadwal', [AturJadwalController::class, 'store'])->name('aturJadwal.store');
+// Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'create'])->name('kaprodi.aturJadwalCreate')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::post('kaprodi/atur-jadwal', [AturJadwalController::class, 'store'])->name('aturJadwal.aturJadwalStore')->middleware(['auth', 'validateRole:Kaprodi']);
 
 

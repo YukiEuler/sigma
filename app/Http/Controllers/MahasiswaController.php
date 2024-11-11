@@ -16,6 +16,13 @@ class MahasiswaController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        } elseif ($user->role !== 'Mahasiswa'){
+            return redirect()->route('home');
+        }
+        
         $mahasiswa = Mahasiswa::where('user_id', $user->id)->get()->first();
         $programStudi = ProgramStudi::where('id_prodi', $mahasiswa->id_prodi)->first();
         $mahasiswa->nama_prodi = $programStudi->nama_prodi;

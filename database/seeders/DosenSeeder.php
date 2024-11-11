@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Dosen;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
 
 class DosenSeeder extends Seeder
@@ -301,7 +303,6 @@ class DosenSeeder extends Seeder
             'nama' => 'Prof. Dr. Kusworo Adi, S.Si., M.T.',
             'alamat' => $faker->address,
             'no_telp' => $faker->phoneNumber,
-            'dekan' => true,
             'id_prodi' => 62,
             'user_id' => 32
         ]);

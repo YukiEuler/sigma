@@ -19,7 +19,7 @@ class MahasiswaSeeder extends Seeder
 
         $faker = Faker::create();
         $jalurMasukOptions = ['SBMPTN', 'SNMPTN', 'Mandiri'];
-        $statusOptions = ['Aktif', 'Aktif', 'Aktif', 'Lulus', 'DO', 'Cuti'];
+        $statusOptions = ['Aktif', 'Aktif', 'Aktif', 'Aktif',  'Aktif', 'Aktif', 'Lulus', 'DO', 'Cuti'];
 
         for ($i = 0; $i < 100; $i++){
             $userMahasiswa = User::create([
@@ -28,18 +28,21 @@ class MahasiswaSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'Mahasiswa',
             ]);
+
+            $angkatan = rand(2020, 2024);
+            $semester = 2*(2024-$angkatan) + 1;
     
             Mahasiswa::create([
                 'nim' => $userMahasiswa->username,
                 'nama' => $faker->name,
                 'alamat' => $faker->address,
                 'no_telp' => $faker->phoneNumber,
-                'angkatan' => rand(2020, 2024),
+                'angkatan' => $angkatan,
                 'jalur_masuk' => $jalurMasukOptions[array_rand($jalurMasukOptions)],
                 'status' => $statusOptions[array_rand($statusOptions)],
                 'sks_kumulatif' => rand(0,144),
-                'semester' => rand(1, 8),
                 'ipk' => $faker->randomFloat(2, 0, 4),
+                'semester' => $semester,
                 'id_prodi' => 62,
                 'nip_dosen_wali' => '197404011999031002',
                 'user_id' => $userMahasiswa->id
@@ -57,13 +60,13 @@ class MahasiswaSeeder extends Seeder
             'nim' => $user->username,
             'nama' => 'Dzu Sunan Muhammad',
             'alamat' => $faker->address,
-            'no_telp' => '085641626353',
+            'no_telp' => $faker->phoneNumber,
             'angkatan' => 2023,
             'jalur_masuk' => 'SNMPTN',
             'status' => 'Aktif',
             'sks_kumulatif' => 45,
-            'semester' => 3,
             'ipk' => 3.79,
+            'semester' => 3,
             'id_prodi' => 62,
             'nip_dosen_wali' => '197404011999031002',
             'user_id' => $user->id

@@ -77,7 +77,7 @@ const SidebarKaprodi = ({ dosen }) => {
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
                         >
                             <LuBookMarked style={{ fontSize: "24px" }} />
-                            <span class="ms-3">Data Matakuliah</span>
+                            <span class="ms-3">Data Mata Kuliah</span>
                         </a>
                     </li>
                     <li>

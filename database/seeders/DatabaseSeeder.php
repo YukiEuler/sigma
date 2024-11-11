@@ -25,13 +25,13 @@ class DatabaseSeeder extends Seeder
             FakultasSeeder::class,
             ProdiSeeder::class,
             DosenSeeder::class,
-            BagianAkademikSeeder::class,
             MahasiswaSeeder::class,
             RuanganSeeder::class,
             MataKuliahSeeder::class,
-            KelasSeeder::class,
-            JadwalKuliahSeeder::class,
+            JadwalKelasSeeder::class,
+            IrsKhsSeeder::class,
             KalenderAkademikSeeder::class,
+            BagianAkademikSeeder::class,
         ]);
     }
 }
