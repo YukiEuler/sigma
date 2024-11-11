@@ -1,106 +1,389 @@
 import React, { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/inertia-react";
 import KaprodiLayout from "@/Layouts/KaprodiLayout";
+import { Icon } from "@iconify/react";
 
 const DataMahasiswa = () => {
     const { props } = usePage();
     const dosenData = props.dosen;
     const [dosen, setDosen] = useState(dosenData);
+    const mahasiswaData = props.mahasiswa;
+    const [mahasiswa, setMahasiswa] = useState(mahasiswaData);
+    const [filteredMahasiswa, setFilteredMahasiswa] = useState(mahasiswaData);
+
+    const uniqueAngkatan = [
+        ...new Set(mahasiswaData.map((item) => item.angkatan)),
+    ].sort((a, b) => b - a);
+
+    const uniqueDoswal = [
+        ...new Set(mahasiswaData.map((item) => item.dosen.nama)),
+    ].sort((a, b) => a.localeCompare(b));
+
+    const [filters, setFilters] = useState({
+        angkatan: "all",
+        doswal: "all",
+        statusIRS: "all",
+        search: "",
+    });
+
+    const applyFilters = () => {
+        let result = [...mahasiswaData];
+
+        // Apply angkatan filter only if not "all"
+        if (filters.angkatan && filters.angkatan !== "all") {
+            result = result.filter(
+                (item) => item.angkatan.toString() === filters.angkatan
+            );
+        }
+
+        // Apply doswal filter only if not "all"
+        if (filters.doswal && filters.doswal !== "all") {
+            result = result.filter(
+                (item) => item.dosen.nama === filters.doswal
+            );
+        }
+
+        // Apply statusIRS filter only if not "all"
+        // if (filters.statusIRS && filters.statusIRS !== "all") {
+        //     result = result.filter(
+        //         (item) => getRandomStatusIRS() === filters.statusIRS
+        //     );
+        // }
+
+        // Apply search filter
+        if (filters.search) {
+            result = result.filter(
+                (item) =>
+                    item.nama
+                        .toLowerCase()
+                        .includes(filters.search.toLowerCase()) ||
+                    item.nim
+                        .toLowerCase()
+                        .includes(filters.search.toLowerCase())
+            );
+        }
+
+        setFilteredMahasiswa(result);
+    };
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    useEffect(() => {
+        applyFilters();
+    }, [filters]);
 
     useEffect(() => {
         setDosen(dosenData);
-    }, [dosenData]);
+        setMahasiswa(mahasiswaData);
+        setFilteredMahasiswa(mahasiswaData);
+    }, [dosenData, mahasiswaData]);
 
     return (
         <KaprodiLayout dosen={dosen}>
             <main className="flex-1 max-h-full">
                 <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
-                    <h1 className="text-2xl font-semibold whitespace-nowrap text-black">Mahasiswa</h1>
+                    <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
+                        Data Mahasiswa
+                    </h1>
                 </div>
-
-                <form className="max-w-sm mt-6">
-                    <table className="w-full">
-                        <tr>
-                            <td className="text-sm font-medium text-gray-900">
-                                Angkatan
-                            </td>
-                            <td>
-                                <select
-                                    id="angkatan"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                >
-                                <option selected>
-                                    Select an option
-                                </option>
-                                <option value="2024">
-                                    2024
-                                </option> 
-                                <option value="2023">
-                                    2023
-                                </option>
-                                <option value="2022">
-                                    2022
-                                </option> 
-                                <option value="2021">
-                                    2021
-                                </option>                     
-                                </select>
-                            </td>
-                        </tr>
-                                        
-                    </table>
-                    <div className="mt-4 flex space-x-2">
-                        <button
-                            type="button"
-                            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            Filter Data
-                        </button>
-                        <button
-                            type="button"
-                            className="px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        >
-                            Reset Filter
-                        </button>
-                    </div>
-                </form>
-
-                <div class="flex rounded-md border border-blue-500 overflow-hidden max-w-md mx-auto font-[sans-serif]">
-                    <input
-                        type="text"
-                        placeholder="Cari"
-                        class="w-full outline-none bg-white text-gray-600 text-base px-2 py-2"
-                    />
-                    <button type="button" class="flex items-center justify-center bg-[#007bff] hover:bg-blue-600 px-3">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 192.904 192.904"
-                        width="20px"
-                        class="fill-white"
-                    >
-                        <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z"></path>
-                    </svg>
-                    </button>
-                </div>
-
                 <div className="grid grid-cols-1 gap-5 mt-6">
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
-                        <thead className="text-xs text-white uppercase bg-blue-500 dark:text-gray-400 sticky top-0">
-                            <tr>
-                                <th className="px-6 py-3 text-center">NIM</th>
-                                <th className="px-6 py-3 text-center">Nama</th>
-                                <th className="px-6 py-3 text-center">Angkatan</th>
-                                <th className="px-6 py-3 text-center">Jalur Masuk</th>
-                                <th className="px-6 py-3 text-center">Status</th>
-                                <th className="px-6 py-3 text-center">IPK</th>
-                                <th className="px-6 py-3 text-center">SKS Kumulatif</th>
-                                <th className="px-6 py-3 text-center">Dosen Wali</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                        </tbody>
-                    </table>
+                    <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
+                        <div className="justify-between px-4 pb-4 border rounded-lg shadow-lg bg-white">
+                            <div className="flex flex-col space-y-2">
+                                <table className="w-full max-w-sm mt-6">
+                                    <tr>
+                                        <td className="text-sm font-medium text-gray-900">
+                                            Angkatan
+                                        </td>
+                                        <td>
+                                            <select
+                                                id="angkatan"
+                                                name="angkatan"
+                                                value={filters.angkatan}
+                                                onChange={handleFilterChange}
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            >
+                                                <option value="all">
+                                                    Semua Angkatan
+                                                </option>
+                                                {uniqueAngkatan.map(
+                                                    (angkatan) => (
+                                                        <option
+                                                            key={angkatan}
+                                                            value={angkatan.toString()}
+                                                        >
+                                                            {angkatan}
+                                                        </option>
+                                                    )
+                                                )}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-sm font-medium text-gray-900">
+                                            Status IRS
+                                        </td>
+                                        <td>
+                                            <select
+                                                id="statusIRS"
+                                                name="statusIRS"
+                                                // value={filters.statusIRS}
+                                                // onChange={handleFilterChange}
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            >
+                                                <option value="">
+                                                    Semua Status IRS
+                                                </option>
+                                                <option value="Belum Mengisi">
+                                                    Belum Mengisi
+                                                </option>
+                                                <option value="Belum Disetujui">
+                                                    Belum Disetujui
+                                                </option>
+                                                <option value="Sudah Disetujui">
+                                                    Sudah Disetujui
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-sm font-medium text-gray-900">
+                                            Dosen Wali
+                                        </td>
+                                        <td>
+                                            <select
+                                                id="doswal"
+                                                name="doswal"
+                                                value={filters.doswal}
+                                                onChange={handleFilterChange}
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            >
+                                                <option value="">
+                                                    Semua Dosen wali
+                                                </option>
+                                                {uniqueDoswal.map((doswal) => (
+                                                    <option
+                                                        key={doswal}
+                                                        value={doswal.toString()}
+                                                    >
+                                                        {doswal}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div className="flex justify-between items-center mt-4">
+                                    <div className="mt-2">
+                                        <span className="text-lg font-medium text-gray-900">
+                                            Total: {filteredMahasiswa.length}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-center items-center w-64">
+                                        <div className="relative w-full">
+                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <Icon
+                                                    icon="ri:search-line"
+                                                    style={{
+                                                        color: "gray",
+                                                    }}
+                                                />
+                                            </span>
+                                            <input
+                                                type="text"
+                                                name="search"
+                                                value={filters.search}
+                                                onChange={handleFilterChange}
+                                                placeholder="Cari mahasiswa..."
+                                                className="w-full pl-10 pr-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[340px] scrollbar-hide">
+                                    <style jsx>{`
+                                        .scrollbar-hide::-webkit-scrollbar {
+                                            display: none;
+                                        }
+                                        .scrollbar-hide {
+                                            -ms-overflow-style: none;
+                                            scrollbar-width: none;
+                                        }
+                                    `}</style>
+                                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
+                                        <thead className="text-xs text-white uppercase bg-blue-500 dark:text-gray-400 sticky top-0">
+                                            <tr>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "3%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    No
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "15%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    Nama
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "10%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    NIM
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "5%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    Angkatan
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "5%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    IP Lalu
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "3%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    SKS Diambil
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "10%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    Status Mahasiswa
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "10%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    Status IRS
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "15%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    Doswal
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "10%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    Detail
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {filteredMahasiswa.map(
+                                                (item, index) => (
+                                                    <tr
+                                                        key={index}
+                                                        className="bg-gray-100 border-b"
+                                                    >
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {index + 1}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px]">
+                                                            {item.nama}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px]">
+                                                            {item.nim}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {item.angkatan}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {item.ipk.toFixed(
+                                                                2
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {item.sks_kumulatif}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {item.status}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            Sudah Disetujui
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                            {item.dosen.nama}
+                                                        </td>
+                                                        <td className="flex items-center justify-center py-3">
+                                                            <a
+                                                                href={`/dosen/perwalian/detail/${item.nim}`}
+                                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
+                                                            >
+                                                                Detail
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </main>
         </KaprodiLayout>

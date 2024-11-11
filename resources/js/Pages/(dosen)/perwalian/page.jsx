@@ -114,8 +114,7 @@ const Perwalian = () => {
                     <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
                         <div className="justify-between px-4 pb-4 border rounded-lg shadow-lg bg-white">
                             <div className="flex flex-col space-y-2">
-                                <form className="max-w-sm mt-6">
-                                    <table className="w-full">
+                                    <table className="w-full max-w-sm mt-6">
                                         <tr>
                                             <td className="text-sm font-medium text-gray-900">
                                                 Angkatan
@@ -177,7 +176,6 @@ const Perwalian = () => {
                                             </td>
                                         </tr>
                                     </table>
-                                </form>
                                 <div className="flex justify-between items-center mt-2">
                                     <div className="flex gap-2">
                                         <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-[14px] w-40`">
@@ -324,6 +322,17 @@ const Perwalian = () => {
                                                     }}
                                                 >
                                                     SKS Diambil
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
+                                                        width: "10%",
+                                                        textAlign: "center",
+                                                        fontSize: "12px",
+                                                    }}
+                                                >
+                                                    Status Mahasiswa
                                                 </th>
                                                 <th
                                                     scope="col"
