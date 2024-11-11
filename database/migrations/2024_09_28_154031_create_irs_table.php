@@ -12,11 +12,11 @@ class CreateIrsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('id_kelas');
             $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
-            $table->integer('tahun');
+            $table->string('tahun_akademik');
             $table->enum('status', ['Baru', 'Perbaikan', 'Ulang']);
             $table->string('nim', 30);
-            $table->boolean('isVerified')->default(false);
-            $table->boolean('isSubmitted')->default(false);
+            $table->boolean('is_verified')->default(false);
+            $table->boolean('diajukan')->default(false);
 
             $table->foreign('nim')->references('nim')->on('mahasiswa')->onDelete('cascade');
             $table->foreign('id_kelas')->references('id')->on('kelas')->onDelete('cascade');

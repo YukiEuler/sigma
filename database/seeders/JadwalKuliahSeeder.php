@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\JadwalKuliah;
 use App\Models\Kelas;
-use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\MataKuliah;
 use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 
 class JadwalKuliahSeeder extends Seeder
 {

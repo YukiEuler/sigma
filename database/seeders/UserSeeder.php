@@ -2,10 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Mahasiswa;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Process\FakeProcessResult;
 use Illuminate\Support\Facades\Hash;
+use Faker\Factory as Faker;
 
 class UserSeeder extends Seeder
 {
@@ -14,6 +17,8 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker::create();
+
         User::create([
             'username' => '197805162003121001',
             'email' => 'helmie@lecturer.undip.ac.id',
@@ -150,7 +155,7 @@ class UserSeeder extends Seeder
         User::create([
             'username' => '198203092006041002',
             'email' => 'adiwibowo@lecturer.undip.ac.id',
-            'password' => Hash::make('password`'),
+            'password' => Hash::make('password'),
             'role' => 'Dosen',
         ]);
 
@@ -346,5 +351,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'Dosen',
         ]);
+
+        
+        
     }
 }
