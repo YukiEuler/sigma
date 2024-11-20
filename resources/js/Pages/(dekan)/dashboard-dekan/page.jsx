@@ -69,7 +69,7 @@ const DashboardDekan = ({ ruangan }) => {
                                 <span className="text-gray-400">
                                     Jadwal Kuliah Belum Disetujui
                                 </span>
-                                <span className="text-lg font-semibold">5</span>
+                                <span className="text-lg font-semibold">0</span>
                             </div>
                             <div className="p-8"></div>
                         </div>
@@ -80,7 +80,7 @@ const DashboardDekan = ({ ruangan }) => {
                                 <span className="text-gray-400">
                                     Jadwal Kuliah Sudah Disetujui
                                 </span>
-                                <span className="text-lg font-semibold">5</span>
+                                <span className="text-lg font-semibold">0</span>
                             </div>
                             <div className="p-8"></div>
                         </div>
@@ -136,8 +136,8 @@ const DashboardDekan = ({ ruangan }) => {
                                             width={350}
                                             height={350}
                                             series={[
-                                                5,
-                                                5,
+                                                0,
+                                                0,
                                             ]}
                                             options={{
                                                 labels: [

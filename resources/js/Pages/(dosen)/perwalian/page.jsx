@@ -343,17 +343,6 @@ const Perwalian = () => {
                                                         fontSize: "12px",
                                                     }}
                                                 >
-                                                    Status Mahasiswa
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-4 py-2"
-                                                    style={{
-                                                        width: "10%",
-                                                        textAlign: "center",
-                                                        fontSize: "12px",
-                                                    }}
-                                                >
                                                     Detail
                                                 </th>
                                             </tr>
