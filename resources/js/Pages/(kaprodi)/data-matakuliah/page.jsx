@@ -17,6 +17,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
         semester: "",
         jenis: "Wajib",
     });
+    const [selectedSemester, setSelectedSemester] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredMataKuliah, setFilteredMataKuliah] = useState([]);
 
@@ -226,6 +227,27 @@ const DataMataKuliah = ({ mataKuliah }) => {
                     <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
                         <div className="justify-between px-4 pb-4 border rounded-lg shadow-lg bg-white">
                             <div className="flex flex-col space-y-2">
+                                <div className="mt-4">
+                                    {/* Program Studi Filter */}
+                                    <span className="mr-[1rem]">Semester</span>
+                                    <select
+                                        value={selectedSemester}
+                                        onChange={(e) =>
+                                            setSelectedSemester(e.target.value)
+                                        }
+                                        className="px-2 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
+                                    >
+                                        <option value="">Semua Semester</option>
+                                        <option value="1">Semester 1</option>
+                                        <option value="2">Semester 2</option>
+                                        <option value="3">Semester 3</option>
+                                        <option value="4">Semester 4</option>
+                                        <option value="5">Semester 5</option>
+                                        <option value="6">Semester 6</option>
+                                        <option value="7">Semester 7</option>
+                                        <option value="8">Semester 8</option>
+                                    </select>
+                                </div>
                                 <div className="flex justify-between items-center mt-4 mb-2">
                                     <button
                                         onClick={handleOpenModal}
@@ -255,7 +277,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                     </div>
                                 </div>
 
-                                <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[340px] scrollbar-hide">
+                                <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[420px] scrollbar-hide">
                                     <style jsx>{`
                                         .scrollbar-hide::-webkit-scrollbar {
                                             display: none;
@@ -265,12 +287,17 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                             scrollbar-width: none;
                                         }
                                     `}</style>
-                                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
-                                        <thead className="text-xs text-white uppercase bg-blue-500 dark:text-gray-400 sticky top-0">
+                                    <table className="w-full text-sm text-left rounded-lg text-gray-500 sticky-header">
+                                        <thead
+                                            className="text-xs text-white uppercase bg-gray-50 dark:text-gray-400 sticky top-0"
+                                            style={{
+                                                backgroundColor: "#1EAADF",
+                                            }}
+                                        >
                                             <tr>
                                                 <th
                                                     scope="col"
-                                                    className="px-4 py-2"
+                                                    className="px-4 py-3"
                                                     style={{
                                                         width: "3%",
                                                         textAlign: "center",
@@ -281,7 +308,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-4 py-2"
+                                                    className="px-4 py-3"
                                                     style={{
                                                         width: "20%",
                                                         textAlign: "center",
@@ -292,7 +319,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-4 py-2"
+                                                    className="px-4 py-3"
                                                     style={{
                                                         width: "20%",
                                                         textAlign: "center",
@@ -303,7 +330,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-4 py-2"
+                                                    className="px-4 py-3"
                                                     style={{
                                                         width: "10%",
                                                         textAlign: "center",
@@ -314,7 +341,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-4 py-2"
+                                                    className="px-4 py-3"
                                                     style={{
                                                         width: "10%",
                                                         textAlign: "center",
@@ -325,7 +352,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-4 py-2"
+                                                    className="px-4 py-3"
                                                     style={{
                                                         width: "17%",
                                                         textAlign: "center",
@@ -336,7 +363,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    className="px-4 py-2"
+                                                    className="px-4 py-3"
                                                     style={{
                                                         width: "10%",
                                                         textAlign: "center",

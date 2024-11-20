@@ -304,7 +304,8 @@ class DosenSeeder extends Seeder
             'alamat' => $faker->address,
             'no_telp' => $faker->phoneNumber,
             'id_prodi' => 62,
-            'user_id' => 32
+            'user_id' => 32,
+            'dekan' => true
         ]);
 
         Dosen::create([

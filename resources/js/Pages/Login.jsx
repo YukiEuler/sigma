@@ -37,10 +37,10 @@ const Login = () => {
                         className="mx-auto mb-4"
                         style={{ width: "200px", height: "auto" }}
                     />
-                    <h1 className="text-4xl font-bold text-center mb-4 text-black">
-                        Single Sign On (SSO)
+                    <h1 className="text-4xl font-bold text-center mb-2 text-black">
+                    SIGMA
                     </h1>
-                    <h2 className="text-2xl text-center mb-8 text-black">
+                    <h2 className="text-xl text-center mb-8 text-black">
                         Universitas Diponegoro
                     </h2>
                     <div className="flex items-center mb-8">
