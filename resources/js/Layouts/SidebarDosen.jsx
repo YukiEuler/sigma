@@ -56,6 +56,32 @@ const SidebarDosen = ({ dosen }) => {
                         </div>
                     </li>
                     <li>
+                        {dosen.dekan === 1 && (
+                            <a
+                                href="/dekan/dashboard"
+                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                            >
+                                <HiOutlineAcademicCap
+                                    style={{ fontSize: "24px" }}
+                                />
+                                <span className="ms-3">Dekan Menu</span>
+                            </a>
+                        )}
+                    </li>
+                    <li>
+                        {dosen.kaprodi === 1 && (
+                            <a
+                                href="/kaprodi/dashboard"
+                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                            >
+                                <HiOutlineAcademicCap
+                                    style={{ fontSize: "24px" }}
+                                />
+                                <span className="ms-3">Kaprodi Menu</span>
+                            </a>
+                        )}
+                    </li>
+                    <li>
                         <a
                             href="/dosen/dashboard"
                             className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
@@ -82,32 +108,7 @@ const SidebarDosen = ({ dosen }) => {
                             <span className="ms-3">Rekap IRS</span>
                         </a>
                     </li>
-                    <li>
-                        {dosen.dekan === 1 && (
-                            <a
-                                href="/dekan/dashboard"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
-                            >
-                                <HiOutlineAcademicCap
-                                    style={{ fontSize: "24px" }}
-                                />
-                                <span className="ms-3">Dekan Page</span>
-                            </a>
-                        )}
-                    </li>
-                    <li>
-                        {dosen.kaprodi === 1 && (
-                            <a
-                                href="/kaprodi/dashboard"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
-                            >
-                                <HiOutlineAcademicCap
-                                    style={{ fontSize: "24px" }}
-                                />
-                                <span className="ms-3">Kaprodi Page</span>
-                            </a>
-                        )}
-                    </li>
+
                     <li>
                         <a
                             href="/actionlogout"
