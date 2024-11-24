@@ -2,299 +2,389 @@ import React, { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/inertia-react";
 import { Inertia } from "@inertiajs/inertia";
 import KaprodiLayout from "@/Layouts/KaprodiLayout";
+import { X, Plus, Minus } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 const AturJadwal = () => {
     const { props } = usePage();
     const dosenData = props.dosen;
     const [dosen, setDosen] = useState(dosenData);
+    const [schedules, setSchedules] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [semesterFilter, setSemesterFilter] = useState("");
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [courseForms, setCourseForms] = useState({});
+    const [scheduleForms, setScheduleForms] = useState([
+        {
+            class: "",
+            quota: "",
+            lecturers: [""],
+            room: "",
+            day: "",
+            startTime: "",
+            endTime: "",
+            hour: "",
+            minute: "",
+        },
+    ]);
+
+    // Sample data
+    const COURSES = [
+        {
+            id: "IF1001",
+            name: "Algoritma dan Pemrograman",
+            semester: 1,
+            sks: 3,
+            code: "IF1001",
+        },
+        {
+            id: "IF1002",
+            name: "Basis Data",
+            semester: 3,
+            sks: 4,
+            code: "IF1002",
+        },
+        {
+            id: "IF1003",
+            name: "Pemrograman Web",
+            semester: 3,
+            sks: 3,
+            code: "IF1003",
+        },
+        {
+            id: "IF1004",
+            name: "Pemrograman Web",
+            semester: 3,
+            sks: 3,
+            code: "IF1003",
+        },
+        {
+            id: "IF1005",
+            name: "Pemrograman Web",
+            semester: 3,
+            sks: 3,
+            code: "IF1003",
+        },
+        {
+            id: "IF1006",
+            name: "Pemrograman Web",
+            semester: 4,
+            sks: 3,
+            code: "IF1003",
+        },
+        {
+            id: "IF1007",
+            name: "Pemrograman Web",
+            semester: 4,
+            sks: 3,
+            code: "IF1003",
+        },
+        {
+            id: "IF1008",
+            name: "Pemrograman Web",
+            semester: 4,
+            sks: 3,
+            code: "IF1003",
+        },
+    ];
+
+    const LECTURERS = [
+        { id: 1, name: "Dr. John Doe" },
+        { id: 2, name: "Prof. Jane Smith" },
+        { id: 3, name: "Dr. Robert Johnson" },
+        { id: 4, name: "Dr. Sarah Williams" },
+    ];
+
+    const ROOMS = [
+        { id: 1, name: "Lab 1" },
+        { id: 2, name: "Lab 2" },
+        { id: 3, name: "Room 301" },
+        { id: 4, name: "Room 302" },
+    ];
+
+    const DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
+
+    const timeSlots = [];
+    for (let i = 7; i <= 21; i++) {
+        timeSlots.push(`${i.toString().padStart(2, "0")}:00`);
+    }
+
+    const HOURS = Array.from({ length: 15 }, (_, i) => {
+        const hour = i + 7;
+        return hour.toString().padStart(2, "0");
+    });
+
+    // Generate minutes array (00-55, step 5)
+    const MINUTES = Array.from({ length: 12 }, (_, i) => {
+        const minute = i * 5;
+        return minute.toString().padStart(2, "0");
+    });
+
+    const getTimeSlot = (timeStr) => {
+        const [hours, minutes] = timeStr.split(":").map(Number);
+        if (minutes <= 30) {
+            // Jika menit <= 30, gunakan jam saat ini
+            return `${hours.toString().padStart(2, "0")}:00`;
+        } else {
+            // Jika menit > 30, gunakan jam berikutnya
+            return `${(hours + 1).toString().padStart(2, "0")}:00`;
+        }
+    };
+
+    // Helper function untuk mengecek apakah suatu jadwal masuk ke dalam slot waktu
+    const isScheduleInTimeSlot = (scheduleTime, slotTime) => {
+        const appropriateSlot = getTimeSlot(scheduleTime);
+        return appropriateSlot === slotTime;
+    };
+
+    const handleButtonClick = () => {
+        setIsSubmitted(!isSubmitted);
+    };
+
+    const calculateEndTime = (hour, minute, sks) => {
+        if (!hour || !minute) return "";
+        const totalMinutes = parseInt(hour) * 60 + parseInt(minute) + sks * 50;
+        const newHours = Math.floor(totalMinutes / 60);
+        const newMinutes = totalMinutes % 60;
+        return `${newHours.toString().padStart(2, "0")}:${newMinutes
+            .toString()
+            .padStart(2, "0")}`;
+    };
+
+    const handleTimeChange = (index, type, value) => {
+        const newForms = [...scheduleForms];
+        newForms[index][type] = value;
+
+        if (newForms[index].hour && newForms[index].minute) {
+            const startTime = `${newForms[index].hour}:${newForms[index].minute}`;
+            const endTime = calculateEndTime(
+                newForms[index].hour,
+                newForms[index].minute,
+                selectedCourse?.sks || 0
+            );
+
+            newForms[index].startTime = startTime;
+            newForms[index].endTime = endTime;
+        }
+
+        setScheduleForms(newForms);
+    };
+
+    const handleAddForm = () => {
+        setScheduleForms([
+            ...scheduleForms,
+            {
+                class: "",
+                quota: "",
+                lecturers: [""],
+                room: "",
+                day: "",
+                startTime: "",
+                endTime: "",
+                hour: "",
+                minute: "",
+            },
+        ]);
+    };
+
+    const handleRemoveForm = (index) => {
+        if (scheduleForms.length > 1) {
+            const newForms = scheduleForms.filter((_, i) => i !== index);
+            setScheduleForms(newForms);
+        }
+    };
+
+    const handleAddLecturer = (formIndex) => {
+        const newForms = [...scheduleForms];
+        newForms[formIndex].lecturers.push("");
+        setScheduleForms(newForms);
+    };
+
+    const handleRemoveLecturer = (formIndex, lecturerIndex) => {
+        const newForms = [...scheduleForms];
+        if (newForms[formIndex].lecturers.length > 1) {
+            newForms[formIndex].lecturers = newForms[
+                formIndex
+            ].lecturers.filter((_, i) => i !== lecturerIndex);
+            setScheduleForms(newForms);
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const newSchedules = scheduleForms.map((form) => {
+            const startTime = `${form.hour}:${form.minute}`;
+            const endTime = calculateEndTime(
+                form.hour,
+                form.minute,
+                selectedCourse.sks
+            );
+
+            return {
+                ...form,
+                courseId: selectedCourse.id,
+                courseName: selectedCourse.name,
+                sks: selectedCourse.sks,
+                startTime,
+                endTime,
+            };
+        });
+
+        // Update schedules
+        setSchedules((prevSchedules) => {
+            // Hapus jadwal lama untuk mata kuliah ini (jika ada)
+            const filteredSchedules = prevSchedules.filter(
+                (schedule) => schedule.courseId !== selectedCourse.id
+            );
+            // Tambahkan jadwal baru
+            return [...filteredSchedules, ...newSchedules];
+        });
+
+        // Simpan form state
+        setCourseForms((prev) => ({
+            ...prev,
+            [selectedCourse.id]: scheduleForms,
+        }));
+
+        setIsModalOpen(false);
+    };
+
+    const openModal = (course) => {
+        setSelectedCourse(course);
+        if (courseForms[course.id]) {
+            setScheduleForms(courseForms[course.id]);
+        } else {
+            // Jika belum ada, gunakan form default
+            setScheduleForms([
+                {
+                    class: "",
+                    quota: "",
+                    lecturers: [""],
+                    room: "",
+                    day: "",
+                    startTime: "",
+                    endTime: "",
+                    hour: "",
+                    minute: "",
+                },
+            ]);
+        }
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        // Simpan state form saat ini ke courseForms
+        if (selectedCourse) {
+            setCourseForms((prev) => ({
+                ...prev,
+                [selectedCourse.id]: scheduleForms,
+            }));
+        }
+        setIsModalOpen(false);
+    };
+
+    // Modifikasi handler untuk search dan filter
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleSemesterFilter = (e) => {
+        setSemesterFilter(e.target.value);
+    };
+
+    const getFilteredCourses = () => {
+        return COURSES.filter((course) => {
+            const matchesSearch =
+                course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                course.code.toLowerCase().includes(searchTerm.toLowerCase());
+
+            if (semesterFilter === "") {
+                return matchesSearch;
+            }
+
+            const isOdd = course.semester % 2 === 1;
+            return (
+                matchesSearch &&
+                ((semesterFilter === "ganjil" && isOdd) ||
+                    (semesterFilter === "genap" && !isOdd))
+            );
+        });
+    };
 
     useEffect(() => {
         setDosen(dosenData);
     }, [dosenData]);
 
-    const { dosenmk, mataKuliah, kelas, jadwalKuliah } = props;
-
-    // State untuk form data
-    const [formData, setFormData] = useState({
-        tahun_akademik: "",
-        semester: "",
-        hari: "",
-        waktu_mulai: "",
-        waktu_selesai: "",
-        sks: 1, // Default
-        id_ruang: "",
-        id_kelas: "",
-        id_dosen: [],
-        kode_mk: ""
-    });
-
-    const calculateEndTime = (startTime, sks) => {
-        if (!startTime || !sks) return;
-
-        const [hours, minutes] = startTime.split(":").map(Number);
-        const totalMinutes = hours * 60 + minutes + sks * 50; // 50 menit per SKS
-        const endHours = Math.floor(totalMinutes / 60) % 24;
-        const endMinutes = totalMinutes % 60;
-
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            waktu_selesai: `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`,
-        }));
-    };
-
-    // Fungsi untuk menangani perubahan input
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-
-        // Jika `kode_mk` berubah, perbarui SKS dan hitung waktu selesai
-        if (name === "kode_mk") {
-            const selectedMK = mataKuliah.find((mk) => mk.kode_mk === value);
-            const sks = selectedMK ? selectedMK.sks : 1;
-
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                sks: sks,
-                kode_mk: value,
-            }));
-
-            calculateEndTime(formData.waktu_mulai, sks);
-        } else if (name === "waktu_mulai") {
-            calculateEndTime(value, formData.sks);
-        }
-    };
-
-    // Fungsi untuk submit form
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        Inertia.post('/kaprodi/atur-jadwal', formData);
-    };
-
     return (
         <KaprodiLayout dosen={dosen}>
             <main className="flex-1 max-h-full">
-                <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
+                <div className="flex flex-col items-start justify-between mt-2 pb-3 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
                     <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
-                        Tambah Jadwal Mata Kuliah
+                        Atur Jadwal
                     </h1>
                 </div>
-                <div className="grid grid-cols-1 gap-5 mt-6">
-                    <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
-                        <div className="justify-between px-4 pb-4 border rounded-lg shadow-lg bg-white">
+                <div
+                    className="grid grid-cols-1 gap-3 mt-3 sm:grid-cols-2 lg:grid-cols-7"
+                    style={{
+                        height: "85vh",
+                    }}
+                >
+                    <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100 lg:col-span-2">
+                        <div
+                            className="py-2 px-3 border rounded-lg shadow-lg bg-white"
+                            style={{
+                                height: "80vh",
+                            }}
+                        >
                             <div className="flex flex-col space-y-2">
-                                <div className="container bg-white shadow-lg rounded-lg p-6 mt-6">
-                                    <form onSubmit={handleSubmit}>
-                                        <div className="form-group">
-                                            <label className="font-semibold">Tahun Akademik</label>
-                                            <input
-                                                type="text"
-                                                name="tahun_akademik"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                placeholder="Tahun Akademik"
-                                                required
-                                                value={formData.tahun_akademik}
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                        <div className="form-group mt-4">
-                                            <label className="font-semibold">Semester</label>
-                                            <select
-                                                name="semester"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                required
-                                                value={formData.semester}
-                                                onChange={handleChange}
-                                            >
-                                                <option value="Ganjil">Ganjil</option>
-                                                <option value="Genap">Genap</option>
-                                            </select>
-                                        </div>
-                                        <div className="form-group mt-4">
-                                            <label className="font-semibold">Mata Kuliah</label>
-                                            <select
-                                                name="kode_mk"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                required
-                                                value={formData.kode_mk}
-                                                onChange={handleChange}
-                                            >
-                                                <option value="">Pilih Mata Kuliah</option>
-                                                {mataKuliah.map((item) => (
-                                                    <option key={item.kode_mk} value={item.kode_mk}>{item.nama}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="form-group mt-4">
-                                            <label className="font-semibold">SKS</label>
-                                            <input
-                                                type="number"
-                                                name="sks"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                readOnly
-                                                value={formData.sks}
-                                            />
-                                        </div>
-                                        <div className="form-group mt-4">
-                                            <label className="font-semibold">Kelas</label>
-                                            <select
-                                                name="id_kelas"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                required
-                                                value={formData.id_kelas}
-                                                onChange={handleChange}
-                                            >
-                                                <option value="">Pilih Kelas</option>
-                                                <option value="A">A</option>
-                                                {/* {kelas.map((item) => (
-                                                    <option key={item.id} value={item.id}>{item.kode_kelas}</option>
-                                                ))} */}
-                                            </select>
-                                        </div>
-                                        <div className="form-group mt-4">
-                                            <label className="font-semibold">Ruangan</label>
-                                            <input
-                                                type="text"
-                                                name="id_ruang"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                placeholder="ID Ruangan"
-                                                required
-                                                value={formData.id_ruang}
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                        <div className="form-group mt-4">
-                                            <label className="font-semibold">Hari</label>
-                                            <select
-                                                name="hari"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                required
-                                                value={formData.hari}
-                                                onChange={handleChange}
-                                            >
-                                                <option value="">Pilih Hari</option>
-                                                <option value="Senin">Senin</option>
-                                                <option value="Selasa">Selasa</option>
-                                                <option value="Rabu">Rabu</option>
-                                                <option value="Kamis">Kamis</option>
-                                                <option value="Jumat">Jumat</option>
-                                            </select>
-                                        </div>
-                                        <div className="form-group mt-4">
-                                            <label className="font-semibold">Waktu Mulai</label>
-                                            <input
-                                                type="time"
-                                                name="waktu_mulai"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                required
-                                                value={formData.waktu_mulai}
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                        <div className="form-group mt-4">
-                                            <label className="font-semibold">Waktu Selesai</label>
-                                            <input
-                                                type="time"
-                                                name="waktu_selesai"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                readOnly
-                                                value={formData.waktu_selesai}
-                                            />
-                                        </div>
-                                        <div className="form-group mt-4">
-                                            <label className="font-semibold">Dosen</label>
-                                            <select
-                                                name="id_dosen"
-                                                className="form-control mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                                multiple
-                                                required
-                                                value={formData.id_dosen}
-                                                onChange={(e) => {
-                                                    const options = e.target.options;
-                                                    const selectedDosen = [];
-                                                    for (let i = 0; i < options.length; i++) {
-                                                        if (options[i].selected) {
-                                                            selectedDosen.push(options[i].value);
-                                                        }
-                                                    }
-                                                    setFormData({
-                                                        ...formData,
-                                                        id_dosen: selectedDosen,
-                                                    });
-                                                }}
-                                            >
-                                                {dosen.map((item) => (
-                                                    <option key={item.nip} value={item.nip}>{item.nama}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="mt-6">
-                                            <button type="submit" className="btn btn-primary w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
-                                                Tambah Jadwal
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                                <br />
-                                <br />
-                                <div className="mt-2">
-                                    <span className="text-lg font-medium text-gray-900">
-                                        Daftar Jadwal Kuliah
-                                    </span>
-                                </div>
-                                <form className="max-w-sm mt-6">
-                                    <table className="w-full">
-                                        <tr>
-                                            <td className="text-sm font-medium text-gray-900">
-                                                Tahun Akademik
-                                            </td>
-                                            <td>
-                                                <select
-                                                    id="tahun-akademik"
-                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                >
-                                                    <option selected>Select an option</option>
-                                                    <option value="2024/2025">2024/2025</option>
-                                                    <option value="2023/2024">2023/2024</option>
-                                                    <option value="2022/2023">2022/2023</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className="text-sm font-medium text-gray-900">
-                                                Semester
-                                            </td>
-                                            <td>
-                                                <select
-                                                    id="semester"
-                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                >
-                                                    <option selected>Select an option</option>
-                                                    <option value="Ganjil">Ganjil</option>
-                                                    <option value="Genap">Genap</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <div className="mt-4 flex space-x-2">
-                                        <button
-                                            type="button"
-                                            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                <h2 className="text-xl font-bold mb-2">
+                                    Daftar Mata Kuliah
+                                </h2>
+                                <div className="flex-col">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className="text-sm font-medium">
+                                            Semester
+                                        </span>
+                                        <select
+                                            value={semesterFilter}
+                                            onChange={(e) =>
+                                                setSemesterFilter(
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="p-2 text-sm border border-gray-300 rounded-md w-full"
                                         >
-                                            Filter Data
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                        >
-                                            Reset Filter
-                                        </button>
+                                            <option value="">
+                                                Semua Semester
+                                            </option>
+                                            <option value="ganjil">
+                                                Ganjil
+                                            </option>
+                                            <option value="genap">Genap</option>
+                                        </select>
                                     </div>
-                                </form>
-                                <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[500px] scrollbar-hide">
+                                    <div className="relative w-full">
+                                        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <Icon
+                                                icon="ri:search-line"
+                                                style={{
+                                                    color: "gray",
+                                                }}
+                                            />
+                                        </span>
+                                        <input
+                                            type="text"
+                                            name="search"
+                                            value={searchTerm}
+                                            onChange={handleSearch}
+                                            placeholder="Cari Mata Kuliah..."
+                                            className="w-full pl-10 py-2 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2 max-h-[57vh] overflow-y-auto scrollbar-hide">
                                     <style jsx>{`
                                         .scrollbar-hide::-webkit-scrollbar {
                                             display: none;
@@ -304,47 +394,503 @@ const AturJadwal = () => {
                                             scrollbar-width: none;
                                         }
                                     `}</style>
-                                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
-                                        <thead className="text-xs text-white uppercase bg-blue-500 dark:text-gray-400 sticky top-0">
-                                            <tr>
-                                                <th className="px-4 py-2 border">Tahun Akademik</th>
-                                                <th className="px-4 py-2 border">Semester</th>
-                                                <th className="px-4 py-2 border">Hari</th>
-                                                <th className="px-4 py-2 border">Waktu Mulai</th>
-                                                <th className="px-4 py-2 border">Waktu Selesai</th>
-                                                <th className="px-4 py-2 border">Kode Mata Kuliah</th>
-                                                <th className="px-4 py-2 border">Mata Kuliah</th>
-                                                <th className="px-4 py-2 border">SKS</th>
-                                                <th className="px-4 py-2 border">Kelas</th>
-                                                <th className="px-4 py-2 border">Kuota</th>
-                                                <th className="px-4 py-2 border">Dosen Pengampu</th>
-                                                <th className="px-4 py-2 border">Ruangan</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {jadwalKuliah.map((jadwal, index) => (
-                                                <tr key={index}>
-                                                    <td className="border px-4 py-2">{jadwal.tahun_akademik}</td>
-                                                    <td className="border px-4 py-2">{}</td>
-                                                    <td className="border px-4 py-2">{jadwal.hari}</td>
-                                                    <td className="border px-4 py-2">{jadwal.waktu_mulai}</td>
-                                                    <td className="border px-4 py-2">{jadwal.waktu_selesai}</td>
-                                                    <td className="border px-4 py-2">{jadwal.kode_mk}</td>
-                                                    <td className="border px-4 py-2">{}</td>
-                                                    <td className="border px-4 py-2">{jadwal.sks}</td>
-                                                    <td className="border px-4 py-2">{jadwal.id_kelas}</td>
-                                                    <td className="border px-4 py-2">{}</td>
-                                                    <td className="border px-4 py-2">{}</td>
-                                                    <td className="border px-4 py-2">{jadwal.id_ruang}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                    {getFilteredCourses().map((course) => (
+                                        <div
+                                            key={course.id}
+                                            className="flex items-center justify-between p-2 bg-white border border-gray-200 rounded-md shadow-sm"
+                                        >
+                                            <div>
+                                                <div className="font-medium text-[12px]">
+                                                    {course.name}
+                                                </div>
+                                                <div className="text-[10px] text-gray-500">
+                                                    SMT {course.semester} -{" "}
+                                                    {course.code} (
+                                                    {course.semester} SKS)
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={() =>
+                                                    openModal(course)
+                                                }
+                                                className="bg-blue-500 text-white text-[12px] px-3 py-2 rounded-lg hover:bg-blue-600"
+                                            >
+                                                Atur
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100 lg:col-span-5">
+                        <div
+                            className="p-2 border rounded-lg shadow-lg bg-white"
+                            style={{
+                                height: "80vh",
+                            }}
+                        >
+                            <button
+                                onClick={handleButtonClick}
+                                className={`w-20 mb-1 mt-2 mx-2 p-2 text-sm text-white rounded-md ${
+                                    isSubmitted
+                                        ? "bg-red-500 hover:bg-red-600"
+                                        : "bg-blue-500 hover:bg-blue-600"
+                                }`}
+                            >
+                                {isSubmitted ? "Batalkan" : "Ajukan"}
+                            </button>
+                            <div className="flex flex-col space-y-2 p-2 max-h-[70vh] overflow-x-auto scrollbar-hide">
+                                <table className="w-full border-collapse">
+                                    <thead>
+                                        <tr>
+                                            <th className="border p-2 w-20 text-center">
+                                                Jam
+                                            </th>
+                                            {DAYS.map((day) => (
+                                                <th
+                                                    key={day}
+                                                    className="border p-2 w-48 text-center"
+                                                >
+                                                    {day}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {timeSlots.map((hour) => (
+                                            <tr key={hour}>
+                                                <td className="border p-2 text-center align-top">
+                                                    {hour}
+                                                </td>
+                                                {DAYS.map((day) => (
+                                                    <td
+                                                        key={`${day}-${hour}`}
+                                                        className="border p-2 align-top"
+                                                    >
+                                                        <div className="flex flex-col gap-2">
+                                                            {schedules.map(
+                                                                (
+                                                                    schedule,
+                                                                    index
+                                                                ) => {
+                                                                    if (
+                                                                        schedule.day ===
+                                                                            day &&
+                                                                        isScheduleInTimeSlot(
+                                                                            schedule.startTime,
+                                                                            hour
+                                                                        )
+                                                                    ) {
+                                                                        return (
+                                                                            <div
+                                                                                key={
+                                                                                    index
+                                                                                }
+                                                                                className="bg-blue-200 p-2 rounded w-full"
+                                                                            >
+                                                                                <p className="font-semibold">
+                                                                                    {
+                                                                                        schedule.courseName
+                                                                                    }
+                                                                                </p>
+                                                                                <p className="text-sm">
+                                                                                    Kelas:{" "}
+                                                                                    {
+                                                                                        schedule.class
+                                                                                    }
+                                                                                </p>
+                                                                                <p className="text-sm">
+                                                                                    Ruang:{" "}
+                                                                                    {
+                                                                                        schedule.room
+                                                                                    }
+                                                                                </p>
+                                                                                <p className="text-sm">
+                                                                                    {
+                                                                                        schedule.startTime
+                                                                                    }{" "}
+                                                                                    -{" "}
+                                                                                    {
+                                                                                        schedule.endTime
+                                                                                    }
+                                                                                </p>
+                                                                            </div>
+                                                                        );
+                                                                    }
+                                                                    return null;
+                                                                }
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                {/* Modal */}
+                {isModalOpen && (
+                    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div className="bg-white rounded-lg p-6 w-1/3 h-[80vh] overflow-y-auto scrollbar-hide">
+                            <style jsx>{`
+                                .scrollbar-hide::-webkit-scrollbar {
+                                    display: none;
+                                }
+                                .scrollbar-hide {
+                                    -ms-overflow-style: none;
+                                    scrollbar-width: none;
+                                }
+                            `}</style>
+                            <div className="flex justify-between items-center mb-2">
+                                <h2 className="text-xl font-bold">
+                                    Atur Jadwal Mata Kuliah
+                                </h2>
+                                <button
+                                    onClick={closeModal}
+                                    className="text-gray-500 hover:text-gray-700"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
+
+                            <div className="mb-3 grid grid-cols-8">
+                                <div className="col-span-4">
+                                    Nama Mata Kuliah <br />
+                                    {selectedCourse.name}
+                                </div>
+                                <div className="col-span-3">
+                                    <p>
+                                        Kode Mata Kuliah <br />
+                                        {selectedCourse.code}
+                                    </p>
+                                </div>
+                                <div className="col-span-1">
+                                    <p>
+                                        SKS <br />
+                                        {selectedCourse.sks}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="space-y-2">
+                                {scheduleForms.map((form, formIndex) => (
+                                    <div
+                                        key={formIndex}
+                                        className="border-t pt-2"
+                                    >
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block mb-1">
+                                                    Kelas
+                                                </label>
+                                                <input
+                                                    required
+                                                    type="text"
+                                                    className="w-full border rounded p-2"
+                                                    value={form.class}
+                                                    placeholder="A/B/C/..."
+                                                    onChange={(e) => {
+                                                        const newForms = [
+                                                            ...scheduleForms,
+                                                        ];
+                                                        newForms[
+                                                            formIndex
+                                                        ].class =
+                                                            e.target.value;
+                                                        setScheduleForms(
+                                                            newForms
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block mb-1">
+                                                    Kuota
+                                                </label>
+                                                <input
+                                                    required
+                                                    type="number"
+                                                    min="1"
+                                                    className="w-full border rounded p-2"
+                                                    value={form.quota}
+                                                    onChange={(e) => {
+                                                        const newForms = [
+                                                            ...scheduleForms,
+                                                        ];
+                                                        newForms[
+                                                            formIndex
+                                                        ].quota = Math.max(
+                                                            1,
+                                                            parseInt(
+                                                                e.target.value
+                                                            ) || 1
+                                                        );
+                                                        setScheduleForms(
+                                                            newForms
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block mb-1">
+                                                    Ruang
+                                                </label>
+                                                <select
+                                                    required
+                                                    className="w-full border rounded p-2"
+                                                    value={form.room}
+                                                    onChange={(e) => {
+                                                        const newForms = [
+                                                            ...scheduleForms,
+                                                        ];
+                                                        newForms[
+                                                            formIndex
+                                                        ].room = e.target.value;
+                                                        setScheduleForms(
+                                                            newForms
+                                                        );
+                                                    }}
+                                                >
+                                                    <option value="">
+                                                        Pilih Ruang
+                                                    </option>
+                                                    {ROOMS.map((room) => (
+                                                        <option
+                                                            key={room.id}
+                                                            value={room.name}
+                                                        >
+                                                            {room.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block mb-1">
+                                                    Hari
+                                                </label>
+                                                <select
+                                                    required
+                                                    className="w-full border rounded p-2"
+                                                    value={form.day}
+                                                    onChange={(e) => {
+                                                        const newForms = [
+                                                            ...scheduleForms,
+                                                        ];
+                                                        newForms[
+                                                            formIndex
+                                                        ].day = e.target.value;
+                                                        setScheduleForms(
+                                                            newForms
+                                                        );
+                                                    }}
+                                                >
+                                                    <option value="">
+                                                        Pilih Hari
+                                                    </option>
+                                                    {DAYS.map((day) => (
+                                                        <option
+                                                            key={day}
+                                                            value={day}
+                                                        >
+                                                            {day}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block mb-1">
+                                                    Jam Mulai
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <select
+                                                        required
+                                                        className="w-full border rounded p-2"
+                                                        value={form.hour}
+                                                        onChange={(e) =>
+                                                            handleTimeChange(
+                                                                formIndex,
+                                                                "hour",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    >
+                                                        <option value="">
+                                                            Jam
+                                                        </option>
+                                                        {HOURS.map((hour) => (
+                                                            <option
+                                                                key={hour}
+                                                                value={hour}
+                                                            >
+                                                                {hour}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    <span className="text-xl">
+                                                        :
+                                                    </span>
+                                                    <select
+                                                        required
+                                                        className="w-full border rounded p-2"
+                                                        value={form.minute}
+                                                        onChange={(e) =>
+                                                            handleTimeChange(
+                                                                formIndex,
+                                                                "minute",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    >
+                                                        <option value="">
+                                                            Menit
+                                                        </option>
+                                                        {MINUTES.map(
+                                                            (minute) => (
+                                                                <option
+                                                                    key={minute}
+                                                                    value={
+                                                                        minute
+                                                                    }
+                                                                >
+                                                                    {minute}
+                                                                </option>
+                                                            )
+                                                        )}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block mb-1">
+                                                    Jam Selesai
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full border rounded p-2 bg-gray-100"
+                                                    value={form.endTime}
+                                                    readOnly
+                                                    placeholder="--.--"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-4">
+                                            <label className="block mb-1">
+                                                Dosen Pengampu
+                                            </label>
+                                            {form.lecturers.map(
+                                                (lecturer, lecturerIndex) => (
+                                                    <div
+                                                        key={lecturerIndex}
+                                                        className="flex gap-2 mb-2"
+                                                    >
+                                                        <select
+                                                            required
+                                                            className="w-full border rounded p-2"
+                                                            value={lecturer}
+                                                            onChange={(e) => {
+                                                                const newForms =
+                                                                    [
+                                                                        ...scheduleForms,
+                                                                    ];
+                                                                newForms[
+                                                                    formIndex
+                                                                ].lecturers[
+                                                                    lecturerIndex
+                                                                ] =
+                                                                    e.target.value;
+                                                                setScheduleForms(
+                                                                    newForms
+                                                                );
+                                                            }}
+                                                        >
+                                                            <option value="">
+                                                                Pilih Dosen
+                                                            </option>
+                                                            {LECTURERS.map(
+                                                                (l) => (
+                                                                    <option
+                                                                        key={
+                                                                            l.id
+                                                                        }
+                                                                        value={
+                                                                            l.name
+                                                                        }
+                                                                    >
+                                                                        {l.name}
+                                                                    </option>
+                                                                )
+                                                            )}
+                                                        </select>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                handleAddLecturer(
+                                                                    formIndex
+                                                                )
+                                                            }
+                                                            className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
+                                                        >
+                                                            <Plus size={20} />
+                                                        </button>
+                                                        {form.lecturers.length >
+                                                            1 && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    handleRemoveLecturer(
+                                                                        formIndex,
+                                                                        lecturerIndex
+                                                                    )
+                                                                }
+                                                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                                                            >
+                                                                <Minus
+                                                                    size={20}
+                                                                />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
+
+                                        {scheduleForms.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleRemoveForm(formIndex)
+                                                }
+                                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                            >
+                                                Hapus Kelas
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+
+                                <div className="flex justify-start">
+                                    <button
+                                        type="submit"
+                                        className="bg-blue-600 text-white px-4 py-2  mr-2 rounded hover:bg-blue-700"
+                                    >
+                                        Simpan
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleAddForm}
+                                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                    >
+                                        Tambah Kelas
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
             </main>
         </KaprodiLayout>
     );
