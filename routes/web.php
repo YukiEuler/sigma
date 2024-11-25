@@ -83,12 +83,9 @@ Route::get('kaprodi/data-mahasiswa', [DataMahasiswaController::class, 'index'])-
 Route::get('kaprodi/data-matakuliah', [DataMKController::class, 'index'])->name('kaprodi.dataMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('kaprodi/data-matakuliah/store', [DataMKController::class, 'store'])->name('kaprodi.storeMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('/kaprodi/data-matakuliah/delete/{id}', [DataMKController::class, 'destroy'])->name('kaprodi.deleteMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
-
-
 Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
-// Route::post('kaprodi/data-matakuliah', [DataMKController::class, 'store'])->name('mataKuliah.store');
-// Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
-// Route::post('kaprodi/atur-jadwal', [AturJadwalController::class, 'store'])->name('aturJadwal.aturJadwalStore')->middleware(['auth', 'validateRole:Kaprodi']);
-// Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'create'])->name('kaprodi.aturJadwalCreate')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::post('kaprodi/atur-jadwal/store', [AturJadwalController::class, 'store'])->name('kaprodi.storeJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
+
+
 
 
