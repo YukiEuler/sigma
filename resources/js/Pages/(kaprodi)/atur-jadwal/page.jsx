@@ -4,10 +4,14 @@ import { Inertia } from "@inertiajs/inertia";
 import KaprodiLayout from "@/Layouts/KaprodiLayout";
 import { X, Plus, Minus } from "lucide-react";
 import { Icon } from "@iconify/react";
+import Swal from "sweetalert2";
 
 const AturJadwal = () => {
     const { props } = usePage();
     const dosenData = props.dosen;
+    const mataKuliahData = props.mataKuliah;
+    const listDosenData = props.listDosen;
+    const ruanganData = props.ruangan;
     const [dosen, setDosen] = useState(dosenData);
     const [schedules, setSchedules] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +24,7 @@ const AturJadwal = () => {
         {
             class: "",
             quota: "",
-            lecturers: [""],
+            listDosenData: [""],
             room: "",
             day: "",
             startTime: "",
@@ -29,80 +33,6 @@ const AturJadwal = () => {
             minute: "",
         },
     ]);
-
-    // Sample data
-    const COURSES = [
-        {
-            id: "IF1001",
-            name: "Algoritma dan Pemrograman",
-            semester: 1,
-            sks: 3,
-            code: "IF1001",
-        },
-        {
-            id: "IF1002",
-            name: "Basis Data",
-            semester: 3,
-            sks: 4,
-            code: "IF1002",
-        },
-        {
-            id: "IF1003",
-            name: "Pemrograman Web",
-            semester: 3,
-            sks: 3,
-            code: "IF1003",
-        },
-        {
-            id: "IF1004",
-            name: "Pemrograman Web",
-            semester: 3,
-            sks: 3,
-            code: "IF1003",
-        },
-        {
-            id: "IF1005",
-            name: "Pemrograman Web",
-            semester: 3,
-            sks: 3,
-            code: "IF1003",
-        },
-        {
-            id: "IF1006",
-            name: "Pemrograman Web",
-            semester: 4,
-            sks: 3,
-            code: "IF1003",
-        },
-        {
-            id: "IF1007",
-            name: "Pemrograman Web",
-            semester: 4,
-            sks: 3,
-            code: "IF1003",
-        },
-        {
-            id: "IF1008",
-            name: "Pemrograman Web",
-            semester: 4,
-            sks: 3,
-            code: "IF1003",
-        },
-    ];
-
-    const LECTURERS = [
-        { id: 1, name: "Dr. John Doe" },
-        { id: 2, name: "Prof. Jane Smith" },
-        { id: 3, name: "Dr. Robert Johnson" },
-        { id: 4, name: "Dr. Sarah Williams" },
-    ];
-
-    const ROOMS = [
-        { id: 1, name: "Lab 1" },
-        { id: 2, name: "Lab 2" },
-        { id: 3, name: "Room 301" },
-        { id: 4, name: "Room 302" },
-    ];
 
     const DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
 
@@ -178,7 +108,7 @@ const AturJadwal = () => {
             {
                 class: "",
                 quota: "",
-                lecturers: [""],
+                listDosenData: [""],
                 room: "",
                 day: "",
                 startTime: "",
@@ -198,16 +128,16 @@ const AturJadwal = () => {
 
     const handleAddLecturer = (formIndex) => {
         const newForms = [...scheduleForms];
-        newForms[formIndex].lecturers.push("");
+        newForms[formIndex].listDosenData.push("");
         setScheduleForms(newForms);
     };
 
     const handleRemoveLecturer = (formIndex, lecturerIndex) => {
         const newForms = [...scheduleForms];
-        if (newForms[formIndex].lecturers.length > 1) {
-            newForms[formIndex].lecturers = newForms[
+        if (newForms[formIndex].listDosenData.length > 1) {
+            newForms[formIndex].listDosenData = newForms[
                 formIndex
-            ].lecturers.filter((_, i) => i !== lecturerIndex);
+            ].listDosenData.filter((_, i) => i !== lecturerIndex);
             setScheduleForms(newForms);
         }
     };
@@ -224,9 +154,10 @@ const AturJadwal = () => {
 
             return {
                 ...form,
-                courseId: selectedCourse.id,
-                courseName: selectedCourse.name,
+                courseId: selectedCourse.kode_mk,
+                courseName: selectedCourse.nama,
                 sks: selectedCourse.sks,
+                kuota: selectedCourse.kuota,
                 startTime,
                 endTime,
             };
@@ -261,7 +192,7 @@ const AturJadwal = () => {
                 {
                     class: "",
                     quota: "",
-                    lecturers: [""],
+                    listDosenData: [""],
                     room: "",
                     day: "",
                     startTime: "",
@@ -295,10 +226,10 @@ const AturJadwal = () => {
     };
 
     const getFilteredCourses = () => {
-        return COURSES.filter((course) => {
+        return mataKuliahData.filter((course) => {
             const matchesSearch =
-                course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                course.code.toLowerCase().includes(searchTerm.toLowerCase());
+                course.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                course.kode_mk.toLowerCase().includes(searchTerm.toLowerCase());
 
             if (semesterFilter === "") {
                 return matchesSearch;
@@ -396,16 +327,16 @@ const AturJadwal = () => {
                                     `}</style>
                                     {getFilteredCourses().map((course) => (
                                         <div
-                                            key={course.id}
+                                            key={course.kode_mk}
                                             className="flex items-center justify-between p-2 bg-white border border-gray-200 rounded-md shadow-sm"
                                         >
                                             <div>
                                                 <div className="font-medium text-[12px]">
-                                                    {course.name}
+                                                    {course.nama}
                                                 </div>
                                                 <div className="text-[10px] text-gray-500">
                                                     SMT {course.semester} -{" "}
-                                                    {course.code} (
+                                                    {course.kode_mk} (
                                                     {course.semester} SKS)
                                                 </div>
                                             </div>
@@ -494,6 +425,11 @@ const AturJadwal = () => {
                                                                                         schedule.courseName
                                                                                     }
                                                                                 </p>
+                                                                                <p className="text-md">
+                                                                                    {
+                                                                                        schedule.courseId
+                                                                                    }
+                                                                                </p>
                                                                                 <p className="text-sm">
                                                                                     Kelas:{" "}
                                                                                     {
@@ -504,6 +440,12 @@ const AturJadwal = () => {
                                                                                     Ruang:{" "}
                                                                                     {
                                                                                         schedule.room
+                                                                                    }
+                                                                                </p>
+                                                                                <p className="text-sm">
+                                                                                    Kuota:{" "}
+                                                                                    {
+                                                                                        schedule.kuota
                                                                                     }
                                                                                 </p>
                                                                                 <p className="text-sm">
@@ -535,7 +477,7 @@ const AturJadwal = () => {
                 {/* Modal */}
                 {isModalOpen && (
                     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                        <div className="bg-white rounded-lg p-6 w-1/3 h-[80vh] overflow-y-auto scrollbar-hide">
+                        <div className="bg-white rounded-lg px-6 pb-6 w-1/3 h-[80vh] overflow-y-auto scrollbar-hide">
                             <style jsx>{`
                                 .scrollbar-hide::-webkit-scrollbar {
                                     display: none;
@@ -545,42 +487,44 @@ const AturJadwal = () => {
                                     scrollbar-width: none;
                                 }
                             `}</style>
-                            <div className="flex justify-between items-center mb-2">
-                                <h2 className="text-xl font-bold">
-                                    Atur Jadwal Mata Kuliah
-                                </h2>
-                                <button
-                                    onClick={closeModal}
-                                    className="text-gray-500 hover:text-gray-700"
-                                >
-                                    <X size={24} />
-                                </button>
-                            </div>
+                            <header className="sticky top-0 bg-white pt-6">
+                                <div className="flex justify-between items-center mb-2">
+                                    <h2 className="text-xl font-bold">
+                                        Atur Jadwal Mata Kuliah
+                                    </h2>
+                                    <button
+                                        onClick={closeModal}
+                                        className="text-gray-500 hover:text-gray-700"
+                                    >
+                                        <X size={24} />
+                                    </button>
+                                </div>
 
-                            <div className="mb-3 grid grid-cols-8">
-                                <div className="col-span-4">
-                                    Nama Mata Kuliah <br />
-                                    {selectedCourse.name}
+                                <div className="mb-3 grid grid-cols-8">
+                                    <div className="col-span-4">
+                                        Nama Mata Kuliah <br />
+                                        {selectedCourse.nama}
+                                    </div>
+                                    <div className="col-span-3">
+                                        <p>
+                                            Kode Mata Kuliah <br />
+                                            {selectedCourse.kode_mk}
+                                        </p>
+                                    </div>
+                                    <div className="col-span-1">
+                                        <p>
+                                            SKS <br />
+                                            {selectedCourse.sks}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="col-span-3">
-                                    <p>
-                                        Kode Mata Kuliah <br />
-                                        {selectedCourse.code}
-                                    </p>
-                                </div>
-                                <div className="col-span-1">
-                                    <p>
-                                        SKS <br />
-                                        {selectedCourse.sks}
-                                    </p>
-                                </div>
-                            </div>
+                                <div className="border-t pt-2"></div>
+                            </header>
 
                             <form onSubmit={handleSubmit} className="space-y-2">
                                 {scheduleForms.map((form, formIndex) => (
                                     <div
                                         key={formIndex}
-                                        className="border-t pt-2"
                                     >
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
@@ -658,12 +602,14 @@ const AturJadwal = () => {
                                                     <option value="">
                                                         Pilih Ruang
                                                     </option>
-                                                    {ROOMS.map((room) => (
+                                                    {ruanganData.map((room) => (
                                                         <option
-                                                            key={room.id}
-                                                            value={room.name}
+                                                            key={room.id_ruang}
+                                                            value={
+                                                                room.nama_ruang
+                                                            }
                                                         >
-                                                            {room.name}
+                                                            {room.nama_ruang}
                                                         </option>
                                                     ))}
                                                 </select>
@@ -781,7 +727,7 @@ const AturJadwal = () => {
                                             <label className="block mb-1">
                                                 Dosen Pengampu
                                             </label>
-                                            {form.lecturers.map(
+                                            {form.listDosenData.map(
                                                 (lecturer, lecturerIndex) => (
                                                     <div
                                                         key={lecturerIndex}
@@ -798,7 +744,7 @@ const AturJadwal = () => {
                                                                     ];
                                                                 newForms[
                                                                     formIndex
-                                                                ].lecturers[
+                                                                ].listDosenData[
                                                                     lecturerIndex
                                                                 ] =
                                                                     e.target.value;
@@ -810,17 +756,17 @@ const AturJadwal = () => {
                                                             <option value="">
                                                                 Pilih Dosen
                                                             </option>
-                                                            {LECTURERS.map(
+                                                            {listDosenData.map(
                                                                 (l) => (
                                                                     <option
                                                                         key={
-                                                                            l.id
+                                                                            l.nip
                                                                         }
                                                                         value={
-                                                                            l.name
+                                                                            l.nama
                                                                         }
                                                                     >
-                                                                        {l.name}
+                                                                        {l.nama}
                                                                     </option>
                                                                 )
                                                             )}
@@ -836,8 +782,8 @@ const AturJadwal = () => {
                                                         >
                                                             <Plus size={20} />
                                                         </button>
-                                                        {form.lecturers.length >
-                                                            1 && (
+                                                        {form.listDosenData
+                                                            .length > 1 && (
                                                             <button
                                                                 type="button"
                                                                 onClick={() =>

@@ -503,13 +503,13 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                                     <td className="px-4 py-2 text-[14px] text-center">
                                                         {item.diajukan === 0 &&
                                                         item.disetujui === 0
-                                                            ? "Belum Diajukan"
+                                                            ? "Not Submitted"
                                                             : item.diajukan ===
                                                                   1 &&
                                                               item.disetujui ===
                                                                   0
-                                                            ? "Sudah Diajukan"
-                                                            : "Sudah Disetujui"}
+                                                            ? "Submitted"
+                                                            : "Approved"}
                                                     </td>
                                                     <td className="px-4 py-2 flex justify-center">
                                                         <button
