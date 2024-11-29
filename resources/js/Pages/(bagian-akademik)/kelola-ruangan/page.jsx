@@ -4,14 +4,16 @@ import { Inertia } from "@inertiajs/inertia";
 import { Icon } from "@iconify/react";
 import { FaPlus } from "react-icons/fa6";
 import Swal from "sweetalert2";
-import axios from 'axios';
+import axios from "axios";
 import BagianAkademikLayout from "../../../Layouts/BagianAkademikLayout";
 
-const KelolaRuangan = ({ ruangan, programStudiList }) => {
+const KelolaRuangan = ({ programStudiList }) => {
     const [data, setData] = useState([]);
     const { props } = usePage();
+    const ruanganData = props.ruangan;
     const bagian_akademikData = props.bagian_akademik;
     const [bagian_akademik, setBagian_akademik] = useState(bagian_akademikData);
+    const [ruangan, setRuangan] = useState(ruanganData);
     const [loading, setLoading] = useState(false);
     const [selectedRooms, setSelectedRooms] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
@@ -19,10 +21,18 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
     const [selectedProdi, setSelectedProdi] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
     const [showAddRoomModal, setShowAddRoomModal] = useState(false);
+    const [showEditRoomModal, setShowEditRoomModal] = useState(false);
     const [newRoom, setNewRoom] = useState({
         id_ruang: "",
         nama_ruang: "",
         kuota: "",
+        id_prodi: "",
+    });
+    const [editRoom, setEditRoom] = useState({
+        nama_ruang: ruangan.nama_ruang,
+        kuota: ruangan.kuota,
+        status: ruangan.status,
+        nama_fakultas: ruangan.nama_fakultas,
         id_prodi: "",
     });
 
@@ -184,7 +194,8 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
             buttonsStyling: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post(`/bagian-akademik/atur-ruang/ajukan/${item.id_ruang}`)
+                axios
+                    .post(`/bagian-akademik/atur-ruang/ajukan/${item.id_ruang}`)
                     .then((response) => {
                         if (response.data.success) {
                             Swal.fire({
@@ -200,7 +211,9 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                         }
                     })
                     .catch((error) => {
-                        const errorMessage = error.response?.data?.error || "Terjadi kesalahan saat mengajukan ruangan.";
+                        const errorMessage =
+                            error.response?.data?.error ||
+                            "Terjadi kesalahan saat mengajukan ruangan.";
                         Swal.fire({
                             title: "Gagal!",
                             text: errorMessage,
@@ -267,7 +280,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
             });
             return;
         }
-    
+
         Swal.fire({
             title: "Tambah Ruang Baru",
             html: `Apakah Anda yakin ingin menambahkan ruang berikut?<br><br>
@@ -289,7 +302,8 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post("/bagian-akademik/atur-ruang/tambah-ruang", newRoom)
+                axios
+                    .post("/bagian-akademik/atur-ruang/tambah-ruang", newRoom)
                     .then((response) => {
                         setShowAddRoomModal(false);
                         setNewRoom({
@@ -310,7 +324,8 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                         });
                     })
                     .catch((error) => {
-                        const errorMessage = error.response?.data?.error || "Terjadi kesalahan";
+                        const errorMessage =
+                            error.response?.data?.error || "Terjadi kesalahan";
                         Swal.fire({
                             title: "Gagal!",
                             text: errorMessage,
@@ -320,17 +335,120 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                             },
                         });
                     });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: "Dibatalkan",
+                    text: "Penambahan ruangan dibatalkan",
+                    icon: "error",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger",
+                    },
+                    buttonsStyling: false,
+                });
+            }
+        });
+    };
+
+    const handleEditRoom = () => {
+        if (!editRoom.nama_ruang || !editRoom.kuota || !editRoom.id_prodi) {
+            Swal.fire({
+                title: "Error!",
+                text: "Semua field harus diisi",
+                icon: "error",
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: "Edit Ruang",
+            html: `Apakah Anda yakin ingin mengubah ruang berikut?<br><br>
+                <b>Nama Ruang:</b> ${editRoom.nama_ruang}<br>
+                <b>Kuota:</b> ${editRoom.kuota}<br>
+                <b>Program Studi:</b> ${
+                    programStudiList.find(
+                        (p) => p.id_prodi === editRoom.id_prodi
+                    )?.nama_prodi
+                }`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Ya, Ubah",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+            customClass: {
+                confirmButton: "btn btn-success mr-2",
+                cancelButton: "btn btn-danger ml-2",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios
+                    .post("/bagian-akademik/atur-ruang/update", {
+                        id_ruang: editRoom.id_ruang,
+                        id_prodi: editRoom.id_prodi,
+                        nama_ruang: editRoom.nama_ruang,
+                        kuota: editRoom.kuota,
+                    })
+                    .then((response) => {
+                        setShowEditRoomModal(false);
+                        setEditRoom({
+                            nama_ruang: ruangan.nama_ruang,
+                            kuota: ruangan.kuota,
+                            status: ruangan.status,
+                            nama_fakultas: ruangan.nama_fakultas,
+                            id_prodi: "",
+                        });
+                        Swal.fire({
+                            title: "Berhasil!",
+                            text: "Ruang berhasil diubah",
+                            icon: "success",
+                            customClass: {
+                                confirmButton: "btn btn-success",
+                            },
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    })
+                    .catch((error) => {
+                        const errorMessage =
+                            error.response?.data?.error || "Terjadi kesalahan";
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: errorMessage,
+                            icon: "error",
+                            customClass: {
+                                confirmButton: "btn btn-danger",
+                            },
+                        });
+                    });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: "Dibatalkan",
+                    text: "Perubahan ruangan dibatalkan",
+                    icon: "error",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger",
+                    },
+                    buttonsStyling: false,
+                });
             }
         });
     };
 
     useEffect(() => {
         // Set axios headers ketika komponen dimount
-        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        axios.defaults.headers.common["X-CSRF-TOKEN"] = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content");
     }, []);
 
     const handleOpenAddRoomModal = () => {
         setShowAddRoomModal(true);
+    };
+
+    const handleOpenEditRoomModal = (room) => {
+        setEditRoom(room);
+        setShowEditRoomModal(true);
     };
 
     useEffect(() => {
@@ -511,7 +629,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                                     scope="col"
                                                     className="px-4 py-3"
                                                     style={{
-                                                        width: "25%",
+                                                        width: "20%",
                                                         textAlign: "center",
                                                         fontSize: "14px",
                                                     }}
@@ -528,6 +646,17 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                                     }}
                                                 >
                                                     Program Studi
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-3"
+                                                    style={{
+                                                        width: "5%",
+                                                        textAlign: "center",
+                                                        fontSize: "14px",
+                                                    }}
+                                                >
+                                                    Kuota
                                                 </th>
                                                 <th
                                                     scope="col"
@@ -589,6 +718,9 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                                         {item.nama_prodi}
                                                     </td>
                                                     <td className="px-4 py-2 text-[14px] text-center">
+                                                        {item.kuota}
+                                                    </td>
+                                                    <td className="px-4 py-2 text-[14px] text-center">
                                                         {item.diajukan === 0 &&
                                                         item.disetujui === 0
                                                             ? "Not Submitted"
@@ -601,8 +733,13 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                                     </td>
                                                     <td className="px-4 py-2 flex justify-center">
                                                         <button
+                                                            // onClick={() =>
+                                                            //     (window.location.href = `/bagian-akademik/atur-ruang/edit/${item.id_ruang}`)
+                                                            // }
                                                             onClick={() =>
-                                                                (window.location.href = `/bagian-akademik/atur-ruang/edit/${item.id_ruang}`)
+                                                                handleOpenEditRoomModal(
+                                                                    item
+                                                                )
                                                             }
                                                             disabled={
                                                                 item.diajukan ===
@@ -669,7 +806,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                             <h2 className="text-xl font-semibold mb-4">
                                 Tambah Ruang Baru
                             </h2>
-                            <div className="mb-4">
+                            <div className="mb-2">
                                 <label className="block text-sm font-medium text-gray-700">
                                     Nama Ruang
                                 </label>
@@ -686,7 +823,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                     placeholder="Masukkan nama ruang"
                                 />
                             </div>
-                            <div className="mb-4">
+                            <div className="mb-2">
                                 <label className="block text-sm font-medium text-gray-700">
                                     Kuota
                                 </label>
@@ -733,7 +870,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                             <div className="flex justify-end space-x-2">
                                 <button
                                     onClick={() => setShowAddRoomModal(false)}
-                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded"
+                                    className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
                                 >
                                     Batal
                                 </button>
@@ -742,6 +879,91 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                     className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
                                 >
                                     Tambah
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showEditRoomModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-white p-6 rounded-lg w-96">
+                            <h2 className="text-xl font-semibold mb-4">
+                                Edit Ruang {editRoom.nama_ruang}
+                            </h2>
+                            <div className="mb-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Nama Ruang
+                                </label>
+                                <input
+                                    type="text"
+                                    value={editRoom.nama_ruang}
+                                    onChange={(e) =>
+                                        setEditRoom({
+                                            ...editRoom,
+                                            nama_ruang: e.target.value,
+                                        })
+                                    }
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                                    placeholder="Masukkan nama ruang"
+                                />
+                            </div>
+                            <div className="mb-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Kuota
+                                </label>
+                                <input
+                                    type="number"
+                                    value={editRoom.kuota}
+                                    onChange={(e) =>
+                                        setEditRoom({
+                                            ...editRoom,
+                                            kuota: e.target.value,
+                                        })
+                                    }
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                                    placeholder="Masukkan kuota ruang"
+                                />
+                            </div>
+                            <div className="mb-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Program Studi
+                                </label>
+                                <select
+                                    value={editRoom.id_prodi}
+                                    onChange={(e) =>
+                                        setEditRoom({
+                                            ...editRoom,
+                                            id_prodi: e.target.value,
+                                        })
+                                    }
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                                >
+                                    <option value="">
+                                        Pilih Program Studi
+                                    </option>
+                                    {programStudiList.map((prodi) => (
+                                        <option
+                                            key={prodi.id_prodi}
+                                            value={prodi.id_prodi}
+                                        >
+                                            {prodi.nama_prodi}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex justify-end space-x-2">
+                                <button
+                                    onClick={() => setShowEditRoomModal(false)}
+                                    className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    onClick={handleEditRoom}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                                >
+                                    Simpan
                                 </button>
                             </div>
                         </div>
