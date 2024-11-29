@@ -9,18 +9,15 @@ const RegistrasiMahasiswa = () => {
     const { props } = usePage();
     const mahasiswaData = props.mahasiswa;
     const [mahasiswa, setMahasiswa] = useState(mahasiswaData);
+    const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
 
     useEffect(() => {
         setMahasiswa(mahasiswaData);
     }, [mahasiswaData]);
 
-    const handleStatusChange = (newStatus) => {
-        setStatus(newStatus);
-    };
-
     const handleAktifConfirmation = () => {
-        if (status === "aktif") return; // Prevent clicking if already active
+        if (mahasiswa.status !== "Belum Aktif") return;
 
         Swal.fire({
             title: "Konfirmasi Status Aktif",
@@ -37,20 +34,44 @@ const RegistrasiMahasiswa = () => {
             buttonsStyling: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                setStatus("aktif");
-                Swal.fire({
-                    title: "Berhasil!",
-                    text: "Status Aktif telah dipilih",
-                    icon: "success",
-                    customClass: {
-                        confirmButton: "btn btn-success",
+                Inertia.post(
+                    "/mahasiswa/registrasi/ubah-status",
+                    {
+                        status: "Aktif",
                     },
-                    buttonsStyling: true,
-                });
+                    {
+                        onSuccess: () => {
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Status AKTIF telah dipilih",
+                                icon: "success",
+                                customClass: {
+                                    confirmButton: "btn btn-success",
+                                },
+                                buttonsStyling: true,
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        },
+                        onError: (errors) => {
+                            Swal.fire({
+                                title: "Gagal!",
+                                text:
+                                    errors.message ||
+                                    "Terjadi kesalahan saat mengupdate status",
+                                icon: "error",
+                                customClass: {
+                                    confirmButton: "btn btn-danger",
+                                },
+                                buttonsStyling: true,
+                            });
+                        },
+                    }
+                );
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire({
                     title: "Dibatalkan",
-                    text: "Pemilihan status Aktif dibatalkan",
+                    text: "Pemilihan status AKTIF dibatalkan",
                     icon: "info",
                     customClass: {
                         cancelButton: "btn btn-danger",
@@ -62,7 +83,7 @@ const RegistrasiMahasiswa = () => {
     };
 
     const handleCutiConfirmation = () => {
-        if (status === "cuti") return; // Prevent clicking if already on leave
+        if (mahasiswa.status !== "Belum Aktif") return; // Prevent clicking if already on leave
 
         Swal.fire({
             title: "Konfirmasi Status Cuti",
@@ -79,20 +100,44 @@ const RegistrasiMahasiswa = () => {
             buttonsStyling: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                setStatus("cuti");
-                Swal.fire({
-                    title: "Berhasil!",
-                    text: "Status Cuti telah dipilih",
-                    icon: "success",
-                    customClass: {
-                        confirmButton: "btn btn-success",
+                Inertia.post(
+                    "/mahasiswa/registrasi/ubah-status",
+                    {
+                        status: "Cuti",
                     },
-                    buttonsStyling: true,
-                });
+                    {
+                        onSuccess: () => {
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Status CUTI telah dipilih",
+                                icon: "success",
+                                customClass: {
+                                    confirmButton: "btn btn-success",
+                                },
+                                buttonsStyling: true,
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        },
+                        onError: (errors) => {
+                            Swal.fire({
+                                title: "Gagal!",
+                                text:
+                                    errors.message ||
+                                    "Terjadi kesalahan saat mengupdate status",
+                                icon: "error",
+                                customClass: {
+                                    confirmButton: "btn btn-danger",
+                                },
+                                buttonsStyling: true,
+                            });
+                        },
+                    }
+                );
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire({
                     title: "Dibatalkan",
-                    text: "Pemilihan status Cuti dibatalkan",
+                    text: "Pemilihan status CUTI dibatalkan",
                     icon: "info",
                     customClass: {
                         cancelButton: "btn btn-danger",
@@ -128,8 +173,15 @@ const RegistrasiMahasiswa = () => {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div
                                             className={`p-4 border rounded-lg ${
-                                                status === "aktif"
+                                                mahasiswa.status === "Aktif"
                                                     ? "border-green-500 bg-green-100"
+                                                    : mahasiswa.status ===
+                                                          "Lulus" ||
+                                                      mahasiswa.status ===
+                                                          "DO" ||
+                                                      mahasiswa.status ===
+                                                          "Cuti"
+                                                    ? "border-gray-300 bg-gray-100"
                                                     : "border-gray-300"
                                             }`}
                                         >
@@ -144,16 +196,26 @@ const RegistrasiMahasiswa = () => {
                                             </p>
                                             <button
                                                 className={`mt-2 px-4 py-2 rounded-lg ${
-                                                    status === "aktif"
+                                                    mahasiswa.status === "Aktif"
                                                         ? "bg-green-500 text-white"
-                                                        : "bg-green-100 hover:bg-green-200 text-green-700"
+                                                        : mahasiswa.status ===
+                                                          "Belum Aktif"
+                                                        ? "bg-green-500 hover:bg-green-600 text-white"
+                                                        : "bg-gray-300 text-gray-700"
                                                 }`}
                                                 onClick={
                                                     handleAktifConfirmation
                                                 }
-                                                disabled={status === "cuti"}
+                                                disabled={
+                                                    mahasiswa.status ===
+                                                        "Cuti" ||
+                                                    mahasiswa.status ===
+                                                        "Lulus" ||
+                                                    mahasiswa.status === "DO" ||
+                                                    mahasiswa.status === "Aktif"
+                                                }
                                             >
-                                                {status === "aktif"
+                                                {mahasiswa.status === "Aktif"
                                                     ? "Terpilih"
                                                     : "Pilih"}
                                             </button>
@@ -161,8 +223,15 @@ const RegistrasiMahasiswa = () => {
 
                                         <div
                                             className={`p-4 border rounded-lg ${
-                                                status === "cuti"
+                                                mahasiswa.status === "Cuti"
                                                     ? "border-red-500 bg-red-100"
+                                                    : mahasiswa.status ===
+                                                          "Lulus" ||
+                                                      mahasiswa.status ===
+                                                          "DO" ||
+                                                      mahasiswa.status ===
+                                                          "Aktif"
+                                                    ? "border-gray-300 bg-gray-100"
                                                     : "border-gray-300"
                                             }`}
                                         >
@@ -177,14 +246,24 @@ const RegistrasiMahasiswa = () => {
                                             </p>
                                             <button
                                                 className={`mt-2 px-4 py-2 rounded-lg ${
-                                                    status === "cuti"
+                                                    mahasiswa.status === "Cuti"
                                                         ? "bg-red-500 text-white"
-                                                        : "bg-red-100 hover:bg-red-200 text-red-700"
+                                                        : mahasiswa.status ===
+                                                          "Belum Aktif"
+                                                        ? "bg-red-500 hover:bg-red-600 text-white"
+                                                        : "bg-gray-300 text-gray-700"
                                                 }`}
                                                 onClick={handleCutiConfirmation}
-                                                disabled={status === "aktif"}
+                                                disabled={
+                                                    mahasiswa.status ===
+                                                        "Aktif" ||
+                                                    mahasiswa.status ===
+                                                        "Lulus" ||
+                                                    mahasiswa.status === "DO" ||
+                                                    mahasiswa.status === "Cuti"
+                                                }
                                             >
-                                                {status === "cuti"
+                                                {mahasiswa.status === "Cuti"
                                                     ? "Terpilih"
                                                     : "Pilih"}
                                             </button>
@@ -207,16 +286,17 @@ const RegistrasiMahasiswa = () => {
                                         Status akademik Anda:{" "}
                                         <span
                                             className={`font-semibold ${
-                                                status === "aktif"
+                                                mahasiswa.status === "Aktif"
                                                     ? "text-green-500"
-                                                    : status === "cuti"
+                                                    : mahasiswa.status ===
+                                                      "Cuti"
                                                     ? "text-red-500"
                                                     : "text-blue-500"
                                             }`}
                                         >
-                                            {status
-                                                ? status.toUpperCase()
-                                                : "BELUM DIPILIH"}
+                                            {mahasiswa.status === "Belum Aktif"
+                                                ? "BELUM HER-REGISTRASI"
+                                                : mahasiswa.status}
                                         </span>
                                     </p>
                                     <p className="text-gray-700 mt-2">

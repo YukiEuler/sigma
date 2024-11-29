@@ -48,7 +48,8 @@ const DashboardMahasiswa = () => {
                             </div>
                             <div className="flex justify-center items-center mb-3">
                                 <span className="block text-lg text-gray-700">
-                                    <strong>(NIP:</strong> {mahasiswa.nip_dosen_wali})
+                                    <strong>(NIP:</strong>{" "}
+                                    {mahasiswa.nip_dosen_wali})
                                 </span>
                             </div>
                             <div className="grid grid-cols-3 text-center mb-3">
@@ -57,21 +58,34 @@ const DashboardMahasiswa = () => {
                                         Semester Akademik Sekarang
                                     </p>
                                     <p className="font-semibold text-xl">
-                                        2024/2025 Ganjil
+                                        {mahasiswa.tahun_akademik}
                                     </p>
                                 </div>
                                 <div className="border-r border-gray-300">
                                     <p className="text-gray-500 text-md">
                                         Semester Studi
                                     </p>
-                                    <p className="font-semibold text-xl">{mahasiswa.semester}</p>
+                                    <p className="font-semibold text-xl">
+                                        {mahasiswa.semester}
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-gray-500 text-md">
                                         Status Akademik
                                     </p>
-                                    <span className="inline-block px-3 py-1 mt-1 text-sm font-semibold uppercase text-white bg-green-500 rounded-md">
-                                        {mahasiswa.status}
+                                    <span
+                                        className={`inline-block px-3 py-1 mt-1 text-sm font-semibold uppercase text-white rounded-md ${
+                                            mahasiswa.status === "Aktif"
+                                                ? "bg-green-500"
+                                                : mahasiswa.status ===
+                                                  "Belum Aktif"
+                                                ? "bg-blue-500"
+                                                : "bg-red-500"
+                                        }`}
+                                    >
+                                        {mahasiswa.status === "Belum Aktif"
+                                            ? "Belum Her-Registrasi"
+                                            : mahasiswa.status}
                                     </span>
                                 </div>
                             </div>
@@ -104,7 +118,9 @@ const DashboardMahasiswa = () => {
                                     <p className="text-gray-500 text-lg">
                                         SKSk
                                     </p>
-                                    <p className="font-semibold text-xl">{mahasiswa.sks_kumulatif}</p>
+                                    <p className="font-semibold text-xl">
+                                        {mahasiswa.sks_kumulatif}
+                                    </p>
                                 </div>
                             </div>
                         </div>

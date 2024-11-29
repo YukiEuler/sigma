@@ -66,6 +66,7 @@ Route::get('mahasiswa/akademik/insert/{id_kelas}', [AkademikMhsController::class
 Route::get('mahasiswa/akademik/update/{id_kelas}', [AkademikMhsController::class, 'delete'])->name('mahasiswa.deleteirs')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/akademik/ubah-status', [AkademikMhsController::class, 'ubahstatus'])->name('mahasiswa.ubahstatus')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/registrasi', [RegistrasiController::class, 'index'])->name('mahasiswa.registrasi')->middleware(['auth', 'validateRole:Mahasiswa']);
+Route::post('mahasiswa/registrasi/ubah-status', [RegistrasiController::class, 'updateStatus'])->name('mahasiswa.updateStatus')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/biaya', [BiayaController::class, 'index'])->name('mahasiswa.biaya')->middleware(['auth', 'validateRole:Mahasiswa']);
 
 Route::get('dekan/dashboard', [DekanController::class, 'index'])->name('dekan.dashboard')->middleware(['auth', 'validateRole:Dekan']);
