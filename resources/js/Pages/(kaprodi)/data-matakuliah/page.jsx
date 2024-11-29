@@ -4,6 +4,7 @@ import { Inertia } from "@inertiajs/inertia";
 import KaprodiLayout from "@/Layouts/KaprodiLayout";
 import { Icon } from "@iconify/react";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const DataMataKuliah = ({ mataKuliah }) => {
     const { props } = usePage();
@@ -28,6 +29,13 @@ const DataMataKuliah = ({ mataKuliah }) => {
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
 
+    useEffect(() => {
+        // Set axios headers ketika komponen dimount
+        axios.defaults.headers.common["X-CSRF-TOKEN"] = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content");
+    }, []);
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -50,7 +58,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
         }
 
         Swal.fire({
-            title: "Konfirmasi Penambahan",
+            title: "Tambah Mata Kuliah Baru",
             html: `Apakah Anda yakin ingin menambahkan mata kuliah berikut?<br><br>
                   <b>Kode MK:</b> ${newMataKuliah.kode}<br>
                   <b>Nama:</b> ${newMataKuliah.nama}<br>
@@ -69,8 +77,9 @@ const DataMataKuliah = ({ mataKuliah }) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Kirim data mata kuliah baru
-                Inertia.post("/kaprodi/data-matakuliah/store", newMataKuliah, {
-                    onSuccess: () => {
+                axios
+                    .post("/kaprodi/data-matakuliah/store", newMataKuliah)
+                    .then((response) => {
                         handleCloseModal();
                         setNewMataKuliah({
                             kode: "",
@@ -91,46 +100,79 @@ const DataMataKuliah = ({ mataKuliah }) => {
                             // Refresh halaman setelah alert ditutup
                             window.location.reload();
                         });
-                    },
-                    onError: (errors) => {
-                        // Check jika error adalah kode MK yang sama
-                        if (errors.message) {
-                            let errorMessage = "";
-
-                            // Handle kasus di mana ada duplikasi kode dan/atau nama
-                            if (errors.duplicate) {
-                                if (
-                                    errors.duplicate.kode &&
-                                    errors.duplicate.nama
-                                ) {
-                                    errorMessage =
-                                        "Kode dan nama mata kuliah sudah digunakan!";
-                                } else if (errors.duplicate.kode) {
-                                    errorMessage =
-                                        "Kode mata kuliah sudah digunakan!";
-                                } else if (errors.duplicate.nama) {
-                                    errorMessage =
-                                        "Nama mata kuliah sudah digunakan!";
-                                }
-                            } else {
-                                // Handle error lainnya
-                                errorMessage = Object.values(errors.message)[0];
-                            }
-
-                            Swal.fire({
-                                title: "Gagal!",
-                                text: errorMessage,
-                                icon: "error",
-                                customClass: {
-                                    confirmButton: "btn btn-danger",
-                                },
-                            });
-                        }
-                    },
-                });
+                    })
+                    .catch((error) => {
+                        const errorMessage =
+                            error.response?.data?.error || "Terjadi kesalahan";
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: errorMessage,
+                            icon: "error",
+                            customClass: {
+                                confirmButton: "btn btn-danger",
+                            },
+                        });
+                    });
             }
         });
     };
+    // onSuccess: () => {
+    //     handleCloseModal();
+    //     setNewMataKuliah({
+    //         kode: "",
+    //         nama: "",
+    //         sks: "",
+    //         semester: "",
+    //         jenis: "Wajib",
+    //     });
+
+    //     Swal.fire({
+    //         title: "Berhasil!",
+    //         text: "Mata kuliah berhasil ditambahkan",
+    //         icon: "success",
+    //         customClass: {
+    //             confirmButton: "btn btn-success",
+    //         },
+    //     }).then(() => {
+    //         // Refresh halaman setelah alert ditutup
+    //         window.location.reload();
+    //     });
+    // },
+    // onError: (errors) => {
+    //     // Check jika error adalah kode MK yang sama
+    //     if (errors.message) {
+    //         let errorMessage = "";
+
+    //         // Handle kasus di mana ada duplikasi kode dan/atau nama
+    //         if (errors.duplicate) {
+    //             if (
+    //                 errors.duplicate.kode &&
+    //                 errors.duplicate.nama
+    //             ) {
+    //                 errorMessage =
+    //                     "Kode dan nama mata kuliah sudah digunakan!";
+    //             } else if (errors.duplicate.kode) {
+    //                 errorMessage =
+    //                     "Kode mata kuliah sudah digunakan!";
+    //             } else if (errors.duplicate.nama) {
+    //                 errorMessage =
+    //                     "Nama mata kuliah sudah digunakan!";
+    //             }
+    //         } else {
+    //             // Handle error lainnya
+    //             errorMessage = Object.values(errors.message)[0];
+    //         }
+
+    //         Swal.fire({
+    //             title: "Gagal!",
+    //             text: errorMessage,
+    //             icon: "error",
+    //             customClass: {
+    //                 confirmButton: "btn btn-danger",
+    //             },
+    //         });
+    //     }
+    // },
 
     const handleDelete = (item) => {
         Swal.fire({
