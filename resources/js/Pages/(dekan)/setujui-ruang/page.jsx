@@ -23,8 +23,8 @@ const SetujuiRuang = ({ ruangan }) => {
     // Status options
     const statusOptions = [
         { value: "", label: "Semua Status" },
-        { value: "belum_disetujui", label: "Belum Disetujui" },
-        { value: "sudah_disetujui", label: "Sudah Disetujui" },
+        { value: "belum_disetujui", label: "Not Approved" },
+        { value: "sudah_disetujui", label: "Aprroved" },
     ];
 
     const filteredData = data.filter((room) => {
@@ -478,8 +478,8 @@ const SetujuiRuang = ({ ruangan }) => {
                                                                   1 &&
                                                               item.disetujui ===
                                                                   0
-                                                            ? "Belum Disetujui"
-                                                            : "Sudah Disetujui"}
+                                                            ? "Not Approved"
+                                                            : "Aprroved"}
                                                     </td>
                                                     <td className="px-4 py-2 flex justify-center">
                                                         <button

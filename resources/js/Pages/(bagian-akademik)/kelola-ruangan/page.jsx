@@ -184,50 +184,39 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
             buttonsStyling: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                Inertia.visit(
-                    `/bagian-akademik/atur-ruang/ajukan/${item.id_ruang}`,
-                    {
-                        method: "post",
-                        onSuccess: () => {
-                            console.log("OKE");
+                axios.post(`/bagian-akademik/atur-ruang/ajukan/${item.id_ruang}`)
+                    .then((response) => {
+                        if (response.data.success) {
                             Swal.fire({
                                 title: "Diajukan!",
-                                text: "Ruangan telah berhasil diajukan",
+                                text: response.data.message,
                                 icon: "success",
                                 customClass: {
                                     confirmButton: "btn btn-success",
-                                    cancelButton: "btn btn-danger",
                                 },
+                            }).then(() => {
+                                window.location.reload(); // Reload halaman untuk memperbarui data
                             });
-                            setData(
-                                data.map((item) =>
-                                    item.id_ruang === id_ruang
-                                        ? { ...item, diajukan: 1 }
-                                        : item
-                                )
-                            );
-                        },
-                        onError: () => {
-                            Swal.fire({
-                                title: "Gagal!",
-                                text: "Terjadi kesalahan saat mengajukan ruangan.",
-                                icon: "error",
-                                customClass: {
-                                    confirmButton: "btn btn-success",
-                                    cancelButton: "btn btn-danger",
-                                },
-                            });
-                        },
-                    }
-                );
+                        }
+                    })
+                    .catch((error) => {
+                        const errorMessage = error.response?.data?.error || "Terjadi kesalahan saat mengajukan ruangan.";
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: errorMessage,
+                            icon: "error",
+                            customClass: {
+                                confirmButton: "btn btn-danger",
+                            },
+                        });
+                    });
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire({
                     title: "Dibatalkan",
                     text: "Pengajuan ruangan dibatalkan",
                     icon: "error",
                     customClass: {
-                        confirmButton: "btn btn-success",
-                        cancelButton: "btn btn-danger",
+                        confirmButton: "btn btn-danger",
                     },
                 });
             }

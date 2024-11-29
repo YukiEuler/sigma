@@ -111,17 +111,17 @@ const SetujuiJadwal = ({}) => {
                                 </div>
                                 <div className="flex justify-between items-center mt-4">
                                     <button
-                                    // onClick={handleSetujuiSelected}
-                                    disabled={
-                                        loading ||
-                                        selectedJadwal.length === 0
-                                    }
-                                    className={`${
-                                        loading ||
-                                        selectedJadwal.length === 0
-                                            ? "bg-gray-400"
-                                            : "bg-green-500 hover:bg-green-600"
-                                    } text-white px-4 py-2 rounded text-[14px] w-40`}
+                                        // onClick={handleSetujuiSelected}
+                                        disabled={
+                                            loading ||
+                                            selectedJadwal.length === 0
+                                        }
+                                        className={`${
+                                            loading ||
+                                            selectedJadwal.length === 0
+                                                ? "bg-gray-400"
+                                                : "bg-green-500 hover:bg-green-600"
+                                        } text-white px-4 py-2 rounded text-[14px] w-40`}
                                     >
                                         Setujui Semua
                                     </button>
@@ -206,18 +206,7 @@ const SetujuiJadwal = ({}) => {
                                                     scope="col"
                                                     className="px-4 py-3"
                                                     style={{
-                                                        width: "29%",
-                                                        textAlign: "center",
-                                                        fontSize: "14px",
-                                                    }}
-                                                >
-                                                    Jadwal
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-4 py-3"
-                                                    style={{
-                                                        width: "30%",
+                                                        width: "59%",
                                                         textAlign: "center",
                                                         fontSize: "14px",
                                                     }}
@@ -259,6 +248,70 @@ const SetujuiJadwal = ({}) => {
                                                 </th>
                                             </tr>
                                         </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td className="px-4 py-3">
+                                                    <div className="flex items-center justify-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="w-4 h-4 mr-2"
+                                                        />
+                                                    </div>
+                                                </td>
+                                                <td
+                                                    className="px-4 py-3"
+                                                    style={{
+                                                        textAlign: "center",
+                                                        fontSize: "14px",
+                                                    }}
+                                                >
+                                                    1
+                                                </td>
+                                                <td
+                                                    className="px-4 py-3"
+                                                    style={{
+                                                        textAlign: "center",
+                                                        fontSize: "14px",
+                                                    }}
+                                                >
+                                                    Teknik Informatika
+                                                </td>
+                                                <td
+                                                    className="px-4 py-3"
+                                                    style={{
+                                                        textAlign: "center",
+                                                        fontSize: "14px",
+                                                    }}
+                                                >
+                                                    Not Aprroved
+                                                </td>
+                                                <td
+                                                    className="px-4 py-3"
+                                                    style={{
+                                                        textAlign: "center",
+                                                        fontSize: "14px",
+                                                    }}
+                                                >
+                                                    <a
+                                                        href={`/dekan/setujui-jadwal/detail`}
+                                                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
+                                                    >
+                                                        Detail
+                                                    </a>
+                                                </td>
+                                                <td
+                                                    className="px-4 py-3"
+                                                    style={{
+                                                        textAlign: "center",
+                                                        fontSize: "14px",
+                                                    }}
+                                                >
+                                                    <button className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[14px] text-center w-16">
+                                                        Setujui
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
                                         {/* <tbody>
                                                 {filteredData.map(
                                                     (item, index) => (

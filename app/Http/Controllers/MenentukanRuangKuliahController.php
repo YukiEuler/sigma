@@ -105,7 +105,7 @@ class MenentukanRuangKuliahController extends Controller
         }
 
         // Retrieve the room by id
-        $ruangan = Ruangan::find($id_ruang);
+        $ruangan = Ruangan::where('id_ruang', $id_ruang)->first();
 
         // Check if the room exists
         if (!$ruangan) {
@@ -127,27 +127,27 @@ class MenentukanRuangKuliahController extends Controller
     }
 
   public function ajukanRuang($id)
-  {
+{
     $user = Auth::user();
 
     // Check if user is authenticated
     if (!$user) {
-        return redirect()->route('login');
+        return response()->json(['error' => 'Unauthorized'], 401);
     } elseif ($user->role !== 'Bagian Akademik'){
-        return redirect()->route('home');
+        return response()->json(['error' => 'Forbidden'], 403);
     }
 
     // Retrieve the room by id
-    $ruangan = Ruangan::find($id);
+    $ruangan = Ruangan::where('id_ruang', $id)->first();
 
     // Check if the room exists
     if (!$ruangan) {
-        return back()->with('error', 'Ruangan tidak ditemukan.');
+        return response()->json(['error' => 'Ruangan tidak ditemukan.'], 404);
     }
 
     // Check if room is already submitted
     if ($ruangan->diajukan == 1) {
-        return back()->with('error', 'Ruangan sudah diajukan sebelumnya.');
+        return response()->json(['error' => 'Ruangan sudah diajukan sebelumnya.'], 422);
     }
 
     try {
@@ -155,11 +155,16 @@ class MenentukanRuangKuliahController extends Controller
         $ruangan->diajukan = 1;
         $ruangan->save();
 
-        return back()->with('success', 'Ruangan berhasil diajukan untuk persetujuan.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Ruangan berhasil diajukan untuk persetujuan.'
+        ]);
     } catch (\Exception $e) {
-        return back()->with('error', 'Terjadi kesalahan saat mengajukan ruangan.');
+        return response()->json([
+            'error' => 'Terjadi kesalahan saat mengajukan ruangan.'
+        ], 500);
     }
- }
+}
 
  public function ajukanMultipleRuang(Request $request)
  {
