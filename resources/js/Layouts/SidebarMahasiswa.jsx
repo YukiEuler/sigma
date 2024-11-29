@@ -70,7 +70,7 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
                             <span class="ms-3">Registrasi</span>
                         </a>
                     </li>
-                    <li>
+                    {/* <li>
                         <a
                             href="/mahasiswa/biaya"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
@@ -78,7 +78,7 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
                             <TbCashRegister style={{ fontSize: "24px" }} />
                             <span class="ms-3">Biaya Kuliah</span>
                         </a>
-                    </li>
+                    </li> */}
                     <li>
                         <a
                             href="/mahasiswa/akademik"

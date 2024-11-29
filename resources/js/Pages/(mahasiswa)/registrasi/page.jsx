@@ -3,6 +3,7 @@ import { usePage } from "@inertiajs/inertia-react";
 import { Inertia } from "@inertiajs/inertia";
 import MahasiswaLayout from "../../../Layouts/MahasiswaLayout";
 import { Icon } from "@iconify/react";
+import Swal from "sweetalert2";
 
 const RegistrasiMahasiswa = () => {
     const { props } = usePage();
@@ -18,10 +19,94 @@ const RegistrasiMahasiswa = () => {
         setStatus(newStatus);
     };
 
+    const handleAktifConfirmation = () => {
+        if (status === "aktif") return; // Prevent clicking if already active
+
+        Swal.fire({
+            title: "Konfirmasi Status Aktif",
+            text: "Apakah Anda yakin ingin memilih status AKTIF untuk semester ini?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Ya, Pilih Aktif",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger",
+            },
+            buttonsStyling: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setStatus("aktif");
+                Swal.fire({
+                    title: "Berhasil!",
+                    text: "Status Aktif telah dipilih",
+                    icon: "success",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                    },
+                    buttonsStyling: true,
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: "Dibatalkan",
+                    text: "Pemilihan status Aktif dibatalkan",
+                    icon: "info",
+                    customClass: {
+                        cancelButton: "btn btn-danger",
+                    },
+                    buttonsStyling: true,
+                });
+            }
+        });
+    };
+
+    const handleCutiConfirmation = () => {
+        if (status === "cuti") return; // Prevent clicking if already on leave
+
+        Swal.fire({
+            title: "Konfirmasi Status Cuti",
+            text: "Apakah Anda yakin ingin mengambil CUTI untuk semester ini?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Ya, Pilih Cuti",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger",
+            },
+            buttonsStyling: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setStatus("cuti");
+                Swal.fire({
+                    title: "Berhasil!",
+                    text: "Status Cuti telah dipilih",
+                    icon: "success",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                    },
+                    buttonsStyling: true,
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: "Dibatalkan",
+                    text: "Pemilihan status Cuti dibatalkan",
+                    icon: "info",
+                    customClass: {
+                        cancelButton: "btn btn-danger",
+                    },
+                    buttonsStyling: true,
+                });
+            }
+        });
+    };
+
     return (
         <MahasiswaLayout mahasiswa={mahasiswa}>
             <main className="flex-1 max-h-full">
-                <div className="flex flex-col items-start justify-between pb-6 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
+                <div className="flex flex-col items-start justify-between mt-2 pb-3 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
                     <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
                         Registrasi
                     </h1>
@@ -61,10 +146,10 @@ const RegistrasiMahasiswa = () => {
                                                 className={`mt-2 px-4 py-2 rounded-lg ${
                                                     status === "aktif"
                                                         ? "bg-green-500 text-white"
-                                                        : "bg-green-100 text-green-700"
+                                                        : "bg-green-100 hover:bg-green-200 text-green-700"
                                                 }`}
-                                                onClick={() =>
-                                                    handleStatusChange("aktif")
+                                                onClick={
+                                                    handleAktifConfirmation
                                                 }
                                                 disabled={status === "cuti"}
                                             >
@@ -77,7 +162,7 @@ const RegistrasiMahasiswa = () => {
                                         <div
                                             className={`p-4 border rounded-lg ${
                                                 status === "cuti"
-                                                    ? "border-blue-500 bg-blue-100"
+                                                    ? "border-red-500 bg-red-100"
                                                     : "border-gray-300"
                                             }`}
                                         >
@@ -93,12 +178,10 @@ const RegistrasiMahasiswa = () => {
                                             <button
                                                 className={`mt-2 px-4 py-2 rounded-lg ${
                                                     status === "cuti"
-                                                        ? "bg-blue-500 text-white"
-                                                        : "bg-blue-100 text-blue-700"
+                                                        ? "bg-red-500 text-white"
+                                                        : "bg-red-100 hover:bg-red-200 text-red-700"
                                                 }`}
-                                                onClick={() =>
-                                                    handleStatusChange("cuti")
-                                                }
+                                                onClick={handleCutiConfirmation}
                                                 disabled={status === "aktif"}
                                             >
                                                 {status === "cuti"
@@ -126,6 +209,8 @@ const RegistrasiMahasiswa = () => {
                                             className={`font-semibold ${
                                                 status === "aktif"
                                                     ? "text-green-500"
+                                                    : status === "cuti"
+                                                    ? "text-red-500"
                                                     : "text-blue-500"
                                             }`}
                                         >
