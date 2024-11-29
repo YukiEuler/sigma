@@ -10,6 +10,9 @@ const DataMataKuliah = ({ mataKuliah }) => {
     const dosenData = props.dosen;
     const [dosen, setDosen] = useState(dosenData);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedSemester, setSelectedSemester] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredMataKuliah, setFilteredMataKuliah] = useState([]);
     const [newMataKuliah, setNewMataKuliah] = useState({
         kode: "",
         nama: "",
@@ -17,9 +20,6 @@ const DataMataKuliah = ({ mataKuliah }) => {
         semester: "",
         jenis: "Wajib",
     });
-    const [selectedSemester, setSelectedSemester] = useState("");
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredMataKuliah, setFilteredMataKuliah] = useState([]);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -205,15 +205,21 @@ const DataMataKuliah = ({ mataKuliah }) => {
     };
 
     useEffect(() => {
-        const filtered = mataKuliah.filter(
-            (mk) =>
+        // Menerapkan filter berdasarkan pencarian dan semester
+        const filtered = mataKuliah.filter((mk) => {
+            const matchesSearch =
                 mk.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                mk.kode_mk.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+                mk.kode_mk.toLowerCase().includes(searchTerm.toLowerCase());
+
+            const matchesSemester =
+                selectedSemester === "" || // Jika tidak ada semester yang dipilih, tampilkan semua
+                mk.semester.toString() === selectedSemester;
+
+            return matchesSearch && matchesSemester;
+        });
+
         setFilteredMataKuliah(filtered);
-        // setMataKuliah(mataKuliahData);
-        // getStackedData(mataKuliah);
-    }, [dosen, searchTerm, mataKuliah]);
+    }, [dosen, searchTerm, selectedSemester, mataKuliah]);
 
     return (
         <KaprodiLayout dosen={dosen}>
@@ -238,14 +244,14 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                         className="px-2 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
                                     >
                                         <option value="">Semua Semester</option>
-                                        <option value="1">Semester 1</option>
-                                        <option value="2">Semester 2</option>
-                                        <option value="3">Semester 3</option>
-                                        <option value="4">Semester 4</option>
-                                        <option value="5">Semester 5</option>
-                                        <option value="6">Semester 6</option>
-                                        <option value="7">Semester 7</option>
-                                        <option value="8">Semester 8</option>
+                                        {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                                            <option
+                                                key={num}
+                                                value={num.toString()}
+                                            >
+                                                Semester {num}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div className="flex justify-between items-center mt-4 mb-2">

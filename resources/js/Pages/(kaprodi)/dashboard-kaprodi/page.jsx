@@ -5,7 +5,9 @@ import KaprodiLayout from "../../../Layouts/KaprodiLayout";
 
 const DashboardKaprodi = () => {
     const { props } = usePage();
+    const mahasiswaData = props.mahasiswa;
     const dosenData = props.dosen;
+    const [mahasiswa, setMahasiswa] = useState(mahasiswaData);
     const [dosen, setDosen] = useState(dosenData);
 
     useEffect(() => {
@@ -28,7 +30,7 @@ const DashboardKaprodi = () => {
                                     Total Mahasiswa
                                 </span>
                                 <span className="text-lg font-semibold">
-                                    10
+                                    {mahasiswa.total}
                                 </span>
                             </div>
                             <div className="p-8"></div>
@@ -41,7 +43,7 @@ const DashboardKaprodi = () => {
                                     Mahasiswa Aktif
                                 </span>
                                 <span className="text-lg font-semibold">
-                                    20
+                                    {mahasiswa.aktif}
                                 </span>
                             </div>
                             <div className="p-8"></div>
@@ -56,7 +58,7 @@ const DashboardKaprodi = () => {
                                     Mahasiswa Cuti
                                 </span>
                                 <span className="text-lg font-semibold">
-                                    10
+                                    {mahasiswa.cuti}
                                 </span>
                             </div>
                             <div className="p-8"></div>
@@ -69,7 +71,7 @@ const DashboardKaprodi = () => {
                                     Mahasiswa DO
                                 </span>
                                 <span className="text-lg font-semibold">
-                                    20
+                                    {mahasiswa.do}
                                 </span>
                             </div>
                             <div className="p-8"></div>
@@ -82,9 +84,8 @@ const DashboardKaprodi = () => {
                                     Mahasiswa Lulus
                                 </span>
                                 <span className="text-lg font-semibold">
-                                    20
+                                    {mahasiswa.lulus}
                                 </span>
-
                             </div>
                             <div className="p-8"></div>
                         </div>
@@ -103,10 +104,10 @@ const DashboardKaprodi = () => {
                                         width={350}
                                         height={350}
                                         series={[
-                                            20,
-                                            20,
-                                            20,
-                                            20,
+                                            mahasiswa.aktif,
+                                            mahasiswa.cuti,
+                                            mahasiswa.do,
+                                            mahasiswa.lulus,
                                         ]}
                                         options={{
                                             labels: [
