@@ -6,10 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ruangan extends Model
 {
     protected $table = 'ruangan';
-    protected $primaryKey = 'id_ruang';
-    public $incrementing = false;
-    protected $keyType = 'string';
-    protected $fillable = ['id_ruang', 'nama_ruang', 'kuota', 'id_fakultas', 'id_prodi', 'diajukan', 'disetujui'];
+    protected $fillable = ['nama_ruang', 'kuota', 'id_fakultas', 'id_prodi', 'diajukan', 'disetujui'];
 
     public function fakultas()
     {

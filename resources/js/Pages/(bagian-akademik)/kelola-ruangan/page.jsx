@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/inertia-react";
 import { Inertia } from "@inertiajs/inertia";
 import { Icon } from "@iconify/react";
+import { FaPlus } from "react-icons/fa6";
 import Swal from "sweetalert2";
+import axios from 'axios';
 import BagianAkademikLayout from "../../../Layouts/BagianAkademikLayout";
 
 const KelolaRuangan = ({ ruangan, programStudiList }) => {
@@ -16,6 +18,13 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProdi, setSelectedProdi] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
+    const [showAddRoomModal, setShowAddRoomModal] = useState(false);
+    const [newRoom, setNewRoom] = useState({
+        id_ruang: "",
+        nama_ruang: "",
+        kuota: "",
+        id_prodi: "",
+    });
 
     const statusOptions = [
         { value: "", label: "Semua Status" },
@@ -260,6 +269,81 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
         );
     };
 
+    const handleAddRoom = () => {
+        if (!newRoom.nama_ruang || !newRoom.kuota || !newRoom.id_prodi) {
+            Swal.fire({
+                title: "Error!",
+                text: "Semua field harus diisi",
+                icon: "error",
+            });
+            return;
+        }
+    
+        Swal.fire({
+            title: "Tambah Ruang Baru",
+            html: `Apakah Anda yakin ingin menambahkan ruang berikut?<br><br>
+                <b>Nama Ruang:</b> ${newRoom.nama_ruang}<br>
+                <b>Kuota:</b> ${newRoom.kuota}<br>
+                <b>Program Studi:</b> ${
+                    programStudiList.find(
+                        (p) => p.id_prodi === newRoom.id_prodi
+                    )?.nama_prodi
+                }`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Ya, Tambahkan",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+            customClass: {
+                confirmButton: "btn btn-success mr-2",
+                cancelButton: "btn btn-danger ml-2",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post("/bagian-akademik/atur-ruang/tambah-ruang", newRoom)
+                    .then((response) => {
+                        setShowAddRoomModal(false);
+                        setNewRoom({
+                            id_ruang: "",
+                            nama_ruang: "",
+                            kuota: "",
+                            id_prodi: "",
+                        });
+                        Swal.fire({
+                            title: "Berhasil!",
+                            text: "Ruang berhasil ditambahkan",
+                            icon: "success",
+                            customClass: {
+                                confirmButton: "btn btn-success",
+                            },
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    })
+                    .catch((error) => {
+                        const errorMessage = error.response?.data?.error || "Terjadi kesalahan";
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: errorMessage,
+                            icon: "error",
+                            customClass: {
+                                confirmButton: "btn btn-danger",
+                            },
+                        });
+                    });
+            }
+        });
+    };
+
+    useEffect(() => {
+        // Set axios headers ketika komponen dimount
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }, []);
+
+    const handleOpenAddRoomModal = () => {
+        setShowAddRoomModal(true);
+    };
+
     useEffect(() => {
         setData(ruangan);
         setBagian_akademik(bagian_akademikData);
@@ -306,7 +390,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                             )}
                                         </select>
                                     </div>
-                                    <div className="mt-2">
+                                    <div className="mt-2 mb-2">
                                         <span className="mr-[4.5rem]">
                                             Status
                                         </span>
@@ -331,7 +415,21 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="flex justify-between items-center mt-4">
+                                <div>
+                                    <button
+                                        onClick={handleOpenAddRoomModal}
+                                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-[14px] w-40 flex items-center transition-colors"
+                                    >
+                                        <FaPlus
+                                            className="mx-auto text-white"
+                                            style={{
+                                                fontSize: "20px",
+                                            }}
+                                        />
+                                        Tambah Ruang
+                                    </button>
+                                </div>
+                                <div className="flex justify-between items-center">
                                     <button
                                         onClick={handleAjukanSelected}
                                         disabled={
@@ -347,6 +445,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                     >
                                         Ajukan Semua
                                     </button>
+
                                     <div className="w-64">
                                         <div className="relative w-full">
                                             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -374,7 +473,7 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[385px] scrollbar-hide">
+                                <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[345px] scrollbar-hide">
                                     <style jsx>{`
                                         .scrollbar-hide::-webkit-scrollbar {
                                             display: none;
@@ -575,6 +674,90 @@ const KelolaRuangan = ({ ruangan, programStudiList }) => {
                         </div>
                     </div>
                 </div>
+                {showAddRoomModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-white p-6 rounded-lg w-96">
+                            <h2 className="text-xl font-semibold mb-4">
+                                Tambah Ruang Baru
+                            </h2>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Nama Ruang
+                                </label>
+                                <input
+                                    type="text"
+                                    value={newRoom.nama_ruang}
+                                    onChange={(e) =>
+                                        setNewRoom({
+                                            ...newRoom,
+                                            nama_ruang: e.target.value,
+                                        })
+                                    }
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                                    placeholder="Masukkan nama ruang"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Kuota
+                                </label>
+                                <input
+                                    type="number"
+                                    value={newRoom.kuota}
+                                    onChange={(e) =>
+                                        setNewRoom({
+                                            ...newRoom,
+                                            kuota: e.target.value,
+                                        })
+                                    }
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                                    placeholder="Masukkan kuota ruang"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Program Studi
+                                </label>
+                                <select
+                                    value={newRoom.id_prodi}
+                                    onChange={(e) =>
+                                        setNewRoom({
+                                            ...newRoom,
+                                            id_prodi: e.target.value,
+                                        })
+                                    }
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                                >
+                                    <option value="">
+                                        Pilih Program Studi
+                                    </option>
+                                    {programStudiList.map((prodi) => (
+                                        <option
+                                            key={prodi.id_prodi}
+                                            value={prodi.id_prodi}
+                                        >
+                                            {prodi.nama_prodi}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex justify-end space-x-2">
+                                <button
+                                    onClick={() => setShowAddRoomModal(false)}
+                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded"
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    onClick={handleAddRoom}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                                >
+                                    Tambah
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </BagianAkademikLayout>
     );
