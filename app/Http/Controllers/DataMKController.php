@@ -54,7 +54,6 @@ class DataMKController extends Controller
                     'required',
                     'string',
                     'max:30',
-                    Rule::unique('mata_kuliah', 'kode_mk'),
                 ],
                 'nama' => 'required|string|max:100',
                 'sks' => 'required|integer|min:1',
@@ -71,6 +70,16 @@ class DataMKController extends Controller
                 'jenis.required' => 'Jenis mata kuliah wajib diisi!',
                 'jenis.in' => 'Jenis mata kuliah harus Wajib atau Pilihan!'
             ]);
+
+            $exist = MataKuliah::where('kode_mk', $validated['kode'])  // Perhatikan menggunakan 'kode' bukan 'kode_mk'
+            ->where('id_prodi', $dosen->id_prodi)
+            ->first();
+
+            if ($exist) {
+                return response()->json([
+                    'error' => 'Mata kuliah sudah ada.'
+                ], 422);
+            }
     
             // Create mata kuliah
              $mataKuliah = MataKuliah::create([
@@ -83,13 +92,22 @@ class DataMKController extends Controller
             ]);
     
             if(!$mataKuliah) {
-                return back()->with('error', 'Gagal menambahkan mata kuliah.');
+                // return back()->with('error', 'Gagal menambahkan mata kuliah.');
+                return response()->json([
+                    'error' => 'Gagal menambahkan mata kuliah.'
+                ], 422);
             }
     
-            return back()->with('success', 'Mata kuliah berhasil ditambahkan.');
+            // return back()->with('success', 'Mata kuliah berhasil ditambahkan.');
+            return response()->json([
+                'success' => true
+            ]);
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan saat menambahkan ruangan.');
+            // return back()->with('error', 'Terjadi kesalahan saat menambahkan ruangan.');
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat menambahkan mata kuliah.'
+            ], 422);
         }
     }
 
