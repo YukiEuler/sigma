@@ -12,8 +12,9 @@ class CreateKelasTable extends Migration
             $table->id();
             $table->char('kode_kelas', 1);
             $table->string('kode_mk', 30);
-            $table->integer('tahun');
-            $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
+            // $table->integer('tahun');
+            // $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
+            $table->string('tahun_akademik');
             $table->integer('kuota');
 
             $table->foreign('kode_mk')->references('kode_mk')->on('mata_kuliah')->onDelete('cascade');

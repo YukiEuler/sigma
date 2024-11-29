@@ -4,6 +4,7 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
 import { LuBookMarked } from "react-icons/lu";
 import { RiCalendarScheduleLine } from "react-icons/ri";
+import { SiGoogleclassroom } from "react-icons/si";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
 
@@ -87,6 +88,17 @@ const SidebarKaprodi = ({ dosen }) => {
                         >
                             <LuBookMarked style={{ fontSize: "24px" }} />
                             <span class="ms-3">Data Mata Kuliah</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="/kaprodi/atur-kelas"
+                            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <SiGoogleclassroom
+                                style={{ fontSize: "24px" }}
+                            />
+                            <span class="ms-3">Atur Kelas</span>
                         </a>
                     </li>
                     <li>
