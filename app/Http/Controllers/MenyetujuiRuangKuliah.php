@@ -85,6 +85,7 @@ class MenyetujuiRuangKuliah extends Controller
     public function setujuiMultipleRuang(Request $request)
     {
         $user = Auth::user();
+        error_log("Halo 3");
 
         // Check if user is authenticated and has proper role
         if (!$user) {
@@ -109,7 +110,6 @@ class MenyetujuiRuangKuliah extends Controller
                           ->where('diajukan', 1)
                           ->where('disetujui', 0)
                           ->get();
-
             // Update all matching rooms
             foreach ($rooms as $room) {
                 $room->disetujui = 1;

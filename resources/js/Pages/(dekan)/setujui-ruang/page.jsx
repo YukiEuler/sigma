@@ -94,8 +94,9 @@ const SetujuiRuang = ({ ruangan }) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 setLoading(true);
+                console.log(selectedRooms);
                 Inertia.post(
-                    "/dekan/setujui-ruang/setujui-multiple",
+                    "/dekan/setujui-ruang/set/setujui-multiple",
                     { room_ids: selectedRooms },
                     {
                         onSuccess: () => {
