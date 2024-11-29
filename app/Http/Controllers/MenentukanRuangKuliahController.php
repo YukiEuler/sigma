@@ -254,6 +254,62 @@ class MenentukanRuangKuliahController extends Controller
         return back()->with('error', 'Terjadi kesalahan saat membatalkan pengajuan ruangan.');
     }
     }
+
+    public function tambahRuang(Request $request)
+{
+    $user = Auth::user();
+    $bagian_akademik = BagianAkademik::where('user_id', $user->id)->first();
+
+    try {
+        $validated = $request->validate([
+            'nama_ruang' => 'required|string|max:100',
+            'kuota' => 'required|integer|min:1',
+            'id_prodi' => 'required|integer|exists:program_studi,id_prodi'
+        ], [
+            'nama_ruang.required' => 'Nama ruangan wajib diisi!',
+            'nama_ruang.max' => 'Nama ruangan maksimal 100 karakter!',
+            'kuota.required' => 'Kuota wajib diisi!',
+            'kuota.min' => 'Kuota minimal 1!',
+            'id_prodi.required' => 'Program studi wajib diisi!',
+            'id_prodi.exists' => 'Program studi tidak ditemukan!'
+        ]);
+
+        $exists = Ruangan::where('nama_ruang', $validated['nama_ruang'])
+                     ->where('id_fakultas', $bagian_akademik->id_fakultas)
+                     ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'error' => 'Ruangan dengan nama yang sama sudah ada dalam fakultas.'
+            ], 422);
+        }
+
+        $ruangan = Ruangan::create([
+            'nama_ruang' => $validated['nama_ruang'],
+            'kuota' => $validated['kuota'],
+            'id_fakultas' => $bagian_akademik->id_fakultas,
+            'id_prodi' => $validated['id_prodi'],
+            'diajukan' => 0,
+            'disetujui' => 0
+        ]);
+
+        if (!$ruangan) {
+            return response()->json([
+                'error' => 'Gagal menambahkan ruangan.'
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Terjadi kesalahan saat menambahkan ruangan.'
+        ], 422);
+    }
+}
+
     // public function batalkanMultipleRuang(Request $request)
     // {
     //     // Validate the request

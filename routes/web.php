@@ -58,6 +58,7 @@ Route::post('bagian-akademik/atur-ruang/update', [MenentukanRuangKuliahControlle
 Route::post('bagian-akademik/atur-ruang/ajukan/{id}', [MenentukanRuangKuliahController::class, 'ajukanRuang'])->name('bagianAkademik.ajukanRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 Route::post('bagian-akademik/atur-ruang/ajukan-multiple', [MenentukanRuangKuliahController::class, 'ajukanMultipleRuang'])->name('bagianAkademik.ajukanMultipleRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 ROute::post('bagian-akademik/atur-ruang/batalkan/{id}', [MenentukanRuangKuliahController::class, 'batalkanRuang'])->name('bagianAkademik.batalkanRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
+Route::post('bagian-akademik/atur-ruang/tambah-ruang', [MenentukanRuangKuliahController::class, 'tambahRuang'])->name('bagianAkademik.tambahRuang')->middleware(['auth', 'validateRole:Bagian Akademik']);
 
 Route::get('mahasiswa/dashboard', [MahasiswaController::class, 'index'])->name('mahasiswa.dashboard')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/akademik', [AkademikMhsController::class, 'index'])->name('mahasiswa.akademik')->middleware(['auth', 'validateRole:Mahasiswa']);
@@ -85,7 +86,3 @@ Route::post('kaprodi/data-matakuliah/store', [DataMKController::class, 'store'])
 Route::post('/kaprodi/data-matakuliah/delete/{id}', [DataMKController::class, 'destroy'])->name('kaprodi.deleteMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('kaprodi/atur-jadwal/store', [AturJadwalController::class, 'store'])->name('kaprodi.storeJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
-
-
-
-

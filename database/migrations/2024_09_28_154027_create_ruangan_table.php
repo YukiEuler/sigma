@@ -9,7 +9,7 @@ class CreateRuanganTable extends Migration
     public function up()
     {
         Schema::create('ruangan', function (Blueprint $table) {
-            $table->string('id_ruang', 30)->primary();
+            $table->id('id_ruang');
             $table->string('nama_ruang', 100);
             $table->integer('kuota');
             $table->timestamps();

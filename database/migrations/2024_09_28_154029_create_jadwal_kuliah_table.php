@@ -13,7 +13,7 @@ class CreateJadwalKuliahTable extends Migration
             $table->string('hari', 10);
             $table->time('waktu_mulai');
             $table->time('waktu_selesai');
-            $table->string('id_ruang', 30);
+            $table->unsignedBigInteger('id_ruang');
             $table->unsignedBigInteger('id_kelas');
 
             $table->foreign('id_kelas')->references('id')->on('kelas')->onDelete('cascade');
