@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BagianAkademik;
+use App\Models\Dosen;
 use App\Models\Fakultas;
 use App\Models\ProgramStudi;
 use App\Models\Ruangan;

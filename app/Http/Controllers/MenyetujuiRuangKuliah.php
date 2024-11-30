@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BagianAkademik;
 use App\Models\Dosen;
 use App\Models\Fakultas;
 use App\Models\ProgramStudi;
@@ -9,6 +10,7 @@ use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class MenyetujuiRuangKuliah extends Controller
@@ -96,33 +98,41 @@ class MenyetujuiRuangKuliah extends Controller
         // Validate the request
         $request->validate([
             'room_ids' => 'required|array',
-            'room_ids.*' => 'required|exists:ruangan,id_ruang'
+            'room_ids.*' => 'required|integer|exists:ruangan,id_ruang'
         ]);
+
+        $dosen = Dosen::where('user_id', $user->id)->get()->first();
 
         try {
             // Begin transaction
             DB::beginTransaction();
 
-            // Get all rooms that match the IDs, are already proposed (diajukan = 1),
-            // and not yet approved (disetujui = 0)
-            $rooms = Ruangan::whereIn('id_ruang', $request->room_ids)
-                          ->where('diajukan', 1)
-                          ->where('disetujui', 0)
-                          ->get();
+            $rooms = Ruangan::whereIn('id_ruang', $request->room_ids)->where('id_fakultas', $dosen->id_fakultas)->get();
 
-            // Update all matching rooms
+            // Validate that all rooms exist and belong to the correct fakultas
+            if ($rooms->count() !== count($request->room_ids)) {
+                return back()->with('error', 'Beberapa ruangan tidak ditemukan atau tidak termasuk dalam fakultas');
+            }
+
+            // Check if any rooms are already submitted or approved
+            $invalidRooms = $rooms->filter(function ($room) {
+                return $room->diajukan == 0 || $room->disetujui == 1;
+            });
+
+            if ($invalidRooms->count() > 0) {
+                return back()->with('error', 'Beberapa ruangan belum diajukan atau sudah disetujui');
+            }
+
             foreach ($rooms as $room) {
                 $room->disetujui = 1;
                 $room->save();
             }
 
-            // Commit transaction
             DB::commit();
 
             return back()->with('success', 'Ruangan berhasil disetujui.');
 
         } catch (\Exception $e) {
-            // Rollback in case of error
             DB::rollBack();
             
             return back()->with('error', 'Terjadi kesalahan saat menyetujui ruangan.');
