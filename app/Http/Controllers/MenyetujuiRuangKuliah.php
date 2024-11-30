@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BagianAkademik;
 use App\Models\Dosen;
 use App\Models\Fakultas;
 use App\Models\ProgramStudi;
@@ -9,6 +10,7 @@ use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class MenyetujuiRuangKuliah extends Controller
@@ -97,8 +99,10 @@ class MenyetujuiRuangKuliah extends Controller
         // Validate the request
         $request->validate([
             'room_ids' => 'required|array',
-            'room_ids.*' => 'required|exists:ruangan,id_ruang'
+            'room_ids.*' => 'required|integer|exists:ruangan,id_ruang'
         ]);
+
+        $dosen = Dosen::where('user_id', $user->id)->get()->first();
 
         try {
             // Begin transaction
@@ -116,13 +120,11 @@ class MenyetujuiRuangKuliah extends Controller
                 $room->save();
             }
 
-            // Commit transaction
             DB::commit();
 
             return back()->with('success', 'Ruangan berhasil disetujui.');
 
         } catch (\Exception $e) {
-            // Rollback in case of error
             DB::rollBack();
             
             return back()->with('error', 'Terjadi kesalahan saat menyetujui ruangan.');

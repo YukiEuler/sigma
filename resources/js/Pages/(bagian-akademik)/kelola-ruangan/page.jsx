@@ -22,6 +22,7 @@ const KelolaRuangan = ({ programStudiList }) => {
     const [selectedStatus, setSelectedStatus] = useState("");
     const [showAddRoomModal, setShowAddRoomModal] = useState(false);
     const [showEditRoomModal, setShowEditRoomModal] = useState(false);
+    const [allApproved, setAllApproved] = useState(false);
     const [newRoom, setNewRoom] = useState({
         id_ruang: "",
         nama_ruang: "",
@@ -38,9 +39,9 @@ const KelolaRuangan = ({ programStudiList }) => {
 
     const statusOptions = [
         { value: "", label: "Semua Status" },
-        { value: "belum_diajukan", label: "Belum Diajukan" },
-        { value: "belum_disetujui", label: "Belum Disetujui" },
-        { value: "sudah_disetujui", label: "Sudah Disetujui" },
+        { value: "belum_diajukan", label: "Not Submitted" },
+        { value: "belum_disetujui", label: "Not Approved" },
+        { value: "sudah_disetujui", label: "Approved" },
     ];
 
     const filteredData = data.filter((room) => {
@@ -104,7 +105,7 @@ const KelolaRuangan = ({ programStudiList }) => {
 
         Swal.fire({
             title: "Apakah anda yakin?",
-            text: "Ruangan yang dipilih akan diajukan!",
+            text: `${selectedRooms.length} ruangan yang dipilih akan diajukan!`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Ya, ajukan!",
@@ -134,11 +135,14 @@ const KelolaRuangan = ({ programStudiList }) => {
                                     cancelButton: "btn btn-danger",
                                 },
                                 buttonsStyling: false,
+                            }).then(() => {
+                                // Refresh halaman setelah Sweet Alert ditutup
+                                window.location.reload();
                             });
                             setData((prevData) =>
                                 prevData.map((item) =>
                                     selectedRooms.includes(item.id_ruang)
-                                        ? { ...item, disetujui: 1 }
+                                        ? { ...item, diajukan: 1 }
                                         : item
                                 )
                             );
@@ -435,13 +439,6 @@ const KelolaRuangan = ({ programStudiList }) => {
         });
     };
 
-    useEffect(() => {
-        // Set axios headers ketika komponen dimount
-        axios.defaults.headers.common["X-CSRF-TOKEN"] = document
-            .querySelector('meta[name="csrf-token"]')
-            .getAttribute("content");
-    }, []);
-
     const handleOpenAddRoomModal = () => {
         setShowAddRoomModal(true);
     };
@@ -452,8 +449,18 @@ const KelolaRuangan = ({ programStudiList }) => {
     };
 
     useEffect(() => {
+        // Set axios headers ketika komponen dimount
+        axios.defaults.headers.common["X-CSRF-TOKEN"] = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content");
+    }, []);
+
+    useEffect(() => {
         setData(ruangan);
         setBagian_akademik(bagian_akademikData);
+
+        const allApproved = ruangan.every((ruangan) => ruangan.diajukan === 1);
+        setAllApproved(allApproved);
     }, [ruangan, bagian_akademikData]);
 
     return (
@@ -608,6 +615,9 @@ const KelolaRuangan = ({ programStudiList }) => {
                                                             checked={selectAll}
                                                             onChange={
                                                                 handleSelectAll
+                                                            }
+                                                            disabled={
+                                                                allApproved
                                                             }
                                                             className="w-4 h-4 mr-2"
                                                         />

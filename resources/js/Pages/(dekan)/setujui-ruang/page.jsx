@@ -5,17 +5,20 @@ import { Icon } from "@iconify/react";
 import { usePage } from "@inertiajs/inertia-react";
 import Swal from "sweetalert2";
 
-const SetujuiRuang = ({ ruangan }) => {
+const SetujuiRuang = ({}) => {
     const [data, setData] = useState([]);
     const { props } = usePage();
+    const ruanganData = props.ruangan;
     const dosenData = props.dosen;
     const [dosen, setDosen] = useState(dosenData);
+    const [ruangan, setRuangan] = useState(ruanganData);
     const [loading, setLoading] = useState(false);
     const [selectedRooms, setSelectedRooms] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProdi, setSelectedProdi] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
+    const [allApproved, setAllApproved] = useState(false);
 
     // Get unique prodi list
     const prodiList = [...new Set(data.map((room) => room.nama_prodi))];
@@ -49,7 +52,13 @@ const SetujuiRuang = ({ ruangan }) => {
         if (e.target.checked) {
             // Only select rooms that can be submitted (diajukan = 0 and disetujui = 0)
             const selectableRooms = data
-                .filter((room) => room.diajukan === 1 && room.disetujui === 0)
+                .filter(
+                    (room) =>
+                        room.diajukan === 1 &&
+                        room.disetujui === 0 &&
+                        (selectedProdi === "" ||
+                            room.id_prodi === selectedProdi)
+                )
                 .map((room) => room.id_ruang);
             setSelectedRooms(selectableRooms);
         } else {
@@ -79,7 +88,7 @@ const SetujuiRuang = ({ ruangan }) => {
 
         Swal.fire({
             title: "Apakah anda yakin?",
-            text: "Ruangan yang dipilih akan disetujui!",
+            text: `${selectedRooms.length} ruangan yang dipilih akan disetujui!`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Ya, setujui!",
@@ -107,10 +116,14 @@ const SetujuiRuang = ({ ruangan }) => {
                                 icon: "success",
                                 customClass: {
                                     confirmButton: "btn btn-success",
-                                    cancelButton: "btn btn-danger",
                                 },
                                 buttonsStyling: false,
+                            }).then(() => {
+                                // Refresh halaman setelah Sweet Alert ditutup
+                                window.location.reload();
                             });
+
+                            // Update local state
                             setData((prevData) =>
                                 prevData.map((item) =>
                                     selectedRooms.includes(item.id_ruang)
@@ -129,7 +142,6 @@ const SetujuiRuang = ({ ruangan }) => {
                                 icon: "error",
                                 customClass: {
                                     confirmButton: "btn btn-success",
-                                    cancelButton: "btn btn-danger",
                                 },
                                 buttonsStyling: false,
                             });
@@ -173,7 +185,6 @@ const SetujuiRuang = ({ ruangan }) => {
                 Inertia.visit(`/dekan/setujui-ruang/${item.id_ruang}`, {
                     method: "post",
                     onSuccess: () => {
-                        console.log("OKE");
                         Swal.fire({
                             title: "Disetujui!",
                             text: "Ruangan telah berhasil disetujui",
@@ -218,9 +229,15 @@ const SetujuiRuang = ({ ruangan }) => {
     };
 
     useEffect(() => {
+        // Check if all rooms are approved
+        const allApproved = ruangan.every(ruangan => ruangan.disetujui === 1);
+        setAllApproved(allApproved);
+    }, [ruangan]);
+
+    useEffect(() => {
         setDosen(dosenData);
         setData(ruangan);
-    }, [ruangan]);
+    }, [ruangan, dosenData]);
 
     return (
         <DekanLayout dosen={dosen}>
@@ -360,6 +377,7 @@ const SetujuiRuang = ({ ruangan }) => {
                                                             onChange={
                                                                 handleSelectAll
                                                             }
+                                                            disabled={allApproved}
                                                             className="w-4 h-4 mr-2"
                                                         />
                                                         <span>Semua</span>
