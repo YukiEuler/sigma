@@ -20,24 +20,42 @@ class ValidateRole
     public function handle(Request $request, Closure $next, string $role): Response
     {
         $user = Auth::user();
-        if (!$user){
+
+        // Jika pengguna tidak terautentikasi
+        if (!$user) {
             return redirect()->route('login');
-        } elseif ($role === 'Kaprodi' || $role === 'Dekan'){
-            if ($user->role !== 'Dosen'){
-                return redirect("/");
-            }
+        }
+
+        // Jika pengguna bukan Dosen, tetapi peran memerlukan validasi 'Kaprodi' atau 'Dekan'
+        if (($role === 'Kaprodi' || $role === 'Dekan') && $user->role !== 'Dosen') {
+            return redirect('/');
+        }
+
+        // Jika role 'Kaprodi' atau 'Dekan', validasi atribut dosen
+        if ($user->role === 'Dosen') {
             $dosen = Dosen::where('user_id', $user->id)->first();
-            if ($role === 'Kaprodi' && $dosen->kaprodi === '0'){
-                return redirect("/");
+
+            // Jika data dosen tidak ditemukan
+            if (!$dosen) {
+                return redirect('/');
             }
-            if ($role === 'Dekan' && $dosen->dekan === '0'){
-                return redirect("/");
+
+            // Validasi Kaprodi
+            if ($role === 'Kaprodi' && $dosen->kaprodi != 1) {
+                return redirect('/');
+            }
+
+            // Validasi Dekan
+            if ($role === 'Dekan' && $dosen->dekan != 1) {
+                return redirect('/');
             }
         }
-        elseif ($user->role !== $role) {
-            return redirect("/");
+
+        // Jika role lain, validasi user role
+        if ($role !== 'Kaprodi' && $role !== 'Dekan' && $user->role !== $role) {
+            return redirect('/');
         }
-        
+
         return $next($request);
     }
 }
