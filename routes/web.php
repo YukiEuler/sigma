@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AturKelasController;
 use App\Http\Controllers\AturJadwalController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DosenController;
@@ -72,7 +73,7 @@ Route::get('mahasiswa/biaya', [BiayaController::class, 'index'])->name('mahasisw
 Route::get('dekan/dashboard', [DekanController::class, 'index'])->name('dekan.dashboard')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-ruang', [MenyetujuiRuangKuliah::class, 'index'])->name('dekan.setujuiRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::post('dekan/setujui-ruang/{id}', [MenyetujuiRuangKuliah::class, 'update'])->name('dekan.updateStatusRuang')->middleware(['auth', 'validateRole:Dekan']);
-Route::post('dekan/setujui-ruang/setujui-multiple', [MenyetujuiRuangKuliah::class, 'setujuiMultipleRuang'])->name('dekan.setujuiMultipleRuang')->middleware(['auth', 'validateRole:Dekan']);
+Route::post('dekan/setujui-ruang/set/setujui-multiple', [MenyetujuiRuangKuliah::class, 'setujuiMultipleRuang'])->name('dekan.setujuiMultipleRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-jadwal', [MenyetujuiJadwalController::class, 'index'])->name('dekan.setujuiJadwal')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-jadwal/detail', [MenyetujuiJadwalController::class, 'detail'])->name('dekan.detailJadwal')->middleware(['auth', 'validateRole:Dekan']);
 
@@ -86,5 +87,7 @@ Route::get('kaprodi/data-mahasiswa', [DataMahasiswaController::class, 'index'])-
 Route::get('kaprodi/data-matakuliah', [DataMKController::class, 'index'])->name('kaprodi.dataMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('kaprodi/data-matakuliah/store', [DataMKController::class, 'store'])->name('kaprodi.storeMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('/kaprodi/data-matakuliah/delete/{id}', [DataMKController::class, 'destroy'])->name('kaprodi.deleteMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::get('kaprodi/atur-kelas', [AturKelasController::class, 'index'])->name('kaprodi.aturKelas')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::post('kaprodi/atur-kelas/tambah', [AturKelasController::class, 'tambah'])->name('kaprodi.tambahKelas')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('kaprodi/atur-jadwal/store', [AturJadwalController::class, 'store'])->name('kaprodi.storeJadwal')->middleware(['auth', 'validateRole:Kaprodi']);

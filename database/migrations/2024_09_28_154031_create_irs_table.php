@@ -11,7 +11,7 @@ class CreateIrsTable extends Migration
         Schema::create('irs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_kelas');
-            $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
+            $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14']);
             $table->string('tahun_akademik');
             $table->enum('status', ['Baru', 'Perbaikan', 'Ulang']);
             $table->string('nim', 30);

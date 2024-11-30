@@ -60,8 +60,9 @@ class JadwalKelasSeeder extends Seeder
                         $hasil = Kelas::create([
                             'kode_kelas' => $kelas,
                             'kode_mk' => $matkul->kode_mk,
-                            'tahun' => $tahun,
-                            'semester' => $matkul->semester,
+                            // 'tahun' => $tahun,
+                            // 'semester' => $matkul->semester,
+                            'tahun_akademik' => ''.$tahun.'-'.($matkul->semester%2+1),
                             'kuota' => 50,
                             'created_at' => now(),
                             'updated_at' => now(),

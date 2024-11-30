@@ -87,6 +87,7 @@ class MenyetujuiRuangKuliah extends Controller
     public function setujuiMultipleRuang(Request $request)
     {
         $user = Auth::user();
+        error_log("Halo 3");
 
         // Check if user is authenticated and has proper role
         if (!$user) {
@@ -107,22 +108,13 @@ class MenyetujuiRuangKuliah extends Controller
             // Begin transaction
             DB::beginTransaction();
 
-            $rooms = Ruangan::whereIn('id_ruang', $request->room_ids)->where('id_fakultas', $dosen->id_fakultas)->get();
-
-            // Validate that all rooms exist and belong to the correct fakultas
-            if ($rooms->count() !== count($request->room_ids)) {
-                return back()->with('error', 'Beberapa ruangan tidak ditemukan atau tidak termasuk dalam fakultas');
-            }
-
-            // Check if any rooms are already submitted or approved
-            $invalidRooms = $rooms->filter(function ($room) {
-                return $room->diajukan == 0 || $room->disetujui == 1;
-            });
-
-            if ($invalidRooms->count() > 0) {
-                return back()->with('error', 'Beberapa ruangan belum diajukan atau sudah disetujui');
-            }
-
+            // Get all rooms that match the IDs, are already proposed (diajukan = 1),
+            // and not yet approved (disetujui = 0)
+            $rooms = Ruangan::whereIn('id_ruang', $request->room_ids)
+                          ->where('diajukan', 1)
+                          ->where('disetujui', 0)
+                          ->get();
+            // Update all matching rooms
             foreach ($rooms as $room) {
                 $room->disetujui = 1;
                 $room->save();

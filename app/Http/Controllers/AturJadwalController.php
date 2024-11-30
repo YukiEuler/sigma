@@ -35,19 +35,25 @@ class AturJadwalController extends Controller
         $fakultas = Fakultas::where('id_fakultas', $programStudi->id_fakultas)->first();
         $dosen->nama_fakultas = $fakultas->nama_fakultas;
 
+        $tahun = KalenderAkademik::getTahunAkademik();
+
         $mataKuliah = MataKuliah::where('id_prodi', $dosen->id_prodi)
-        ->select('kode_mk', 'nama', 'sks', 'semester')
-        ->get();
+            ->with(['kelas' => function ($query) use ($tahun) {
+            $query->where('tahun_akademik', $tahun);
+            }])
+            ->get();
 
         $listDosen = Dosen::where('id_prodi', $dosen->id_prodi)
         ->select('nip', 'nama')
         ->get();
 
         $ruangan = Ruangan::where('id_prodi', $dosen->id_prodi)
-        ->where('diajukan', 1)
-        ->where('disetujui', 1)
-        ->select('id_ruang', 'nama_ruang')
+        // ->where('diajukan', 1)
+        // ->where('disetujui', 1)
+        // ->select('id_ruang', 'nama_ruang')
         ->get();
+
+        error_log($ruangan);
 
         return Inertia::render('(kaprodi)/atur-jadwal/page', ['dosen' => $dosen, 'mataKuliah' => $mataKuliah, 'listDosen' => $listDosen, 'ruangan' => $ruangan]);
     }

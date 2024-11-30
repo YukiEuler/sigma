@@ -16,6 +16,7 @@ const AturJadwal = () => {
     const [schedules, setSchedules] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedKelas, setSelectedKelas] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [semesterFilter, setSemesterFilter] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -531,25 +532,21 @@ const AturJadwal = () => {
                                                 <label className="block mb-1">
                                                     Kelas
                                                 </label>
-                                                <input
+                                                <select
                                                     required
-                                                    type="text"
                                                     className="w-full border rounded p-2"
-                                                    value={form.class}
-                                                    placeholder="A/B/C/..."
+                                                    value={selectedKelas}
                                                     onChange={(e) => {
-                                                        const newForms = [
-                                                            ...scheduleForms,
-                                                        ];
-                                                        newForms[
-                                                            formIndex
-                                                        ].class =
-                                                            e.target.value;
-                                                        setScheduleForms(
-                                                            newForms
-                                                        );
+                                                        setSelectedKelas(e.target.value);
                                                     }}
-                                                />
+                                                >
+                                                    <option value="">Pilih Kelas</option>
+                                                    {selectedCourse.kelas.map((kelas) => (
+                                                        <option key={kelas.kode_kelas} value={kelas.kode_kelas}>
+                                                            {kelas.kode_kelas}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </div>
                                             <div>
                                                 <label className="block mb-1">
@@ -557,26 +554,18 @@ const AturJadwal = () => {
                                                 </label>
                                                 <input
                                                     required
-                                                    type="number"
-                                                    min="1"
-                                                    className="w-full border rounded p-2"
-                                                    value={form.quota}
-                                                    onChange={(e) => {
-                                                        const newForms = [
-                                                            ...scheduleForms,
-                                                        ];
-                                                        newForms[
-                                                            formIndex
-                                                        ].quota = Math.max(
-                                                            1,
-                                                            parseInt(
-                                                                e.target.value
-                                                            ) || 1
-                                                        );
-                                                        setScheduleForms(
-                                                            newForms
-                                                        );
-                                                    }}
+                                                    // type="number"
+                                                    // min="1"
+                                                    className="w-full border rounded p-2 bg-gray-100"
+                                                    value={
+                                                        selectedCourse.kelas.find(
+                                                            (kelas) =>
+                                                                kelas.kode_kelas ===
+                                                                selectedKelas
+                                                        )?.kuota || ""
+                                                    }
+                                                    // value={selectedCourse.kelas}
+                                                    readOnly
                                                 />
                                             </div>
                                             <div>
@@ -602,16 +591,28 @@ const AturJadwal = () => {
                                                     <option value="">
                                                         Pilih Ruang
                                                     </option>
-                                                    {ruanganData.map((room) => (
-                                                        <option
-                                                            key={room.id_ruang}
-                                                            value={
-                                                                room.nama_ruang
-                                                            }
-                                                        >
-                                                            {room.nama_ruang}
-                                                        </option>
-                                                    ))}
+                                                    {ruanganData
+                                                        .filter(
+                                                            (room) =>
+                                                                room.kuota >=
+                                                                selectedCourse.kelas.find(
+                                                                    (kelas) =>
+                                                                        kelas.kode_kelas ===
+                                                                        selectedKelas
+                                                                )?.kuota
+                                                        )
+                                                        .map((room) => (
+                                                            <option
+                                                                key={
+                                                                    room.id_ruang
+                                                                }
+                                                                value={
+                                                                    room.nama_ruang
+                                                                }
+                                                            >
+                                                                {room.nama_ruang}
+                                                            </option>
+                                                        ))}
                                                 </select>
                                             </div>
                                             <div>
@@ -721,87 +722,6 @@ const AturJadwal = () => {
                                                     placeholder="--.--"
                                                 />
                                             </div>
-                                        </div>
-
-                                        <div className="mt-4">
-                                            <label className="block mb-1">
-                                                Dosen Pengampu
-                                            </label>
-                                            {form.listDosenData.map(
-                                                (lecturer, lecturerIndex) => (
-                                                    <div
-                                                        key={lecturerIndex}
-                                                        className="flex gap-2 mb-2"
-                                                    >
-                                                        <select
-                                                            required
-                                                            className="w-full border rounded p-2"
-                                                            value={lecturer}
-                                                            onChange={(e) => {
-                                                                const newForms =
-                                                                    [
-                                                                        ...scheduleForms,
-                                                                    ];
-                                                                newForms[
-                                                                    formIndex
-                                                                ].listDosenData[
-                                                                    lecturerIndex
-                                                                ] =
-                                                                    e.target.value;
-                                                                setScheduleForms(
-                                                                    newForms
-                                                                );
-                                                            }}
-                                                        >
-                                                            <option value="">
-                                                                Pilih Dosen
-                                                            </option>
-                                                            {listDosenData.map(
-                                                                (l) => (
-                                                                    <option
-                                                                        key={
-                                                                            l.nip
-                                                                        }
-                                                                        value={
-                                                                            l.nama
-                                                                        }
-                                                                    >
-                                                                        {l.nama}
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                        </select>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                handleAddLecturer(
-                                                                    formIndex
-                                                                )
-                                                            }
-                                                            className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
-                                                        >
-                                                            <Plus size={20} />
-                                                        </button>
-                                                        {form.listDosenData
-                                                            .length > 1 && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    handleRemoveLecturer(
-                                                                        formIndex,
-                                                                        lecturerIndex
-                                                                    )
-                                                                }
-                                                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-                                                            >
-                                                                <Minus
-                                                                    size={20}
-                                                                />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                )
-                                            )}
                                         </div>
 
                                         {scheduleForms.length > 1 && (
