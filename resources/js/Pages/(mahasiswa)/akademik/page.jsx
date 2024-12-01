@@ -1,83 +1,49 @@
 import React, { useState, useRef, useEffect } from "react";
-import { usePage } from "@inertiajs/inertia-react";
-import MahasiswaLayout from "../../../Layouts/MahasiswaLayout";
-import { ChevronUp, ChevronDown } from "lucide-react";
-import { Icon } from "@iconify/react";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 import {
     Eye,
     Search,
+    ChevronDown,
     Trash2,
     ChevronRight,
     ChevronLeft,
     CheckCircle2,
 } from "lucide-react";
+import { Icon } from "@iconify/react";
+import { usePage } from "@inertiajs/inertia-react";
+import MahasiswaLayout from "../../../Layouts/MahasiswaLayout";
+import { Inertia } from "@inertiajs/inertia";
+import Swal from "sweetalert2";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const Akademik = () => {
     const { props } = usePage();
     const mahasiswaData = props.mahasiswa;
     const [mahasiswa, setMahasiswa] = useState(mahasiswaData);
+    const jadwalData = props.jadwal;
+    const [jadwal, setJadwal] = useState(jadwalData);
+    const irsData = props.irs;
+    const [irs, setIrs] = useState(irsData);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedCourses, setSelectedCourses] = useState([]);
+    const [filteredCourses, setFilteredCourses] = useState([]);
+    const [registeredCourses, setRegisteredCourses] = useState([]);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
+    const dropdownRef = useRef(null);
+    const [isWithinSchedule, setIsWithinSchedule] = useState(false);
     const [activeTab, setActiveTab] = useState("Pengisian IRS");
     const [openSemesters, setOpenSemesters] = useState({});
-
-    useEffect(() => {
-        setMahasiswa(mahasiswaData);
-    }, [mahasiswaData]);
-
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-    };
-
-    const toggleSemester = (semester) => {
-        setOpenSemesters((prev) => ({
-            ...prev,
-            [semester]: !prev[semester],
-        }));
-    };
-
-    const handleDownloadPDF = () => {
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.getWidth();
-
-        // Tambahkan judul
-        const title = "ISIAN RANCANGAN STUDI";
-        doc.setFontSize(18);
-        const titleWidth = doc.getTextWidth(title);
-        doc.text(title, (pageWidth - titleWidth) / 2, 22);
-
-        // Tambahkan informasi tambahan
-        const tahunAjaran = "2022/2023 Ganjil";
-        const nim = "123456789";
-        const nama = "John Doe";
-        const programStudi = "Teknik Informatika";
-        const dosenWali = "Dr. Jane Smith";
-
-        doc.setFontSize(12);
-        const tahunAjaranWidth = doc.getTextWidth(
-            `Tahun Akademik: ${tahunAjaran}`
-        );
-        doc.text(
-            `Tahun Akademik: ${tahunAjaran}`,
-            (pageWidth - tahunAjaranWidth) / 2,
-            28
-        );
-
-        doc.setFontSize(10);
-        doc.text(`NIM: ${nim}`, 14, 38);
-        doc.text(`Nama: ${nama}`, 14, 44);
-        doc.text(`Program Studi: ${programStudi}`, 14, 50);
-        doc.text(`Dosen Wali: ${dosenWali}`, 14, 56);
-
-        // Tambahkan tabel
-        doc.autoTable({
-            html: "#irs-mahasiswa",
-            startY: 62, // Posisi Y di mana tabel akan dimulai
-        });
-
-        // Simpan PDF
-        doc.save("Print IRS.pdf");
-    };
+    const [academicCalendar] = useState({
+        year: "2024",
+        semester: "Ganjil",
+        irsSchedule: {
+            startDate: "30-08-2024",
+            endDate: "13-09-2024",
+        },
+    });
 
     const semesterData = {
         semester1: {
@@ -351,199 +317,22 @@ const Akademik = () => {
         },
     };
 
-    const studentData = {
-        name: "Dzu Sunan Muhammad",
-        nim: "24060122120034",
-        yearOfStudy: "2024/2025 Ganjil",
-        semester: 2,
-        ipk: 4.0,
-        ips: 4.0,
-        maxCredits: 24,
-    };
+    const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
 
-    const coursesData = [
-        {
-            id: 1,
-            name: "Sistem Operasi",
-            code: "PAIK0305",
-            credits: 3,
-            semester: 3,
-            type: "Wajib",
-            classes: [
-                {
-                    code: "A",
-                    room: "K301",
-                    quota: 50,
-                    filled: 25,
-                    schedule: {
-                        day: "Selasa",
-                        startTime: "08:30",
-                        endTime: "10:30",
-                    },
-                },
-                {
-                    code: "B",
-                    room: "K302",
-                    quota: 50,
-                    filled: 30,
-                    schedule: {
-                        day: "Selasa",
-                        startTime: "08:40",
-                        endTime: "10:30",
-                    },
-                },
-            ],
-        },
-        {
-            id: 2,
-            name: "Algoritma dan Pemrograman",
-            code: "PAIK0201",
-            credits: 4,
-            semester: 2,
-            type: "Wajib",
-            classes: [
-                {
-                    code: "A",
-                    room: "K201",
-                    quota: 40,
-                    filled: 35,
-                    schedule: {
-                        day: "Rabu",
-                        startTime: "07:40",
-                        endTime: "09:30",
-                    },
-                },
-            ],
-        },
-        {
-            id: 3,
-            name: "Jaringan Komputer",
-            code: "PAIK0401",
-            credits: 3,
-            semester: 4,
-            type: "Wajib",
-            classes: [
-                {
-                    code: "A",
-                    room: "K401",
-                    quota: 45,
-                    filled: 40,
-                    schedule: {
-                        day: "Kamis",
-                        startTime: "10:00",
-                        endTime: "12:30",
-                    },
-                },
-            ],
-        },
-        {
-            id: 4,
-            name: "Basis Data",
-            code: "PAIK0302",
-            credits: 3,
-            semester: 3,
-            type: "Wajib",
-            classes: [
-                {
-                    code: "A",
-                    room: "K303",
-                    quota: 50,
-                    filled: 45,
-                    schedule: {
-                        day: "Jumat",
-                        startTime: "08:00",
-                        endTime: "10:30",
-                    },
-                },
-            ],
-        },
-        {
-            id: 5,
-            name: "Pemrograman Web",
-            code: "PAIK0501",
-            credits: 3,
-            semester: 5,
-            type: "Pilihan",
-            classes: [
-                {
-                    code: "A",
-                    room: "K501",
-                    quota: 40,
-                    filled: 35,
-                    schedule: {
-                        day: "Senin",
-                        startTime: "13:00",
-                        endTime: "15:30",
-                    },
-                },
-            ],
-        },
-        {
-            id: 6,
-            name: "Kecerdasan Buatan",
-            code: "PAIK0601",
-            credits: 3,
-            semester: 6,
-            type: "Pilihan",
-            classes: [
-                {
-                    code: "A",
-                    room: "K601",
-                    quota: 30,
-                    filled: 25,
-                    schedule: {
-                        day: "Selasa",
-                        startTime: "10:00",
-                        endTime: "12:30",
-                    },
-                },
-            ],
-        },
-        {
-            id: 7,
-            name: "Rekayasa Perangkat Lunak",
-            code: "PAIK0402",
-            credits: 4,
-            semester: 4,
-            type: "Wajib",
-            classes: [
-                {
-                    code: "A",
-                    room: "K402",
-                    quota: 50,
-                    filled: 45,
-                    schedule: {
-                        day: "Rabu",
-                        startTime: "13:00",
-                        endTime: "15:30",
-                    },
-                },
-            ],
-        },
-    ];
-
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedCourses, setSelectedCourses] = useState([]);
-    const [registeredCourses, setRegisteredCourses] = useState([]);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const dropdownRef = useRef(null);
-
-    // Time slots for the schedule
     const timeSlots = [];
     for (let i = 7; i <= 21; i++) {
         timeSlots.push(`${i.toString().padStart(2, "0")}:00`);
     }
 
-    const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
+    const parseDate = (dateStr) => {
+        const [day, month, year] = dateStr.split("-").map(Number);
+        return new Date(year, month - 1, day);
+    };
 
-    // Filter courses based on search
-    const filteredCourses = coursesData.filter(
-        (course) =>
-            course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            course.code.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const parseTime = (timeStr) => {
+        const [hours, minutes, seconds] = timeStr.split(":").map(Number);
+        return new Date(1970, 0, 1, hours, minutes, seconds);
+    };
 
     // Calculate total credits
     const totalCredits = registeredCourses.reduce(
@@ -553,8 +342,15 @@ const Akademik = () => {
 
     // Handle course selection from dropdown
     const handleCourseSelect = (course) => {
-        if (!selectedCourses.some((selected) => selected.id === course.id)) {
+        if (
+            !selectedCourses.some(
+                (selected) => selected.kode_mk === course.kode_mk
+            )
+        ) {
             setSelectedCourses([...selectedCourses, course]);
+            setFilteredCourses(
+                filteredCourses.filter((c) => c.kode_mk !== course.kode_mk)
+            );
         }
         setIsDropdownOpen(false);
         setSearchQuery("");
@@ -563,14 +359,20 @@ const Akademik = () => {
     // Handle course visibility toggle
     const handleToggleCourse = (courseId) => {
         setSelectedCourses(
-            selectedCourses.filter((course) => course.id !== courseId)
+            selectedCourses.filter((course) => course.kode_mk !== courseId)
         );
+        const courseToAdd = jadwalData.find(
+            (course) => course.kode_mk === courseId
+        );
+        if (courseToAdd) {
+            setFilteredCourses([...filteredCourses, courseToAdd]);
+        }
     };
 
     // Handle class selection
     const handleClassSelect = (course, classInfo) => {
         const existingCourse = registeredCourses.find(
-            (c) => c.id === course.id
+            (c) => c.kode_mk === course.kode_mk
         );
         if (!existingCourse) {
             setRegisteredCourses([
@@ -580,19 +382,11 @@ const Akademik = () => {
                     selectedClass: classInfo,
                 },
             ]);
+            Inertia.visit("/mahasiswa/buat-irs/insert/" + classInfo.id_kelas, {
+                method: "get",
+                preserveState: true,
+            });
         }
-    };
-
-    // Handle course removal from registration
-    const handleRemoveCourse = (courseId) => {
-        setRegisteredCourses(
-            registeredCourses.filter((course) => course.id !== courseId)
-        );
-    };
-
-    // Handle submission
-    const handleSubmit = () => {
-        setIsSubmitted(!isSubmitted);
     };
 
     // Helper function untuk menentukan slot waktu berdasarkan threshold 30 menit
@@ -613,99 +407,50 @@ const Akademik = () => {
         return appropriateSlot === slotTime;
     };
 
-    const Schedule = () => (
-        <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-                <thead>
-                    <tr>
-                        <th className="border p-2 w-20"></th>
-                        {days.map((day) => (
-                            <th key={day} className="border p-2 w-48">
-                                {day}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {timeSlots.map((time, index) => (
-                        <tr key={time}>
-                            <td className="border p-2 text-center align-top">
-                                {time}
-                            </td>
-                            {days.map((day) => (
-                                <td
-                                    key={`${day}-${time}`}
-                                    className="border p-2 align-top"
-                                >
-                                    <div className="flex flex-col gap-2">
-                                        {selectedCourses.map((course) =>
-                                            course.classes.map((classInfo) => {
-                                                if (
-                                                    classInfo.schedule.day ===
-                                                        day &&
-                                                    isScheduleInTimeSlot(
-                                                        classInfo.schedule
-                                                            .startTime,
-                                                        time
-                                                    )
-                                                ) {
-                                                    return (
-                                                        <div
-                                                            key={`${course.id}-${classInfo.code}`}
-                                                            className="bg-blue-100 p-2 rounded cursor-pointer hover:bg-blue-200 w-full"
-                                                            onClick={() =>
-                                                                handleClassSelect(
-                                                                    course,
-                                                                    classInfo
-                                                                )
-                                                            }
-                                                        >
-                                                            <div className="text-sm font-semibold">
-                                                                {course.name}
-                                                            </div>
-                                                            <div className="text-xs">
-                                                                {course.type}{" "}
-                                                                (SMT
-                                                                {
-                                                                    course.semester
-                                                                }
-                                                                ) (
-                                                                {course.credits}{" "}
-                                                                SKS)
-                                                                <br />
-                                                                Kelas:{" "}
-                                                                {classInfo.code}
-                                                                <br />
-                                                                <div className="flex justify-start items-center gap-1">
-                                                                    <Icon icon="lsicon:time-two-outline" />
-                                                                    {
-                                                                        classInfo
-                                                                            .schedule
-                                                                            .startTime
-                                                                    }{" "}
-                                                                    -{" "}
-                                                                    {
-                                                                        classInfo
-                                                                            .schedule
-                                                                            .endTime
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                }
-                                                return null;
-                                            })
-                                        )}
-                                    </div>
-                                </td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+    };
+
+    const toggleSemester = (semester) => {
+        setOpenSemesters((prev) => ({
+            ...prev,
+            [semester]: !prev[semester],
+        }));
+    };
+
+    // Handle course removal from registration
+    const handleRemoveCourse = (courseId) => {
+        Swal.fire({
+            title: "Apakah Anda yakin ingin menghapus course ini?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setRegisteredCourses(
+                    registeredCourses.filter(
+                        (course) => course.selectedClass.id_kelas !== courseId
+                    )
+                );
+                Inertia.visit("/mahasiswa/buat-irs/delete/" + courseId, {
+                    method: "get",
+                    preserveState: true,
+                });
+                Swal.fire("Deleted!", "Course sudah dihapus.", "success");
+            }
+        });
+    };
+
+    // Handle submission
+    const handleSubmit = () => {
+        Inertia.visit("/mahasiswa/buat-irs/ubah-status/", {
+            method: "get",
+            preserveState: true,
+        });
+        setIsSubmitted(!isSubmitted);
+    };
 
     // KHS
     function hitungBobot(nilaiHuruf) {
@@ -724,6 +469,49 @@ const Akademik = () => {
                 return null;
         }
     }
+
+    const downloadIRS = () => {
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Tambahkan judul
+        const title = "ISIAN RANCANGAN STUDI";
+        doc.setFontSize(18);
+        const titleWidth = doc.getTextWidth(title);
+        doc.text(title, (pageWidth - titleWidth) / 2, 22);
+
+        // Tambahkan informasi tambahan
+        const tahunAjaran = "2022/2023 Ganjil";
+        const nim = "123456789";
+        const nama = "John Doe";
+        const programStudi = "Teknik Informatika";
+        const dosenWali = "Dr. Jane Smith";
+
+        doc.setFontSize(12);
+        const tahunAjaranWidth = doc.getTextWidth(
+            `Tahun Akademik: ${tahunAjaran}`
+        );
+        doc.text(
+            `Tahun Akademik: ${tahunAjaran}`,
+            (pageWidth - tahunAjaranWidth) / 2,
+            28
+        );
+
+        doc.setFontSize(10);
+        doc.text(`NIM: ${nim}`, 14, 38);
+        doc.text(`Nama: ${nama}`, 14, 44);
+        doc.text(`Program Studi: ${programStudi}`, 14, 50);
+        doc.text(`Dosen Wali: ${dosenWali}`, 14, 56);
+
+        // Tambahkan tabel
+        doc.autoTable({
+            html: "#irs-mahasiswa",
+            startY: 62, // Posisi Y di mana tabel akan dimulai
+        });
+
+        // Simpan PDF
+        doc.save("Print IRS.pdf");
+    };
 
     const downloadKHS = () => {
         const doc = new jsPDF();
@@ -828,6 +616,301 @@ const Akademik = () => {
         doc.save("Transkrip.pdf");
     };
 
+    const Schedule = () => (
+        <div className="space-y-2 max-h-[67vh] overflow-y-auto scrollbar-hide">
+            <style jsx>{`
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            `}</style>
+            <table className="w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th className="border p-2 w-20"></th>
+                        {days.map((day) => (
+                            <th key={day} className="border p-2 w-48">
+                                {day}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {timeSlots.map((time, index) => (
+                        <tr key={time}>
+                            <td className="border p-2 text-center align-top">
+                                {time}
+                            </td>
+                            {days.map((day) => (
+                                <td
+                                    key={`${day}-${time}`}
+                                    className="border p-2 align-top"
+                                >
+                                    <div className="flex flex-col gap-2">
+                                        {selectedCourses.map((course) =>
+                                            course.jadwal_kuliah.map(
+                                                (classInfo) => {
+                                                    if (
+                                                        classInfo.hari ===
+                                                            day &&
+                                                        isScheduleInTimeSlot(
+                                                            classInfo.waktu_mulai,
+                                                            time
+                                                        )
+                                                    ) {
+                                                        const kelasRegistered =
+                                                            registeredCourses.some(
+                                                                (
+                                                                    registeredCourse
+                                                                ) =>
+                                                                    registeredCourse
+                                                                        .selectedClass
+                                                                        .id_kelas ===
+                                                                    classInfo.id_kelas
+                                                            );
+                                                        const matkulRegistered =
+                                                            registeredCourses.some(
+                                                                (
+                                                                    registeredCourse
+                                                                ) =>
+                                                                    registeredCourse.kode_mk ===
+                                                                    course.kode_mk
+                                                            );
+                                                        const bentrok =
+                                                            registeredCourses.some(
+                                                                (
+                                                                    registeredCourse
+                                                                ) => {
+                                                                    const jadwal =
+                                                                        registeredCourse.selectedClass;
+                                                                    return (
+                                                                        jadwal.hari ===
+                                                                            classInfo.hari &&
+                                                                        parseTime(
+                                                                            jadwal.waktu_mulai
+                                                                        ) <=
+                                                                            parseTime(
+                                                                                classInfo.waktu_selesai
+                                                                            ) &&
+                                                                        parseTime(
+                                                                            jadwal.waktu_selesai
+                                                                        ) >=
+                                                                            parseTime(
+                                                                                classInfo.waktu_mulai
+                                                                            )
+                                                                    );
+                                                                }
+                                                            );
+                                                        const maxSks =
+                                                            totalCredits +
+                                                                course.sks >
+                                                            mahasiswa.maxSks;
+                                                        let tooltipMessage = "";
+                                                        const periodeGanti =
+                                                            Boolean(
+                                                                mahasiswa.periode_ganti
+                                                            );
+                                                        if (!periodeGanti) {
+                                                            tooltipMessage =
+                                                                "Tidak dalam periode penggantian";
+                                                        } else if (isVerified) {
+                                                            tooltipMessage =
+                                                                "IRS telah disetujui";
+                                                        } else if (
+                                                            isSubmitted
+                                                        ) {
+                                                            tooltipMessage =
+                                                                "IRS telah diajukan";
+                                                        } else if (
+                                                            kelasRegistered
+                                                        ) {
+                                                            tooltipMessage =
+                                                                "Kelas sudah terdaftar";
+                                                        } else if (
+                                                            matkulRegistered
+                                                        ) {
+                                                            tooltipMessage =
+                                                                "Mata kuliah sudah terdaftar";
+                                                        } else if (bentrok) {
+                                                            tooltipMessage =
+                                                                "Jadwal bentrok";
+                                                        } else if (maxSks) {
+                                                            tooltipMessage =
+                                                                "Melebihi batasan SKS";
+                                                        }
+
+                                                        return (
+                                                            <div
+                                                                key={`${course.id}-${classInfo.code}`}
+                                                                className={`p-2 rounded w-full ${
+                                                                    kelasRegistered
+                                                                        ? "cursor-not-allowed bg-green-400 hover:bg-green-500"
+                                                                        : matkulRegistered
+                                                                        ? "cursor-not-allowed bg-yellow-100 hover:bg-yellow-200"
+                                                                        : bentrok ||
+                                                                          maxSks
+                                                                        ? "cursor-not-allowed bg-red-400 hover:bg-red-500"
+                                                                        : isSubmitted ||
+                                                                          isVerified ||
+                                                                          !periodeGanti
+                                                                        ? "cursor-not-allowed bg-blue-200 hover:bg-blue-300"
+                                                                        : "cursor-pointer bg-blue-200 hover:bg-blue-300"
+                                                                }`}
+                                                                onClick={() =>
+                                                                    !kelasRegistered &&
+                                                                    !matkulRegistered &&
+                                                                    !bentrok &&
+                                                                    !isSubmitted &&
+                                                                    !isVerified &&
+                                                                    !maxSks &&
+                                                                    periodeGanti &&
+                                                                    handleClassSelect(
+                                                                        course,
+                                                                        classInfo
+                                                                    )
+                                                                }
+                                                                title={
+                                                                    tooltipMessage
+                                                                }
+                                                            >
+                                                                <div className="text-sm font-semibold">
+                                                                    {
+                                                                        course.nama
+                                                                    }
+                                                                </div>
+                                                                <div className="text-xs">
+                                                                    {
+                                                                        course.type
+                                                                    }{" "}
+                                                                    (SMT{" "}
+                                                                    {
+                                                                        course.semester
+                                                                    }
+                                                                    ) (
+                                                                    {course.sks}{" "}
+                                                                    SKS)
+                                                                    <br />
+                                                                    Kelas:{" "}
+                                                                    {
+                                                                        classInfo.kelas
+                                                                    }
+                                                                    <br />
+                                                                    Kuota:{" "}
+                                                                    {
+                                                                        classInfo.kuota
+                                                                    }{" "}
+                                                                    <br />
+                                                                    <div className="flex justify-start items-center gap-1">
+                                                                        <Icon icon="lsicon:time-two-outline" />
+                                                                        {
+                                                                            classInfo.waktu_mulai
+                                                                        }{" "}
+                                                                        -{" "}
+                                                                        {
+                                                                            classInfo.waktu_selesai
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    }
+                                                    return null;
+                                                }
+                                            )
+                                        )}
+                                    </div>
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+
+    useEffect(() => {
+        const checkSchedule = () => {
+            const now = new Date("2023-08-31");
+            const startDate = parseDate(academicCalendar.irsSchedule.startDate);
+            const endDate = parseDate(academicCalendar.irsSchedule.endDate);
+
+            // Set end date to end of day
+            endDate.setHours(23, 59, 59, 999);
+
+            const isWithin = now >= startDate && now <= endDate;
+            setIsWithinSchedule(isWithin);
+        };
+        checkSchedule();
+        setJadwal(jadwalData, academicCalendar);
+    }, [jadwalData]);
+
+    useEffect(() => {
+        setFilteredCourses(
+            jadwalData.filter(
+                (course) =>
+                    (course.nama
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                        course.kode_mk
+                            .toLowerCase()
+                            .includes(searchQuery.toLowerCase())) &&
+                    !irs.some(
+                        (registeredCourse) =>
+                            registeredCourse.kode_mk === course.kode_mk
+                    ) &&
+                    course.semester != mahasiswa.semester
+            )
+        );
+    }, []);
+
+    // Set Registered Awal
+    useEffect(() => {
+        const initialRegisteredCourses = [],
+            initialCourseSelect = [];
+        for (const course of irs) {
+            initialRegisteredCourses.push(course);
+            const elm = jadwalData.find(
+                (filteredCourse) => filteredCourse.kode_mk === course.kode_mk
+            );
+            initialCourseSelect.push(elm);
+        }
+        const filteredJadwal = jadwal.filter(
+            (elm) => elm.semester == mahasiswa.semester
+        );
+        const updatedFilteredJadwal = filteredJadwal
+            .map((course) => {
+                const updatedCourse = { ...course };
+                updatedCourse.selectedClass = updatedCourse.jadwal_kuliah;
+                delete updatedCourse.jadwal_kuliah;
+                return updatedCourse;
+            })
+            .sort((a, b) => a.kode_mk.localeCompare(b.kode_mk));
+        for (const course of updatedFilteredJadwal) {
+            if (
+                initialRegisteredCourses.some(
+                    (registeredCourse) =>
+                        registeredCourse.kode_mk === course.kode_mk
+                )
+            )
+                continue;
+            const elm = jadwalData.find(
+                (filteredCourse) => filteredCourse.kode_mk === course.kode_mk
+            );
+            if (elm) initialCourseSelect.push(elm);
+        }
+        setRegisteredCourses(initialRegisteredCourses);
+        setSelectedCourses(initialCourseSelect);
+        setIsSubmitted(irs.length > 0 && Boolean(irs[0].sudah_diajukan));
+        setIsVerified(irs.length > 0 && Boolean(irs[0].sudah_disetujui));
+    }, []);
+
+    useEffect(() => {
+        setMahasiswa(mahasiswaData);
+    }, [mahasiswaData]);
+
     return (
         <MahasiswaLayout mahasiswa={mahasiswa}>
             <main className="flex-1 max-h-full">
@@ -837,7 +920,7 @@ const Akademik = () => {
                     </h1>
                 </div>
                 {/* Tab Menu */}
-                <div className="flex w-full border-b mb-4 mt-2">
+                <div className="flex w-full border-b mt-4">
                     <button
                         onClick={() => handleTabClick("Pengisian IRS")}
                         className={`flex-1 pb-2 text-center ${
@@ -880,64 +963,80 @@ const Akademik = () => {
                     </button>
                 </div>
 
-                <div className="p-4 bg-white-100 rounded-lg shadow-md">
+                <div>
                     {activeTab === "Pengisian IRS" && (
                         <div>
                             <div
-                                className="grid grid-cols-1 gap-3 mt-1 sm:grid-cols-2 lg:grid-cols-7"
+                                className="grid grid-cols-1 gap-3 mt-4 sm:grid-cols-2 lg:grid-cols-7"
                                 style={{
-                                    height: "85vh",
+                                    height: "78vh",
                                 }}
                             >
                                 <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100 lg:col-span-2">
                                     <div
                                         className="p-2 border rounded-lg shadow-lg bg-white"
                                         style={{
-                                            height: "80vh",
+                                            height: "73vh",
                                         }}
                                     >
                                         <div className="flex flex-col space-y-2 border-2 border-black p-2 m-2 rounded-md">
-                                            <div className="student-info-container">
+                                            <div className="student-info-container font-bold">
                                                 <div className="student-info-item flex text-xs">
-                                                    <label>
-                                                        Nama :{" "}
-                                                        {studentData.name}
+                                                    <label className="w-24">
+                                                        Nama
                                                     </label>
-                                                </div>
-                                                <div className="student-info-item flex text-xs">
-                                                    <label>
-                                                        NIM : {studentData.nim}
-                                                    </label>
-                                                </div>
-                                                <div className="student-info-item flex text-xs">
-                                                    <label>
-                                                        Tahun Ajaran :{" "}
-                                                        {
-                                                            studentData.yearOfStudy
-                                                        }
-                                                    </label>
-                                                </div>
-                                                <div className="student-info-item flex text-xs">
-                                                    <label>
-                                                        Semester :{" "}
-                                                        {studentData.semester}
-                                                    </label>
-                                                </div>
-                                                <div className="student-info-item flex text-xs">
-                                                    <label>
-                                                        IPK : {studentData.ipk}
-                                                    </label>
+                                                    <span>
+                                                        : {mahasiswa.nama}
+                                                    </span>
                                                 </div>
                                                 <div className="student-info-item flex text-xs">
                                                     <label className="w-24">
-                                                        IPS : {studentData.ips}
+                                                        NIM
                                                     </label>
+                                                    <span>
+                                                        : {mahasiswa.nim}
+                                                    </span>
                                                 </div>
                                                 <div className="student-info-item flex text-xs">
-                                                    <label>
-                                                        Max Beban SKS :{" "}
-                                                        {studentData.maxCredits}
+                                                    <label className="w-24">
+                                                        Tahun Ajaran
                                                     </label>
+                                                    <span>
+                                                        :{" "}
+                                                        {mahasiswa.tahun_ajaran}{" "}
+                                                    </span>
+                                                </div>
+                                                <div className="student-info-item flex text-xs">
+                                                    <label className="w-24">
+                                                        Semester
+                                                    </label>
+                                                    <span>
+                                                        : {mahasiswa.semester}{" "}
+                                                    </span>
+                                                </div>
+                                                <div className="student-info-item flex text-xs">
+                                                    <label className="w-24">
+                                                        IPK
+                                                    </label>
+                                                    <span>
+                                                        : {mahasiswa.ipk}
+                                                    </span>
+                                                </div>
+                                                <div className="student-info-item flex text-xs">
+                                                    <label className="w-24">
+                                                        IPS
+                                                    </label>
+                                                    <span>
+                                                        : {mahasiswa.ips}{" "}
+                                                    </span>
+                                                </div>
+                                                <div className="student-info-item flex text-xs">
+                                                    <label className="w-24">
+                                                        Max Beban SKS
+                                                    </label>
+                                                    <span>
+                                                        : {mahasiswa.maxSks}{" "}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1000,7 +1099,7 @@ const Akademik = () => {
                                                         </div>
 
                                                         {/* Course options */}
-                                                        <div className="max-h-64 overflow-y-auto">
+                                                        <div className="max-h-56 overflow-y-auto">
                                                             {filteredCourses.length ===
                                                             0 ? (
                                                                 <div className="p-4 text-gray-500 text-center">
@@ -1014,7 +1113,7 @@ const Akademik = () => {
                                                                     ) => (
                                                                         <button
                                                                             key={
-                                                                                course.id
+                                                                                course.kode_mk
                                                                             }
                                                                             onClick={() =>
                                                                                 handleCourseSelect(
@@ -1025,16 +1124,16 @@ const Akademik = () => {
                                                                         >
                                                                             <div className="font-medium text-[12px]">
                                                                                 {
-                                                                                    course.name
+                                                                                    course.nama
                                                                                 }
                                                                             </div>
                                                                             <div className="text-sm text-gray-500 text-[10px]">
                                                                                 {
-                                                                                    course.code
+                                                                                    course.kode_mk
                                                                                 }{" "}
                                                                                 -{" "}
                                                                                 {
-                                                                                    course.credits
+                                                                                    course.sks
                                                                                 }{" "}
                                                                                 SKS
                                                                             </div>
@@ -1051,7 +1150,8 @@ const Akademik = () => {
                                             <h2 className="text-lg font-medium text-gray-900 mb-3">
                                                 Mata Kuliah
                                             </h2>
-                                            <div className="space-y-2 max-h-[35vh] overflow-y-auto pr-2">
+                                            <div className="space-y-2 max-h-[28vh] overflow-y-auto pr-2">
+                                                {console.log(selectedCourses)}
                                                 {selectedCourses.map(
                                                     (course) => (
                                                         <div
@@ -1061,29 +1161,27 @@ const Akademik = () => {
                                                             <div>
                                                                 <div className="font-medium text-[12px]">
                                                                     {
-                                                                        course.name
+                                                                        course.nama
                                                                     }
                                                                 </div>
                                                                 <div className="text-[10px] text-gray-500">
-                                                                    SMT{" "}
+                                                                    Semester{" "}
                                                                     {
                                                                         course.semester
                                                                     }{" "}
                                                                     -{" "}
                                                                     {
-                                                                        course.code
+                                                                        course.kode_mk
                                                                     }{" "}
                                                                     (
-                                                                    {
-                                                                        course.credits
-                                                                    }{" "}
+                                                                    {course.sks}{" "}
                                                                     SKS)
                                                                 </div>
                                                             </div>
                                                             <button
                                                                 onClick={() =>
                                                                     handleToggleCourse(
-                                                                        course.id
+                                                                        course.kode_mk
                                                                     )
                                                                 }
                                                                 className="p-1 text-gray-400 hover:text-gray-600"
@@ -1099,11 +1197,11 @@ const Akademik = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100 lg:col-span-5">
+                                <div className="p-3 w-[115vh] transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100 lg:col-span-5">
                                     <div
                                         className="flex items-start justify-between p-2 border rounded-lg shadow-lg bg-white overflow-y-auto"
                                         style={{
-                                            height: "80vh",
+                                            height: "73vh",
                                         }}
                                     >
                                         <div className="flex flex-col space-y-2 p-2">
@@ -1115,8 +1213,8 @@ const Akademik = () => {
 
                             {/* Sidebar */}
                             <div
-                                className={`fixed right-0 top-14 h-full bg-[#1EAADF] shadow-lg transition-all duration-300 ${
-                                    isSidebarOpen ? "w-80" : "w-12"
+                                className={`fixed right-0 top-0 h-full bg-[#1EAADF] shadow-lg transition-all duration-300 ${
+                                    isSidebarOpen ? "w-80" : "w-12" 
                                 }`}
                             >
                                 <button
@@ -1155,16 +1253,16 @@ const Akademik = () => {
                                                                 <div>
                                                                     <div className="font-medium text-[12px]">
                                                                         {
-                                                                            course.name
+                                                                            course.nama
                                                                         }
                                                                     </div>
                                                                     <div className="text-[10px] text-gray-500">
                                                                         {
-                                                                            course.code
+                                                                            course.kode_mk
                                                                         }{" "}
                                                                         -{" "}
                                                                         {
-                                                                            course.credits
+                                                                            course.sks
                                                                         }{" "}
                                                                         SKS
                                                                         <br />
@@ -1172,24 +1270,29 @@ const Akademik = () => {
                                                                         {
                                                                             course
                                                                                 .selectedClass
-                                                                                .code
+                                                                                .kelas
                                                                         }
                                                                     </div>
                                                                 </div>
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleRemoveCourse(
-                                                                            course.id
-                                                                        )
-                                                                    }
-                                                                    className="text-red-500"
-                                                                >
-                                                                    <Trash2
-                                                                        size={
-                                                                            16
-                                                                        }
-                                                                    />
-                                                                </button>
+                                                                {!isSubmitted &&
+                                                                    !isVerified && (
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleRemoveCourse(
+                                                                                    course
+                                                                                        .selectedClass
+                                                                                        .id_kelas
+                                                                                )
+                                                                            }
+                                                                            className="text-red-500"
+                                                                        >
+                                                                            <Trash2
+                                                                                size={
+                                                                                    16
+                                                                                }
+                                                                            />
+                                                                        </button>
+                                                                    )}
                                                             </div>
                                                         </div>
                                                     )
@@ -1206,18 +1309,59 @@ const Akademik = () => {
                                                         {totalCredits}
                                                     </span>
                                                 </div>
-                                                <button
-                                                    onClick={handleSubmit}
-                                                    className={`w-full p-2 rounded-md ${
-                                                        isSubmitted
-                                                            ? "bg-red-500 text-white hover:bg-red-600"
-                                                            : "bg-green-500 text-white hover:bg-green-600"
-                                                    }`}
-                                                >
-                                                    {isSubmitted
-                                                        ? "Batalkan"
-                                                        : "Ajukan"}
-                                                </button>
+                                                {!isVerified && (
+                                                    <button
+                                                        onClick={() => {
+                                                            Swal.fire({
+                                                                title: "Apakah Anda yakin?",
+                                                                icon: "warning",
+                                                                showCancelButton: true,
+                                                                confirmButtonColor:
+                                                                    "#3085d6",
+                                                                cancelButtonColor:
+                                                                    "#d33",
+                                                                confirmButtonText:
+                                                                    isSubmitted
+                                                                        ? "Ya, batalkan!"
+                                                                        : "Ya, ajukan!",
+                                                            }).then(
+                                                                (result) => {
+                                                                    if (
+                                                                        result.isConfirmed
+                                                                    ) {
+                                                                        handleSubmit();
+                                                                        Swal.fire(
+                                                                            isSubmitted
+                                                                                ? "Dibatalkan!"
+                                                                                : "Diajukan!",
+                                                                            isSubmitted
+                                                                                ? "Pengajuan IRS telah dibatalkan."
+                                                                                : "IRS Anda telah diajukan.",
+                                                                            "success"
+                                                                        );
+                                                                    }
+                                                                }
+                                                            );
+                                                        }}
+                                                        className={`w-full p-2 rounded-md ${
+                                                            isSubmitted
+                                                                ? "bg-red-500 text-white hover:bg-red-600"
+                                                                : "bg-green-500 text-white hover:bg-green-600"
+                                                        }`}
+                                                    >
+                                                        {isSubmitted
+                                                            ? "Batalkan"
+                                                            : "Ajukan"}
+                                                    </button>
+                                                )}
+                                                {isVerified && (
+                                                    <button
+                                                        className={`w-full p-2 rounded-md bg-gray-500 text-white hover:bg-gray-600 cursor-not-allowed`}
+                                                        disabled
+                                                    >
+                                                        {"IRS telah disetujui"}
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -1480,7 +1624,7 @@ const Akademik = () => {
                                                         </table>
                                                         <button
                                                             onClick={
-                                                                handleDownloadPDF
+                                                                downloadIRS
                                                             }
                                                             className="w-40 mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                                                         >

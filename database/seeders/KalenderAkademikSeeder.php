@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\KalenderAkademik;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class KalenderAkademikSeeder extends Seeder
 {
@@ -13,6 +14,7 @@ class KalenderAkademikSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('kalender_akademik')->truncate();
         KalenderAkademik::create([
             'id' => 20232,
             'tanggal_mulai' => '2023-07-17',
@@ -39,6 +41,38 @@ class KalenderAkademikSeeder extends Seeder
             'id_fakultas'=> NULL,
             'tahun_akademik'=> '2024-2',
             'keterangan'=>'Periode Tahun Akademik',
+        ]);
+        KalenderAkademik::create([
+            'tanggal_mulai' => '2024-07-02',
+            'tanggal_selesai'=>'2024-08-25',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2024-2',
+            'keterangan'=>'Pengisian IRS',
+        ]);
+        KalenderAkademik::create([
+            'tanggal_mulai' => '2024-08-19',
+            'tanggal_selesai'=>'2024-12-06',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2024-2',
+            'keterangan'=>'Masa Kuliah',
+        ]);
+        KalenderAkademik::create([
+            'tanggal_mulai' => '2024-08-19',
+            'tanggal_selesai'=>'2024-09-01',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2024-2',
+            'keterangan'=>'Periode Penggantian',
+        ]);
+        KalenderAkademik::create([
+            'tanggal_mulai' => '2024-08-19',
+            'tanggal_selesai'=>'2024-09-15',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2024-2',
+            'keterangan'=>'Periode Pembatalan',
         ]);
     }
 }

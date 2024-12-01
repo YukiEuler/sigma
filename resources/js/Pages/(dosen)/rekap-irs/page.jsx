@@ -110,7 +110,7 @@ const RekapIRS = () => {
                                 : "text-gray-500"
                         }`}
                     >
-                        Belum IRS
+                        Belum IRS (50)
                     </button>
                     <button
                         onClick={() => handleTabClick("Belum Disetujui")}
@@ -120,7 +120,7 @@ const RekapIRS = () => {
                                 : "text-gray-500"
                         }`}
                     >
-                        Belum Disetujui
+                        Belum Disetujui (50)
                     </button>
                     <button
                         onClick={() => handleTabClick("Sudah Disetujui")}
@@ -130,7 +130,7 @@ const RekapIRS = () => {
                                 : "text-gray-500"
                         }`}
                     >
-                        Sudah Disetujui
+                        Sudah Disetujui (50)
                     </button>
                 </div>
                 <div className="grid grid-cols-1 mt-3">
