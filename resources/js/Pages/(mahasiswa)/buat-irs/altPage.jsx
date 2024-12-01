@@ -58,7 +58,7 @@ const AltIRSMahasiswa = () => {
                         <Calendar className="w-16 h-16 text-black" />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                        Tidak dalam periode {periode.status}
+                        Tidak Dalam Periode {periode.status.toUpperCase()}
                     </h2>
                     <p className="text-gray-600">
                         Pembatalan IRS dapat dilakukan pada{" "}

@@ -15,7 +15,7 @@ class Irs extends Model
     protected $fillable = [
         'id_kelas',
         'semester',
-        'tahun',
+        'tahun_akademik',
         'status',
         'nim',
         'is_verified',
@@ -27,8 +27,13 @@ class Irs extends Model
         return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
     }
 
+    public function mataKuliah()
+    {
+        return $this->belongsTo(MataKuliah::class, 'kode_mk', 'kode_mk');
+    }
+
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class, 'id_kelas', 'id');
+        return $this->belongsTo(Kelas::class, 'id_kelas');
     }
 }

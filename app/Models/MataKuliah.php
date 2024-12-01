@@ -26,8 +26,8 @@ class MataKuliah extends Model
         return $this->belongsTo(ProgramStudi::class, 'id_prodi');
     }
 
-    public function kelas()
+    public function dosenMk()
     {
-        return $this->hasMany(Kelas::class, 'kode_mk');
+        return $this->hasMany(DosenMk::class, 'kode_mk', 'kode_mk');
     }
 }
