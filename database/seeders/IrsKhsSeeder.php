@@ -19,6 +19,9 @@ class IrsKhsSeeder extends Seeder
             ->join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
             ->select('kelas.*', 'mata_kuliah.*')
             ->get();
+        foreach ($kelasData as $kelas) {
+            $kelas->tahun = explode('-', $kelas->tahun_akademik)[0];
+        }
         foreach ($mahasiswas as $mahasiswa) {
             $kelas = chr(rand(65, 68));
             $semester = 1;

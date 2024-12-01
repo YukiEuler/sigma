@@ -48,9 +48,9 @@ class AturJadwalController extends Controller
         ->get();
 
         $ruangan = Ruangan::where('id_prodi', $dosen->id_prodi)
-        // ->where('diajukan', 1)
-        // ->where('disetujui', 1)
-        // ->select('id_ruang', 'nama_ruang')
+        ->where('diajukan', 1)
+        ->where('disetujui', 1)
+        ->select('id_ruang', 'nama_ruang', 'kuota')
         ->get();
 
         error_log($ruangan);
