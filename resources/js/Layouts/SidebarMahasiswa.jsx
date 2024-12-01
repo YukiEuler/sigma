@@ -1,9 +1,11 @@
 import React from "react";
-import { CgProfile } from "react-icons/cg";
 import { MdOutlineDashboard } from "react-icons/md";
 import { PiNotePencilDuotone } from "react-icons/pi";
-import { TbCashRegister } from "react-icons/tb";
+import { MdOutlineNoteAdd } from "react-icons/md";
 import { SiHtmlacademy } from "react-icons/si";
+import { CgNotes } from "react-icons/cg";
+import { HiOutlineDocumentReport } from "react-icons/hi";
+import { PiNotebook } from "react-icons/pi";
 import { IoIosLogOut } from "react-icons/io";
 
 const SidebarMahasiswa = ({ mahasiswa }) => {
@@ -45,42 +47,68 @@ const SidebarMahasiswa = ({ mahasiswa }) => {
                         {mahasiswa.nama_prodi}
                     </span>
                 </div>
+                <div className="mb-2">
+                    <div className="flex items-center text-white font-medium space-y-1">
+                        <a
+                            href="/mahasiswa/dashboard"
+                            className="flex items-center w-full gap-2 px-2 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <MdOutlineDashboard style={{ fontSize: "24px" }} />
+                            <span className="text-md">Dashboard</span>
+                        </a>
+                    </div>
+                </div>
+                <div className="mb-2">
+                    <div className="flex items-center text-white font-medium space-y-1">
+                        <a
+                            href="/mahasiswa/registrasi"
+                            className="flex items-center w-full gap-2 px-2 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <PiNotePencilDuotone style={{ fontSize: "24px" }} />
+                            <span className="text-md">Registrasi</span>
+                        </a>
+                    </div>
+                </div>
                 <div>
-                    <div className="mb-2">
-                        <div className="space-y-1 font-medium">
-                            <a
-                                href="/mahasiswa/dashboard"
-                                className="flex items-center gap-2 px-2 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
-                            >
-                                <MdOutlineDashboard
-                                    style={{ fontSize: "24px" }}
-                                />
-                                <span className="text-md">Dashboard</span>
-                            </a>
-                            <a
-                                href="/mahasiswa/registrasi"
-                                className="flex items-center gap-2 px-2 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
-                            >
-                                <PiNotePencilDuotone
-                                    style={{ fontSize: "24px" }}
-                                />
-                                <span className="text-md">Registrasi</span>
-                            </a>
-                            <a
-                                href="/mahasiswa/akademik"
-                                className="flex items-center gap-2 px-2 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
-                            >
-                                <SiHtmlacademy style={{ fontSize: "24px" }} />
-                                <span className="text-md">Akademik</span>
-                            </a>
-                            <a
-                                href="/actionlogout"
-                                className="flex items-center gap-2 px-2 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
-                            >
-                                <IoIosLogOut style={{ fontSize: "24px" }} />
-                                <span className="text-md">Logout</span>
-                            </a>
-                        </div>
+                    <div className="flex items-center gap-2 px-2 py-2 text-white font-medium">
+                        <SiHtmlacademy style={{ fontSize: "24px" }} />
+                        <span className="text-md">Akademik</span>
+                    </div>
+                    <div className="space-y-1 ml-4">
+                        <a
+                            href="/mahasiswa/akademik/buat-irs"
+                            className="flex items-center gap-2 px-4 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <MdOutlineNoteAdd style={{ fontSize: "24px" }} />
+                            <span className="text-sm">Buat IRS</span>
+                        </a>
+                        <a
+                            href="/mahasiswa/akademik/irs"
+                            className="flex items-center gap-2 px-4 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <CgNotes style={{ fontSize: "24px" }} />
+                            <span className="text-sm">IRS</span>
+                        </a>
+                        <a
+                            href="/mahasiswa/akademik/khs"
+                            className="flex items-center gap-2 px-4 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <HiOutlineDocumentReport
+                                style={{ fontSize: "24px" }}
+                            />
+                            <span className="text-sm">KHS</span>
+                        </a>
+                    </div>
+                </div>
+                <div className="mb-2">
+                    <div className="flex items-center text-white font-medium space-y-1">
+                        <a
+                            href="/actionlogout"
+                            className="flex items-center w-full gap-2 px-2 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-white group"
+                        >
+                            <IoIosLogOut style={{ fontSize: "24px" }} />
+                            <span className="text-md">Logout</span>
+                        </a>
                     </div>
                 </div>
             </div>
