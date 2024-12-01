@@ -26,11 +26,11 @@ class Kelas extends Model
 
     public function irs()
     {
-        return $this->hasMany(Irs::class, 'kode_kelas', 'kode_kelas');
+        return $this->hasMany(Irs::class, 'id_kelas', 'id');
     }
 
     public function jadwalKuliah()
     {
-        return $this->hasMany(JadwalKuliah::class, 'kode_kelas', 'kode_kelas');
+        return $this->hasMany(JadwalKuliah::class, 'id_kelas', 'id');
     }
 }
