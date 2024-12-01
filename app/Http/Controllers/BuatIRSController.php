@@ -44,8 +44,12 @@ class BuatIRSController extends Controller
     $mahasiswa->nama_prodi = $programStudi->nama_prodi;
     $fakultas = Fakultas::where('id_fakultas', $programStudi->id_fakultas)->first();
     $mahasiswa->nama_fakultas = $fakultas->nama_fakultas;
-    $mahasiswa->tahun_ajaran = ''.($tahun-$periode).'/'.($tahun-$periode+1).' '.$semester;
-    
+
+    if ($mahasiswa->status != "Aktif"){
+        return Inertia::render('(mahasiswa)/buat-irs/altPageStatus', ['mahasiswa' => $mahasiswa]);
+    }
+
+    $mahasiswa->tahun_ajaran = ''.($tahun-$periode).'/'.($tahun-$periode+1).' '.$semester;  
     $pengisianIRS = KalenderAkademik::where('tahun_akademik', $tahunAkademik->tahun_akademik)
         ->where('keterangan', 'Pengisian IRS')
         ->first();

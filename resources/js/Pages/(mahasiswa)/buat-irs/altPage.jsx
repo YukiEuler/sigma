@@ -52,10 +52,10 @@ const AltIRSMahasiswa = () => {
                     Buat IRS
                 </h1>
             </div>
-            <div className="flex flex-col items-center justify-center h-full bg-gray-50">
+            <div className="flex flex-col items-center justify-center h-full mt-4">
                 <div className="text-center mb-8">
-                    <div className="mx-auto mb-4 flex justify-center">
-                        <Calendar className="w-16 h-16 text-gray-400" />
+                    <div className="mx-auto mb-2 flex justify-center">
+                        <Calendar className="w-16 h-16 text-black" />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">
                         Tidak dalam periode {periode.status}
