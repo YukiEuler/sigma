@@ -21,6 +21,9 @@ use App\Http\Controllers\AkademikMhsController;
 use App\Http\Controllers\DataMahasiswaController;
 use App\Http\Controllers\DataMKController;
 use App\Http\Controllers\BiayaController;
+use App\Http\Controllers\BuatIRSController;
+use App\Http\Controllers\IRSController;
+use App\Http\Controllers\KHSController;
 use App\Http\Controllers\MenyetujuiJadwalController;
 use App\Http\Controllers\RegistrasiController;
 use App\Http\Controllers\RekapIRSController;
@@ -69,6 +72,10 @@ Route::get('mahasiswa/akademik/ubah-status', [AkademikMhsController::class, 'uba
 Route::get('mahasiswa/registrasi', [RegistrasiController::class, 'index'])->name('mahasiswa.registrasi')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::post('mahasiswa/registrasi/ubah-status', [RegistrasiController::class, 'updateStatus'])->name('mahasiswa.updateStatus')->middleware(['auth', 'validateRole:Mahasiswa']);
 Route::get('mahasiswa/biaya', [BiayaController::class, 'index'])->name('mahasiswa.biaya')->middleware(['auth', 'validateRole:Mahasiswa']);
+
+Route::get('mahasiswa/akademik/buat-irs', [BuatIRSController::class, 'index'])->name('mahasiswa.buatIRS')->middleware(['auth', 'validateRole:Mahasiswa']);
+Route::get('mahasiswa/akademik/irs', [IRSController::class, 'index'])->name('mahasiswa.irs')->middleware(['auth', 'validateRole:Mahasiswa']);
+Route::get('mahasiswa/akademik/khs', [KHSController::class, 'index'])->name('mahasiswa.khs')->middleware(['auth', 'validateRole:Mahasiswa']);
 
 Route::get('dekan/dashboard', [DekanController::class, 'index'])->name('dekan.dashboard')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-ruang', [MenyetujuiRuangKuliah::class, 'index'])->name('dekan.setujuiRuang')->middleware(['auth', 'validateRole:Dekan']);
