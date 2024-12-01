@@ -12,9 +12,8 @@ class CreateDosenMkTable extends Migration
             $table->id();
             $table->string('nip', 30);
             $table->string('kode_mk', 30);
-            $table->integer('tahun');
-            $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
-            
+            $table->string('tahun_akademik');
+                       
             $table->foreign('nip')->references('nip')->on('dosen')->onDelete('cascade');
             $table->foreign('kode_mk')->references('kode_mk')->on('mata_kuliah')->onDelete('cascade');
             $table->timestamps();

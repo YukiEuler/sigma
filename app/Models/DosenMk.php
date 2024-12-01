@@ -15,8 +15,7 @@ class DosenMk extends Model
     protected $fillable = [
         'nip',
         'kode_mk',
-        'tahun',
-        'semester',
+        'tahun_akademik'
     ];
 
     public function dosen()
