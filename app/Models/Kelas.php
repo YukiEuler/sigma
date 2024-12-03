@@ -17,6 +17,7 @@ class Kelas extends Model
         'kode_kelas',
         'tahun_akademik',
         'kuota',
+        'disetujui',
     ];
 
     public function mataKuliah()
