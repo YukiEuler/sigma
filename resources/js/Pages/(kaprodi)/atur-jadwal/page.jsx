@@ -53,7 +53,7 @@ const AturJadwal = () => {
                         'startTime': jadwal.waktu_mulai,
                         'endTime': jadwal.waktu_selesai,
                         'idKelas': kelas.id,
-                        'idRuang': jadwal.ruangan.id,
+                        'idRuang': jadwal.ruangan.id_ruang,
                         'hour': jadwal.waktu_mulai.split(':')[0],
                         'minute': jadwal.waktu_mulai.split(':')[1],
                     })
@@ -249,13 +249,15 @@ const AturJadwal = () => {
                         'startTime': jadwal.waktu_mulai,
                         'endTime': endTime,
                         'idKelas': kelas.id,
-                        'idRuang': jadwal.ruangan.id,
+                        'idRuang': jadwal.ruangan.id_ruang,
                         'hour': jadwal.waktu_mulai.split(':')[0],
                         'minute': jadwal.waktu_mulai.split(':')[1],
                     });
                 }
             }
         }
+        console.log(mataKuliahData);
+        console.log(daftarJadwal);
         setScheduleForms(daftarJadwal);
         // if (courseForms[course.id]) {
         //     setScheduleForms(courseForms[course.id]);
