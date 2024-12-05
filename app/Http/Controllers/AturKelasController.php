@@ -41,7 +41,18 @@ class AturKelasController extends Controller
             ->with(['kelas' => function ($query) use ($tahun) {
             $query->where('tahun_akademik', $tahun);
             }])
+            ->with(['dosenMk' => function ($query) use ($tahun) {
+                $query->where('tahun_akademik', $tahun);
+                }])
             ->get();
+        foreach ($mataKuliah as $mk) {
+            foreach ($mk->dosenMk as $dosenMk) {
+                $dosen = Dosen::where('nip', $dosenMk->nip)->first();
+                $dosenMk->nama = $dosen ? $dosen->nama : null;
+            }
+        }
+
+        error_log($mataKuliah);
         
         $listDosen = Dosen::where('id_prodi', $dosen->id_prodi)
         ->select('nip', 'nama')

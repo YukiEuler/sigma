@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { X, Plus, Minus } from "lucide-react";
 import { FaRegTrashCan } from "react-icons/fa6";
 import Swal from "sweetalert2";
+import Select from 'react-select';
 
 const DataMataKuliah = ({ mataKuliah }) => {
     const { props } = usePage();
@@ -22,9 +23,12 @@ const DataMataKuliah = ({ mataKuliah }) => {
     });
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedSemester, setSelectedSemester] = useState("");
+    const [listDosen, setListDosen] = useState(['']);
     const [searchTerm, setSearchTerm] = useState("");
-    const [kelasValue, setKelasValue] = useState('');
+    const [kelasValue, setKelasValue] = useState(1);
+    const [kelasAwal, setKelasAwal] = useState({});
     const [filteredMataKuliah, setFilteredMataKuliah] = useState([]);
+    const [adaUpdate, setAdaUpdate] = useState(false);
     const [scheduleForms, setScheduleForms] = useState([
         {
             class: "",
@@ -65,59 +69,92 @@ const DataMataKuliah = ({ mataKuliah }) => {
     };
 
     const openModal = (course) => {
-        console.log(course);
+        setKelasAwal(course['kelas'].slice());
         setSelectedCourse(course);
-        // if (courseForms[course.id]) {
-        //     setScheduleForms(courseForms[course.id]);
-        // } else {
-            // Jika belum ada, gunakan form default
-            setScheduleForms([
-                {
-                    class: "",
-                    quota: "",
-                    listDosenData: [""],
-                    room: "",
-                    day: "",
-                    startTime: "",
-                    endTime: "",
-                    hour: "",
-                    minute: "",
-                },
-            ]);
-        // }
         setIsModalOpen(true);
+        const newListDosen = [];
+        for (const dosen of course['dosen_mk']) {
+            newListDosen.push({
+                'value': dosen.nip,
+                'label': dosen.nama
+            });
+        }
+        setListDosen(newListDosen);
+        console.log(newListDosen);
     };
 
     const closeModal = () => {
-        // Simpan state form saat ini ke courseForms
-        // if (selectedCourse) {
-        //     setCourseForms((prev) => ({
-        //         ...prev,
-        //         [selectedCourse.id]: scheduleForms,
-        //     }));
-        // }
-        setIsModalOpen(false);
+        if (adaUpdate) {
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin menutup?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, tutup',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'btn btn-success mr-2',
+                    cancelButton: 'btn btn-danger ml-2',
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    setKelasValue(1);
+                    setIsModalOpen(false);
+                    setAdaUpdate(false);
+                    setListDosen(['']);
+                    setFilteredMataKuliah((prevMataKuliah) =>
+                        prevMataKuliah.map((mk) =>
+                            mk.kode_mk === selectedCourse.kode_mk
+                                ? { ...mk, kelas: kelasAwal }
+                                : mk
+                        )
+                    );
+                }
+            });
+        } else {
+            setKelasValue(1);
+            setIsModalOpen(false);
+            setAdaUpdate(false);
+            setListDosen([''])
+        }
     };
 
     const handleAddLecturer = (formIndex) => {
-        const newForms = [...scheduleForms];
-        newForms[formIndex].listDosenData.push("");
-        setScheduleForms(newForms);
+        const newListDosen = [...listDosen, ""]; // Buat salinan baru dan tambahkan elemen baru
+        setListDosen(newListDosen);
     };
-
+    
     const handleRemoveLecturer = (formIndex, lecturerIndex) => {
-        const newForms = [...scheduleForms];
-        if (newForms[formIndex].listDosenData.length > 1) {
-            newForms[formIndex].listDosenData = newForms[
-                formIndex
-            ].listDosenData.filter((_, i) => i !== lecturerIndex);
-            setScheduleForms(newForms);
+        if (listDosen.length > 1) {
+            setAdaUpdate(true);
+            const newListDosen = listDosen.filter((_, i) => i !== lecturerIndex); // Buat salinan baru tanpa elemen yang dihapus
+            setListDosen(newListDosen);
         }
     };
 
     const handleTambahKelasButtonClick = (formIndex) => {
-        console.log("Halo");
-        Inertia.post("/kaprodi/atur-kelas/tambah", { kode_mk: selectedCourse.kode_mk, banyak: kelasValue });
+        const kelasBaru = selectedCourse['kelas'];
+        for (let i = 0; i < kelasValue; i++) {
+            const lastKelas = kelasBaru.length > 0 ? kelasBaru[kelasBaru.length - 1]['kode_kelas'] : '@';
+            kelasBaru.push({
+                'kode_kelas': String.fromCharCode(lastKelas.charCodeAt(0) + 1)
+            });
+        }
+        setSelectedCourse((prevCourse) => ({
+            ...prevCourse,
+            kelas: kelasBaru,
+        }));
+        setAdaUpdate(true);
+    };
+
+    const handleDelete = (courseIndex) => {
+        const updatedKelas = selectedCourse.kelas.filter((_, index) => index !== courseIndex);
+        setSelectedCourse((prevCourse) => ({
+            ...prevCourse,
+            kelas: updatedKelas,
+        }));
+        setAdaUpdate(true);
     };
 
     const handleInputKelasChange = (e) => {
@@ -253,7 +290,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
             <main className="flex-1 max-h-full">
                 <div className="flex flex-col items-start justify-between mt-2 pb-3 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
                     <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
-                        Data Mata Kuliah
+                        Data Kelas
                     </h1>
                 </div>
                 <div className="grid grid-cols-1 gap-5 mt-6">
@@ -517,6 +554,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                     onChange={handleInputKelasChange}
                                                 />
                                                 <button
+                                                    type="button"
                                                     onClick={handleTambahKelasButtonClick}
                                                     className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
                                                 >
@@ -569,12 +607,16 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                             className="w-1/2 border rounded p-2"
                                                             value={course.kuota}
                                                         />
-                                                        <button
-                                                            onClick={() => handleDelete(courseIndex)}
-                                                            className="text-red-500 hover:text-red-700"
-                                                        >
-                                                            <FaRegTrashCan />
-                                                        </button>
+                                                        {courseIndex === selectedCourse['kelas'].length - 1 ? (
+                                                            <button
+                                                                onClick={() => handleDelete(courseIndex)}
+                                                                className="text-red-500 hover:text-red-700"
+                                                            >
+                                                                <FaRegTrashCan />
+                                                            </button>
+                                                        ) : (
+                                                            <FaRegTrashCan className="opacity-0"/> //placeholder
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>
@@ -583,81 +625,42 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                             <label className="block mb-1">
                                                 Dosen Pengampu
                                             </label>
-                                            {form.listDosenData.map(
-                                                (lecturer, lecturerIndex) => (
-                                                    <div
-                                                        key={lecturerIndex}
-                                                        className="flex gap-2 mb-2"
+                                            {listDosen.map((lecturer, lecturerIndex) => (
+                                                <div key={lecturerIndex} className="flex gap-2 mb-2">
+                                                    <Select
+                                                        required
+                                                        className="w-full border rounded p-2"
+                                                        value={lecturer} // Perbaiki nilai value di sini
+                                                        onChange={(selectedOption) => {
+                                                            const newListDosen = [...listDosen];
+                                                            newListDosen[lecturerIndex] = selectedOption;
+                                                            setListDosen(newListDosen);
+                                                            setAdaUpdate(true);
+                                                        }}
+                                                        options={listDosenData.map((l) => ({
+                                                            value: l.nama,
+                                                            label: l.nama,
+                                                        }))}
+                                                        placeholder="Pilih Dosen"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleAddLecturer(formIndex)}
+                                                        className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
                                                     >
-                                                        <select
-                                                            required
-                                                            className="w-full border rounded p-2"
-                                                            value={lecturer}
-                                                            onChange={(e) => {
-                                                                const newForms =
-                                                                    [
-                                                                        ...scheduleForms,
-                                                                    ];
-                                                                newForms[
-                                                                    formIndex
-                                                                ].listDosenData[
-                                                                    lecturerIndex
-                                                                ] =
-                                                                    e.target.value;
-                                                                setScheduleForms(
-                                                                    newForms
-                                                                );
-                                                            }}
-                                                        >
-                                                            <option value="">
-                                                                Pilih Dosen
-                                                            </option>
-                                                            {listDosenData.map(
-                                                                (l) => (
-                                                                    <option
-                                                                        key={
-                                                                            l.nip
-                                                                        }
-                                                                        value={
-                                                                            l.nama
-                                                                        }
-                                                                    >
-                                                                        {l.nama}
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                        </select>
+                                                        <Plus size={20} />
+                                                    </button>
+                                                    {listDosen.length > 1 && (
                                                         <button
                                                             type="button"
-                                                            onClick={() =>
-                                                                handleAddLecturer(
-                                                                    formIndex
-                                                                )
-                                                            }
-                                                            className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
+                                                            onClick={() => handleRemoveLecturer(formIndex, lecturerIndex)}
+                                                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
                                                         >
-                                                            <Plus size={20} />
+                                                            <Minus size={20} />
                                                         </button>
-                                                        {form.listDosenData
-                                                            .length > 1 && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    handleRemoveLecturer(
-                                                                        formIndex,
-                                                                        lecturerIndex
-                                                                    )
-                                                                }
-                                                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-                                                            >
-                                                                <Minus
-                                                                    size={20}
-                                                                />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                )
-                                            )}
+                                                    )}
+                                                </div>
+                                            ))}
                                         </div>
 
                                         {scheduleForms.length > 1 && (
