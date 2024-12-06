@@ -26,11 +26,13 @@ class IrsKhsSeeder extends Seeder
             $kelas = chr(rand(65, 68));
             $semester = 1;
             $tahun = $mahasiswa->angkatan;
+            $sks = 0;
             while ($semester < $mahasiswa->semester){
                 $periode = $semester % 2 + 1;
                 $tahun_akademik = ''.$tahun.'-'.$periode;
                 $filteredKelasData = $kelasData->where('semester', $semester)->where('tahun', $tahun)->where('kode_kelas', $kelas);
                 foreach ($filteredKelasData as $kelasItem) {
+                    $sks += $kelasItem->sks;
                     Irs::create([
                         'id_kelas' => $kelasItem->id,
                         'semester' => $semester,
@@ -58,6 +60,8 @@ class IrsKhsSeeder extends Seeder
                 $semester++;
                 if ($semester % 2 == 0) $tahun++;
             }
+            $mahasiswa->sks_kumulatif = $sks;
+            $mahasiswa->save();
         }
     }
 }

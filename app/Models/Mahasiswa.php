@@ -9,6 +9,10 @@ class Mahasiswa extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'nim';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     // Jika nama tabel berbeda dari default (plural lowercase dari nama model)
     protected $table = 'mahasiswa';
 
@@ -59,7 +63,7 @@ class Mahasiswa extends Model
 
     public function irs()
     {
-        return $this->hasMany(Irs::class, 'nim_mhs');
+        return $this->hasMany(Irs::class, 'nim');
     }
 
     public function khs()

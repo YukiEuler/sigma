@@ -351,18 +351,16 @@ const DataMahasiswa = () => {
                                                             {item.angkatan}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
-                                                            {item.ipk.toFixed(
-                                                                2
-                                                            )}
+                                                            {(parseFloat(item.ip_lalu) || 0).toFixed(2)}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
-                                                            {item.sks_kumulatif}
+                                                            {item.sks_kumulatif || 0}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
                                                             {item.status}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
-                                                            Sudah Disetujui
+                                                            {item.status}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
                                                             {item.dosen.nama}
