@@ -51,8 +51,6 @@ class AturKelasController extends Controller
                 $dosenMk->nama = $dosen ? $dosen->nama : null;
             }
         }
-
-        error_log($mataKuliah);
         
         $listDosen = Dosen::where('id_prodi', $dosen->id_prodi)
         ->select('nip', 'nama')
@@ -66,7 +64,7 @@ class AturKelasController extends Controller
         ]);
     }
 
-    public function tambah(Request $request)
+    public function store(Request $request)
     {
         $user = Auth::user();
 
@@ -80,23 +78,38 @@ class AturKelasController extends Controller
         $dosen->nama_fakultas = $fakultas->nama_fakultas;
 
         $kode_mk = $request['kode_mk'];
-        $banyak = (int) $request['banyak'];
-
+        error_log($request);
         $kelas = MataKuliah::where('id_prodi', $dosen->id_prodi)
             ->where('kode_mk', $kode_mk)
             ->with(['kelas' => function ($query) use ($tahun_akademik) {
-            $query->where('tahun_akademik', $tahun_akademik)
-                  ->orderBy('kode_kelas');
+                $query->where('tahun_akademik', $tahun_akademik)
+                ->orderBy('kode_kelas');
             }])
             ->get();
-        $start = ord($kelas->pluck('kelas')->flatten()->max('kode_kelas') ?: '@') + 1;
-        for ($i = 0; $i < $banyak; $i++) {
-            Kelas::create([
-                'kode_kelas' => chr($start + $i),
+        
+        error_log(count($request['kelas']));
+        if (count($request['kelas']) < count($kelas->pluck('kelas')[0])) {
+            $existingKelas = $kelas->pluck('kelas')->flatten();
+            $requestKelasCodes = collect($request['kelas'])->pluck('kode_kelas');
+            $kelasToDelete = $existingKelas->whereNotIn('kode_kelas', $requestKelasCodes);
+
+            foreach ($kelasToDelete as $kelas) {
+                Kelas::where('kode_kelas', $kelas->kode_kelas)
+                    ->where('kode_mk', $kode_mk)
+                    ->where('tahun_akademik', $tahun_akademik)
+                    ->delete();
+            }
+        }
+
+        foreach ($request['kelas'] as $kelas) {
+            Kelas::updateOrCreate([
+                'kode_kelas' => $kelas['kode_kelas'],
                 'kode_mk' => $kode_mk,
                 'tahun_akademik' => $tahun_akademik,
-                'kuota' => 1
+            ], [
+                'kuota' => $kelas['kuota']
             ]);
         }
+        return;
     }
 }

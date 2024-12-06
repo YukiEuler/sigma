@@ -79,8 +79,11 @@ const DataMataKuliah = ({ mataKuliah }) => {
                 'label': dosen.nama
             });
         }
-        setListDosen(newListDosen);
-        console.log(newListDosen);
+        if (newListDosen.length === 0){
+            setListDosen(['']);
+        } else {
+            setListDosen(newListDosen);
+        }
     };
 
     const closeModal = () => {
@@ -130,12 +133,13 @@ const DataMataKuliah = ({ mataKuliah }) => {
             setAdaUpdate(true);
             const newListDosen = listDosen.filter((_, i) => i !== lecturerIndex); // Buat salinan baru tanpa elemen yang dihapus
             setListDosen(newListDosen);
+            console.log(newListDosen);
         }
     };
 
     const handleTambahKelasButtonClick = (formIndex) => {
         const kelasBaru = selectedCourse['kelas'];
-        for (let i = 0; i < kelasValue; i++) {
+        for (let i = 0; i < kelasValue && kelasBaru.length < 26; i++) {
             const lastKelas = kelasBaru.length > 0 ? kelasBaru[kelasBaru.length - 1]['kode_kelas'] : '@';
             kelasBaru.push({
                 'kode_kelas': String.fromCharCode(lastKelas.charCodeAt(0) + 1)
@@ -164,13 +168,21 @@ const DataMataKuliah = ({ mataKuliah }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         // Validasi form
+        if (!adaUpdate){
+            Swal.fire({
+                title: "Peringatan!",
+                text: "Anda belum melakukan perubahan!",
+                icon: "error",
+                customClass: {
+                    confirmButton: "btn btn-danger",
+                },
+            });
+            return;
+        }
         if (
-            !newMataKuliah.kode ||
-            !newMataKuliah.nama ||
-            !newMataKuliah.sks ||
-            !newMataKuliah.semester
+            listDosen.includes('') || // Periksa elemen kosong dalam listDosen
+            selectedCourse['kelas'].some(kelas => !kelas.kode_kelas || !kelas.kuota)
         ) {
             Swal.fire({
                 title: "Error!",
@@ -184,16 +196,11 @@ const DataMataKuliah = ({ mataKuliah }) => {
         }
 
         Swal.fire({
-            title: "Konfirmasi Penambahan",
-            html: `Apakah Anda yakin ingin menambahkan mata kuliah berikut?<br><br>
-                  <b>Kode MK:</b> ${newMataKuliah.kode}<br>
-                  <b>Nama:</b> ${newMataKuliah.nama}<br>
-                  <b>SKS:</b> ${newMataKuliah.sks}<br>
-                  <b>Semester:</b> ${newMataKuliah.semester}<br>
-                  <b>Jenis:</b> ${newMataKuliah.jenis}`,
+            title: "Konfirmasi Penggantian",
+            html: `Apakah Anda yakin ingin mengganti kelas untuk mata kuliah <b>${selectedCourse.nama} (${selectedCourse.kode_mk})</b>?<br>`,
             icon: "question",
             showCancelButton: true,
-            confirmButtonText: "Ya, tambahkan!",
+            confirmButtonText: "Ya, ganti!",
             cancelButtonText: "Batal",
             reverseButtons: true,
             customClass: {
@@ -202,8 +209,9 @@ const DataMataKuliah = ({ mataKuliah }) => {
             },
         }).then((result) => {
             if (result.isConfirmed) {
+                selectedCourse['listDosen'] = listDosen;
                 // Kirim data mata kuliah baru
-                Inertia.post("/kaprodi/data-matakuliah/store", newMataKuliah, {
+                Inertia.post("/kaprodi/atur-kelas/store", selectedCourse, {
                     onSuccess: () => {
                         handleCloseModal();
                         setNewMataKuliah({
@@ -216,7 +224,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
 
                         Swal.fire({
                             title: "Berhasil!",
-                            text: "Mata kuliah berhasil ditambahkan",
+                            text: "Kelas berhasil diganti",
                             icon: "success",
                             customClass: {
                                 confirmButton: "btn btn-success",
@@ -227,39 +235,6 @@ const DataMataKuliah = ({ mataKuliah }) => {
                         });
                     },
                     onError: (errors) => {
-                        // Check jika error adalah kode MK yang sama
-                        if (errors.message) {
-                            let errorMessage = "";
-
-                            // Handle kasus di mana ada duplikasi kode dan/atau nama
-                            if (errors.duplicate) {
-                                if (
-                                    errors.duplicate.kode &&
-                                    errors.duplicate.nama
-                                ) {
-                                    errorMessage =
-                                        "Kode dan nama mata kuliah sudah digunakan!";
-                                } else if (errors.duplicate.kode) {
-                                    errorMessage =
-                                        "Kode mata kuliah sudah digunakan!";
-                                } else if (errors.duplicate.nama) {
-                                    errorMessage =
-                                        "Nama mata kuliah sudah digunakan!";
-                                }
-                            } else {
-                                // Handle error lainnya
-                                errorMessage = Object.values(errors.message)[0];
-                            }
-
-                            Swal.fire({
-                                title: "Gagal!",
-                                text: errorMessage,
-                                icon: "error",
-                                customClass: {
-                                    confirmButton: "btn btn-danger",
-                                },
-                            });
-                        }
                     },
                 });
             }
@@ -319,12 +294,6 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                     </select>
                                 </div>
                                 <div className="flex justify-between items-center mt-4 mb-2">
-                                    <button
-                                        onClick={handleOpenModal}
-                                        className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
-                                    >
-                                        Tambah Mata Kuliah
-                                    </button>
                                     <div className="flex justify-center items-center w-64">
                                         <div className="relative w-full">
                                             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -548,7 +517,8 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                 <input
                                                     required
                                                     type="number"
-                                                    min="1"
+                                                    min="0"
+                                                    max={Math.max(0, 26-selectedCourse['kelas'].length)}
                                                     className="w-full border rounded p-2"
                                                     value={kelasValue}
                                                     onChange={handleInputKelasChange}
@@ -602,13 +572,27 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                             value={course.kode_kelas}
                                                         />
                                                         <input
+                                                            required
                                                             type="number"
                                                             min="1"
                                                             className="w-1/2 border rounded p-2"
                                                             value={course.kuota}
+                                                            onChange={
+                                                                (e) => {
+                                                                    const updatedKelas = selectedCourse.kelas.map((kelas, index) =>
+                                                                        index === courseIndex ? { ...kelas, kuota: e.target.value } : kelas
+                                                                    );
+                                                                    setSelectedCourse((prevCourse) => ({
+                                                                        ...prevCourse,
+                                                                        kelas: updatedKelas,
+                                                                    }));
+                                                                    setAdaUpdate(true);
+                                                                }
+                                                            }
                                                         />
                                                         {courseIndex === selectedCourse['kelas'].length - 1 ? (
                                                             <button
+                                                                type="button"
                                                                 onClick={() => handleDelete(courseIndex)}
                                                                 className="text-red-500 hover:text-red-700"
                                                             >
