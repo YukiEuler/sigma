@@ -16,7 +16,7 @@ class CreateKelasTable extends Migration
             // $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
             $table->string('tahun_akademik');
             $table->integer('kuota');
-            $table->boolean('disetujui')->default(false);
+            $table->enum('status', ['belum', 'diajukan', 'disetujui'])->default('belum');
 
             $table->foreign('kode_mk')->references('kode_mk')->on('mata_kuliah')->onDelete('cascade');
             $table->timestamps();

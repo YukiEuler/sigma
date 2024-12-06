@@ -20,7 +20,7 @@ const AturJadwal = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [errorMessages, setErrorMessages] = useState({});
     const [semesterFilter, setSemesterFilter] = useState("");
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [status, setStatus] = useState("");
     const [courseForms, setCourseForms] = useState({});
     const [scheduleForms, setScheduleForms] = useState([
         {
@@ -43,6 +43,7 @@ const AturJadwal = () => {
         const daftarJadwal = [];
         for (const matkul of mataKuliahData){
             for (const kelas of matkul.kelas){
+                setStatus(kelas.status);
                 for (const jadwal of kelas.jadwal_kuliah){
                     daftarJadwal.push({
                         'class': kelas.kode_kelas,
@@ -99,7 +100,30 @@ const AturJadwal = () => {
     };
 
     const handleButtonClick = () => {
-        setIsSubmitted(!isSubmitted);
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Anda akan mengubah status jadwal!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, ubah!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Inertia.get('/kaprodi/atur-jadwal/ubah-status');
+                if (status === 'belum') {
+                    setStatus('diajukan');
+                } else if (status === 'diajukan'){
+                    setStatus('belum');
+                }
+                Swal.fire({
+                    icon: "success",
+                    title: "Berhasil",
+                    text: "Status sudah diubah!",
+                });
+            }
+        });
     };
 
     const calculateEndTime = (hour, minute, sks) => {
@@ -579,12 +603,15 @@ const AturJadwal = () => {
                             <button
                                 onClick={handleButtonClick}
                                 className={`w-20 mb-1 mt-2 mx-2 p-2 text-sm text-white rounded-md ${
-                                    isSubmitted
+                                    status === 'diajukan'
                                         ? "bg-red-500 hover:bg-red-600"
-                                        : "bg-blue-500 hover:bg-blue-600"
+                                        : status === 'belum'
+                                        ? "bg-blue-500 hover:bg-blue-600"
+                                        : "bg-gray-500 hover:bg-gray-600 cursor-not-allowed"
                                 }`}
+                                disabled={status === 'disetujui'}
                             >
-                                {isSubmitted ? "Batalkan" : "Ajukan"}
+                                {status === 'diajukan' ? "Batalkan" : status === 'belum' ? "Ajukan" : "Disetujui"}
                             </button>
                             <div className="flex flex-col space-y-2 p-2 max-h-[70vh] overflow-x-auto scrollbar-hide">
                                 <table className="w-full border-collapse">
@@ -765,12 +792,13 @@ const AturJadwal = () => {
                                             <div>
                                                 <label className="block mb-1">Ruang</label>
                                                 <select
-                                                    className="w-full border rounded p-2"
+                                                    className={"w-full border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
                                                     value={form.room}
                                                     onChange={(e) => {
                                                         const roomId = e.target.options[e.target.selectedIndex].getAttribute('data-key');
                                                         handleRoomChange(formIndex, roomId, e.target.value);
                                                     }}
+                                                    disabled={status !== 'belum'}
                                                 >
                                                     <option value="">Pilih Ruang</option>
                                                     {ruanganData
@@ -792,11 +820,12 @@ const AturJadwal = () => {
                                             <div>
                                                 <label className="block mb-1">Hari</label>
                                                 <select
-                                                    className="w-full border rounded p-2"
+                                                    className={"w-full border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
                                                     value={form.day}
                                                     onChange={(e) => {
                                                         handleDayChange(formIndex, e.target.value);
                                                     }}
+                                                    disabled={status !== 'belum'}
                                                 >
                                                     <option value="">Pilih Hari</option>
                                                     {DAYS.map((day) => (
@@ -810,11 +839,12 @@ const AturJadwal = () => {
                                                 <label className="block mb-1">Jam Mulai</label>
                                                 <div className="flex gap-2 items-center">
                                                     <select
-                                                        className="w-24 border rounded p-2"
+                                                        className={"w-24 border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
                                                         value={form.hour}
                                                         onChange={(e) =>
                                                             handleTimeChange(formIndex, "hour", e.target.value)
                                                         }
+                                                        disabled={status !== 'belum'}
                                                     >
                                                         <option value="">Jam</option>
                                                         {HOURS.map((hour) => (
@@ -825,11 +855,12 @@ const AturJadwal = () => {
                                                     </select>
                                                     <span className="text-xl">:</span>
                                                     <select
-                                                        className="w-24 border rounded p-2"
+                                                        className={"w-24 border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
                                                         value={form.minute}
                                                         onChange={(e) =>
                                                             handleTimeChange(formIndex, "minute", e.target.value)
                                                         }
+                                                        disabled={status !== 'belum'}
                                                     >
                                                         <option value="">Menit</option>
                                                         {MINUTES.map((minute) => (
@@ -860,19 +891,12 @@ const AturJadwal = () => {
                                 ))}
 
                                 <div className="flex justify-start">
-                                    <button
+                                    {status === 'belum' && (<button
                                         type="submit"
                                         className="bg-blue-600 text-white px-4 py-2 mr-2 rounded hover:bg-blue-700"
                                     >
                                         Simpan
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleAddForm}
-                                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                                    >
-                                        Tambah Kelas
-                                    </button>
+                                    </button>)}
                                 </div>
                             </form>
                         </div>

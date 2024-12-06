@@ -23,12 +23,6 @@ class AturJadwalController extends Controller
     public function index(){    
         $user = Auth::user();
 
-        if (!$user) {
-            return redirect()->route('login');
-        } elseif ($user->role !== 'Dosen'){
-            return redirect()->route('home');
-        }
-
         $dosen = Dosen::where('user_id', $user->id)->get()->first();
         $programStudi = ProgramStudi::where('id_prodi', $dosen->id_prodi)->first();
         $dosen->nama_prodi = $programStudi->nama_prodi;
@@ -90,5 +84,25 @@ class AturJadwalController extends Controller
         }
 
         return redirect()->back()->with('success', 'Jadwal berhasil disimpan.');
+    }
+
+    public function ubah_status(){
+        $user = Auth::user();
+
+        $dosen = Dosen::where('user_id', $user->id)->get()->first();
+        $status = Kelas::join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
+            ->where('mata_kuliah.id_prodi', $dosen->id_prodi)
+            ->select('kelas.status')
+            ->first()
+            ->status;
+        if ($status == 'belum'){
+            Kelas::join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
+                ->where('mata_kuliah.id_prodi', $dosen->id_prodi)
+                ->update(['kelas.status' => 'diajukan']);
+        } elseif ($status == 'diajukan'){
+            Kelas::join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
+                ->where('mata_kuliah.id_prodi', $dosen->id_prodi)
+                ->update(['kelas.status' => 'belum']);
+        }
     }
 }

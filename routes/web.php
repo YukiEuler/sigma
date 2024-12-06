@@ -102,3 +102,4 @@ Route::post('kaprodi/atur-kelas/store', [AturKelasController::class, 'store'])->
 Route::post('kaprodi/atur-kelas/get-kuota', [AturKelasController::class, 'get_kuota'])->name('kaprodi.getKuota')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/atur-jadwal', [AturJadwalController::class, 'index'])->name('kaprodi.aturJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('kaprodi/atur-jadwal/store', [AturJadwalController::class, 'store'])->name('kaprodi.storeJadwal')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::get('kaprodi/atur-jadwal/ubah-status', [AturJadwalController::class, 'ubah_status'])->name('kaprodi.ubahStatus')->middleware(['auth', 'validateRole:Kaprodi']);
