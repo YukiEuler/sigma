@@ -18,6 +18,7 @@ const AturJadwal = () => {
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedKelas, setSelectedKelas] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [errorMessages, setErrorMessages] = useState({});
     const [semesterFilter, setSemesterFilter] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [courseForms, setCourseForms] = useState({});
@@ -113,21 +114,112 @@ const AturJadwal = () => {
 
     const handleTimeChange = (index, type, value) => {
         const newForms = [...scheduleForms];
+        const before = newForms[index][type];
         newForms[index][type] = value;
 
         if (newForms[index].hour && newForms[index].minute) {
+            const roomId = newForms[index].idRuang;
+            const day = newForms[index].day;
             const startTime = `${newForms[index].hour}:${newForms[index].minute}`;
             const endTime = calculateEndTime(
                 newForms[index].hour,
                 newForms[index].minute,
                 selectedCourse?.sks || 0
             );
-
-            newForms[index].startTime = startTime;
-            newForms[index].endTime = endTime;
+            const kodeKelas = newForms[index].class;
+            if (isRoomAvailable(roomId, day, startTime, endTime, kodeKelas)) {
+                newForms[index].startTime = startTime;
+                newForms[index].endTime = endTime;
+                setErrorMessages((prev) => ({ ...prev, [index]: "" }));
+            } else {
+                newForms[index][type] = before;
+                setErrorMessages((prev) => ({
+                    ...prev,
+                    [index]: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
+                }));
+            }
+            setScheduleForms(newForms);
+        } else {
+            newForms[index].endTime = "";
         }
 
         setScheduleForms(newForms);
+    };
+
+    const parseTime = (timeStr) => {
+        const [hours, minutes, seconds] = timeStr.split(":").map(Number);
+        return new Date(1970, 0, 1, hours, minutes, seconds);
+    };
+
+    const isRoomAvailable = (roomId, day, startTime, endTime, kode_kelas) => {
+        if (roomId === '' || day === '' || startTime === '' || endTime === '') return true;
+        startTime += ":00";
+        endTime += ":00";
+        for (const matkul of mataKuliahData) {
+            if (matkul.kode_mk === selectedCourse.kode_mk) continue;
+            for (const kelas of matkul.kelas) {
+                for (const jadwal of kelas.jadwal_kuliah) {
+                    if (
+                        jadwal.ruangan.id_ruang == roomId &&
+                        jadwal.hari === day &&
+                        parseTime(jadwal.waktu_mulai) <= parseTime(endTime) &&
+                        parseTime(jadwal.waktu_selesai) >= parseTime(startTime)
+                    ) {
+                        return false;
+                    }
+                }
+            }
+        }
+        for (const jadwal of scheduleForms){
+            if (kode_kelas === jadwal.class) continue;
+            if (
+                jadwal.idRuang === roomId &&
+                jadwal.day === day &&
+                parseTime(jadwal.startTime+":00") <= parseTime(endTime) &&
+                parseTime(jadwal.endTime+":00") >= parseTime(startTime)
+            ) {
+                return false;
+            }
+        }
+        console.log(scheduleForms);
+        return true;
+    };
+
+    const handleRoomChange = (formIndex, roomId, roomName) => {
+        const newForms = [...scheduleForms];
+        const startTime = newForms[formIndex].startTime;
+        const endTime = newForms[formIndex].endTime;
+        const day = newForms[formIndex].day;
+    
+        if (isRoomAvailable(roomId, day, startTime, endTime)) {
+            newForms[formIndex].room = roomName;
+            newForms[formIndex].idRuang = roomId;
+            setScheduleForms(newForms);
+            setErrorMessages((prev) => ({ ...prev, [formIndex]: "" }));
+        } else {
+            setErrorMessages((prev) => ({
+                ...prev,
+                [formIndex]: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
+            }));
+        }
+    };
+
+    const handleDayChange = (formIndex, day) => {
+        const newForms = [...scheduleForms];
+        const roomId = newForms[formIndex].idRuang;
+        const startTime = newForms[formIndex].startTime;
+        const endTime = newForms[formIndex].endTime;
+
+        if (isRoomAvailable(roomId, day, startTime, endTime)) {
+            newForms[formIndex].day = day;
+            setScheduleForms(newForms);
+            setErrorMessages((prev) => ({ ...prev, [formIndex]: "" }));
+        } else {
+            setErrorMessages((prev) => ({
+                ...prev,
+                [formIndex]: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
+            }));
+        }
     };
 
     const handleAddForm = () => {
@@ -173,49 +265,69 @@ const AturJadwal = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const newSchedules = scheduleForms.map((form) => {
-            const startTime = `${form.hour}:${form.minute}`;
-            const endTime = calculateEndTime(
-                form.hour,
-                form.minute,
-                selectedCourse.sks
-            );
 
-            return {
-                ...form,
-                courseId: selectedCourse.kode_mk,
-                courseName: selectedCourse.nama,
-                sks: selectedCourse.sks,
-                kuota: selectedCourse.kuota,
-                startTime,
-                endTime,
-            };
-        });
+        for (const form of scheduleForms) {
+            const { room, day, startTime, endTime } = form;
+            const allFilled = room && day && startTime && endTime;
+            const allEmpty = !room && !day && !startTime && !endTime;
+    
+            if (!allFilled && !allEmpty) {
+                Swal.fire({
+                    title: "Error!",
+                    text: `Atribut harus diisi semua atau tidak diisi semua pada kelas ${form.class}.`,
+                    icon: "error",
+                    customClass: {
+                        confirmButton: "btn btn-danger",
+                    },
+                });
+                return;
+            }
+        }
+
+        // const newSchedules = scheduleForms.map((form) => {
+        //     const startTime = `${form.hour}:${form.minute}`;
+        //     const endTime = calculateEndTime(
+        //         form.hour,
+        //         form.minute,
+        //         selectedCourse.sks
+        //     );
+
+        //     return {
+        //         ...form,
+        //         courseId: selectedCourse.kode_mk,
+        //         courseName: selectedCourse.nama,
+        //         sks: selectedCourse.sks,
+        //         kuota: selectedCourse.kuota,
+        //         startTime,
+        //         endTime,
+        //     };
+        // });
 
         // Update schedules
-        setSchedules((prevSchedules) => {
-            // Hapus jadwal lama untuk mata kuliah ini (jika ada)
-            const filteredSchedules = prevSchedules.filter(
-                (schedule) => schedule.courseId !== selectedCourse.id
-            );
-            // Tambahkan jadwal baru
-            return [...filteredSchedules, ...newSchedules];
-        });
+        // setSchedules((prevSchedules) => {
+        //     // Hapus jadwal lama untuk mata kuliah ini (jika ada)
+        //     const filteredSchedules = prevSchedules.filter(
+        //         (schedule) => schedule.courseId !== selectedCourse.id
+        //     );
+        //     // Tambahkan jadwal baru
+        //     return [...filteredSchedules, ...newSchedules];
+        // });
 
-        // Simpan form state
-        setCourseForms((prev) => ({
-            ...prev,
-            [selectedCourse.id]: scheduleForms,
-        }));
+        // // Simpan form state
+        // setCourseForms((prev) => ({
+        //     ...prev,
+        //     [selectedCourse.id]: scheduleForms,
+        // }));
 
-        const { kelas, ...courseWithoutKelas } = selectedCourse;
-        Inertia.post("/kaprodi/atur-jadwal/store", { scheduleForms, selectedCourse: courseWithoutKelas }, {
+        // const { kelas, ...courseWithoutKelas } = selectedCourse;
+        Inertia.post("/kaprodi/atur-jadwal/store", { scheduleForms }, {
             onSuccess: () => {
                 Swal.fire({
                     icon: "success",
                     title: "Berhasil",
                     text: "Jadwal berhasil disimpan",
                 });
+                window.location.reload();
             },
             onError: (errors) => {
                 Swal.fire({
@@ -252,6 +364,22 @@ const AturJadwal = () => {
                         'idRuang': jadwal.ruangan.id_ruang,
                         'hour': jadwal.waktu_mulai.split(':')[0],
                         'minute': jadwal.waktu_mulai.split(':')[1],
+                    });
+                }
+                if (kelas.jadwal_kuliah.length === 0){
+                    daftarJadwal.push({
+                        'class': kelas.kode_kelas,
+                        'courseId': matkul.kode_mk,
+                        'courseName': matkul.nama,
+                        'quota': kelas.kuota,
+                        'room': "",
+                        'day': "",
+                        'startTime': "",
+                        'endTime': "",
+                        'idKelas': kelas.id,
+                        'idRuang': "",
+                        'hour': "",
+                        'minute': "",
                     });
                 }
             }
@@ -608,52 +736,25 @@ const AturJadwal = () => {
                                 <div className="border-t pt-2"></div>
                             </header>
 
-                            <form onSubmit={handleSubmit} className="space-y-2">
+                            <form onSubmit={handleSubmit} className="space-y-4">
                                 {scheduleForms.map((form, formIndex) => (
-                                    <div
-                                        key={formIndex}
-                                    >
+                                    <div key={formIndex} className="p-4 border-2 border-gray-300 rounded-lg shadow-lg bg-white">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <label className="block mb-1">
-                                                    Kelas
-                                                </label>
-                                                <select
-                                                    required
-                                                    className="w-full border rounded p-2"
+                                                <label className="block mb-1">Kelas</label>
+                                                <input
+                                                    readOnly
+                                                    className="w-full border rounded p-2 bg-gray-100"
                                                     value={form.class}
-                                                    onChange={(e) => {
-                                                        const newForms = [...scheduleForms];
-                                                        newForms[formIndex].class = e.target.value;
-                                                        newForms[formIndex].idKelas = e.target.options[e.target.selectedIndex].getAttribute('data-key');
-                                                        newForms[formIndex].quota = selectedCourse.kelas.find((kelas) => kelas.kode_kelas === e.target.value)?.kuota || "";
-                                                        setScheduleForms(newForms);
-                                                    }}              
-                                                >
-                                                    <option value="">Pilih Kelas</option>
-                                                    {selectedCourse.kelas
-                                                        .filter((kelas) => !scheduleForms.some((form) => form.class === kelas.kode_kelas) || form.class === kelas.kode_kelas)
-                                                        .map((kelas) => (
-                                                            <option key={kelas.kode_kelas} value={kelas.kode_kelas} data-key={kelas.id}>
-                                                                {kelas.kode_kelas}
-                                                            </option>
-                                                    ))}
-                                                </select>
+                                                />
                                             </div>
                                             <div>
-                                                <label className="block mb-1">
-                                                    Kuota
-                                                </label>
+                                                <label className="block mb-1">Kuota</label>
                                                 <input
-                                                    required
-                                                    // type="number"
-                                                    // min="1"
                                                     className="w-full border rounded p-2 bg-gray-100"
                                                     value={
                                                         selectedCourse.kelas.find(
-                                                            (kelas) =>
-                                                                kelas.kode_kelas ===
-                                                                form['class']
+                                                            (kelas) => kelas.kode_kelas === form['class']
                                                         )?.kuota || ""
                                                     }
                                                     readOnly
@@ -662,28 +763,20 @@ const AturJadwal = () => {
                                         </div>
                                         <div className="grid grid-cols-4 gap-4">
                                             <div>
-                                                <label className="block mb-1">
-                                                    Ruang
-                                                </label>
+                                                <label className="block mb-1">Ruang</label>
                                                 <select
-                                                    required
                                                     className="w-full border rounded p-2"
                                                     value={form.room}
                                                     onChange={(e) => {
-                                                        const newForms = [...scheduleForms];
-                                                        newForms[formIndex].room = e.target.value;
-                                                        newForms[formIndex].idRuang = e.target.options[e.target.selectedIndex].getAttribute('data-key');
-                                                        setScheduleForms(newForms);
+                                                        const roomId = e.target.options[e.target.selectedIndex].getAttribute('data-key');
+                                                        handleRoomChange(formIndex, roomId, e.target.value);
                                                     }}
                                                 >
-                                                    <option value="">
-                                                        Pilih Ruang
-                                                    </option>
-                                                    {console.log(form.quota) || ruanganData
+                                                    <option value="">Pilih Ruang</option>
+                                                    {ruanganData
                                                         .filter(
                                                             (room) =>
-                                                                parseInt(room.kuota) >=
-                                                                parseInt(form.quota)
+                                                                parseInt(room.kuota) >= parseInt(form.quota)
                                                         )
                                                         .map((room) => (
                                                             <option
@@ -697,125 +790,58 @@ const AturJadwal = () => {
                                                 </select>
                                             </div>
                                             <div>
-                                                <label className="block mb-1">
-                                                    Hari
-                                                </label>
+                                                <label className="block mb-1">Hari</label>
                                                 <select
-                                                    required
                                                     className="w-full border rounded p-2"
                                                     value={form.day}
                                                     onChange={(e) => {
-                                                        const newForms = [...scheduleForms];
-                                                        newForms[formIndex].day = e.target.value;
-                                                        setScheduleForms(newForms);
+                                                        handleDayChange(formIndex, e.target.value);
                                                     }}
                                                 >
-                                                    <option value="">
-                                                        Pilih Hari
-                                                    </option>
+                                                    <option value="">Pilih Hari</option>
                                                     {DAYS.map((day) => (
-                                                        <option
-                                                            key={day}
-                                                            value={day}
-                                                        >
+                                                        <option key={day} value={day}>
                                                             {day}
                                                         </option>
                                                     ))}
                                                 </select>
                                             </div>
                                             <div>
-                                                <label className="block mb-1">
-                                                    Jam Mulai
-                                                </label>
+                                                <label className="block mb-1">Jam Mulai</label>
                                                 <div className="flex gap-2 items-center">
                                                     <select
-                                                        required
                                                         className="w-24 border rounded p-2"
                                                         value={form.hour}
                                                         onChange={(e) =>
-                                                            handleTimeChange(
-                                                                formIndex,
-                                                                "hour",
-                                                                e.target.value
-                                                            )
+                                                            handleTimeChange(formIndex, "hour", e.target.value)
                                                         }
                                                     >
-                                                        <option value="">
-                                                            Jam
-                                                        </option>
+                                                        <option value="">Jam</option>
                                                         {HOURS.map((hour) => (
-                                                            <option
-                                                                key={hour}
-                                                                value={hour}
-                                                            >
+                                                            <option key={hour} value={hour}>
                                                                 {hour}
                                                             </option>
                                                         ))}
                                                     </select>
-                                                    <span className="text-xl">
-                                                        :
-                                                    </span>
+                                                    <span className="text-xl">:</span>
                                                     <select
-                                                        required
                                                         className="w-24 border rounded p-2"
                                                         value={form.minute}
                                                         onChange={(e) =>
-                                                            handleTimeChange(
-                                                                formIndex,
-                                                                "minute",
-                                                                e.target.value
-                                                            )
+                                                            handleTimeChange(formIndex, "minute", e.target.value)
                                                         }
                                                     >
-                                                        <option value="">
-                                                            Menit
-                                                        </option>
-                                                        {MINUTES.map(
-                                                            (minute) => (
-                                                                <option
-                                                                    key={minute}
-                                                                    value={minute}
-                                                                >
-                                                                    {minute}
-                                                                </option>
-                                                            )
-                                                        )}
+                                                        <option value="">Menit</option>
+                                                        {MINUTES.map((minute) => (
+                                                            <option key={minute} value={minute}>
+                                                                {minute}
+                                                            </option>
+                                                        ))}
                                                     </select>
                                                 </div>
                                             </div>
-                                            {/* <div>
-                                                <label className="block mb-1">
-                                                    SKS
-                                                </label>
-                                                <select
-                                                    required
-                                                    className="w-24 border rounded p-2"
-                                                    value={form.hour}
-                                                    onChange={(e) =>
-                                                        handleTimeChange(
-                                                            formIndex,
-                                                            "hour",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                >
-                                                    <option value="">
-                                                        Jam
-                                                    </option>
-                                                    {HOURS.map((hour) => (
-                                                        <option
-                                                            key={hour}
-                                                            value={hour}
-                                                        >
-                                                            {hour}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div> */}
                                             <div>
-                                                <label className="block mb-1">
-                                                    Jam Selesai
-                                                </label>
+                                                <label className="block mb-1">Jam Selesai</label>
                                                 <input
                                                     type="text"
                                                     className="w-full border rounded p-2 bg-gray-100"
@@ -825,16 +851,10 @@ const AturJadwal = () => {
                                                 />
                                             </div>
                                         </div>
-                                        {scheduleForms.length > 1 && (
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    handleRemoveForm(formIndex)
-                                                }
-                                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                            >
-                                                Hapus Kelas
-                                            </button>
+                                        {errorMessages[formIndex] && (
+                                            <div className="text-red-500 mt-2">
+                                                {errorMessages[formIndex]}
+                                            </div>
                                         )}
                                     </div>
                                 ))}
@@ -842,7 +862,7 @@ const AturJadwal = () => {
                                 <div className="flex justify-start">
                                     <button
                                         type="submit"
-                                        className="bg-blue-600 text-white px-4 py-2  mr-2 rounded hover:bg-blue-700"
+                                        className="bg-blue-600 text-white px-4 py-2 mr-2 rounded hover:bg-blue-700"
                                     >
                                         Simpan
                                     </button>

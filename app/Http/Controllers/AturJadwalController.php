@@ -39,51 +39,51 @@ class AturJadwalController extends Controller
 
         $mataKuliah = MataKuliah::where('id_prodi', $dosen->id_prodi)
             ->with(['kelas' => function ($query) use ($tahun) {
-            $query->where('tahun_akademik', $tahun);
+                $query->where('tahun_akademik', $tahun);
             }])
             ->get();
         $mataKuliah->each(function ($mk) {
             $mk->kelas->each(function ($kelas) {
-            $kelas->load('jadwalKuliah');
+                $kelas->load('jadwalKuliah');
             });
         });
         $mataKuliah->each(function ($mk) {
             $mk->kelas->each(function ($kelas) {
-            $kelas->load(['jadwalKuliah' => function ($query) {
-                $query->with('ruangan');
-            }]);
+                $kelas->load(['jadwalKuliah' => function ($query) {
+                    $query->with('ruangan');
+                }]);
             });
         });
 
         $listDosen = Dosen::where('id_prodi', $dosen->id_prodi)
-        ->select('nip', 'nama')
-        ->get();
+            ->select('nip', 'nama')
+            ->get();
 
         $ruangan = Ruangan::where('id_prodi', $dosen->id_prodi)
-        ->where('diajukan', 1)
-        ->where('disetujui', 1)
-        ->select('id_ruang', 'nama_ruang', 'kuota')
-        ->get();
+            ->where('diajukan', 1)
+            ->where('disetujui', 1)
+            ->select('id_ruang', 'nama_ruang', 'kuota')
+            ->get();
 
         return Inertia::render('(kaprodi)/atur-jadwal/page', ['dosen' => $dosen, 'mataKuliah' => $mataKuliah, 'listDosen' => $listDosen, 'ruangan' => $ruangan]);
     }
 
     public function store(Request $request)
     {
-        error_log($request);
         $tahunAkademik = KalenderAkademik::getTahunAkademik();
 
         DB::table('jadwal_kuliah')
             ->join('kelas', 'jadwal_kuliah.id_kelas', '=', 'kelas.id')
-            ->where('kelas.kode_mk', $request->selectedCourse['kode_mk'])
+            ->where('kelas.kode_mk', $request->scheduleForms[0]['courseId'])
             ->where('kelas.tahun_akademik', $tahunAkademik)
             ->delete();
 
         foreach ($request->scheduleForms as $jadwal) {
+            if ($jadwal['day'] == '') continue;
             JadwalKuliah::create([
                 'hari' => $jadwal['day'],
                 'waktu_mulai' => $jadwal['startTime'],
-                'waktu_selesai' => $jadwal['endTime'],
+                'waktu_selesai' => ''.$jadwal['endTime'].':00',
                 'id_ruang' => $jadwal['idRuang'],
                 'id_kelas' => $jadwal['idKelas'],
             ]);
