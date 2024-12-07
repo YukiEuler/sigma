@@ -430,7 +430,7 @@ const BuatIRS = () => {
                                                                 course.sks >
                                                             mahasiswa.maxSks;
                                                         const penuh = classInfo.kuota === classInfo.jumlah_mahasiswa;
-
+                                                        const bukanPrioritas = course.semester > mahasiswa.semester && mahasiswa.prioritas == 1;
                                                         let tooltipMessage = "";
                                                         const periodeGanti =
                                                             Boolean(
@@ -466,6 +466,9 @@ const BuatIRS = () => {
                                                         } else if (penuh) {
                                                             tooltipMessage =
                                                                 "Kelas sudah penuh";
+                                                        } else if (bukanPrioritas) {
+                                                            tooltipMessage = 
+                                                                "Bukan mahasiswa prioritas";
                                                         }
 
                                                         return (
@@ -477,7 +480,9 @@ const BuatIRS = () => {
                                                                         : matkulRegistered
                                                                         ? "cursor-not-allowed bg-yellow-100 hover:bg-yellow-200"
                                                                         : bentrok ||
-                                                                          maxSks
+                                                                          maxSks ||
+                                                                          penuh ||
+                                                                          bukanPrioritas
                                                                         ? "cursor-not-allowed bg-red-400 hover:bg-red-500"
                                                                         : isSubmitted ||
                                                                           isVerified ||
@@ -493,6 +498,7 @@ const BuatIRS = () => {
                                                                     !isVerified &&
                                                                     !maxSks &&
                                                                     !penuh &&
+                                                                    !bukanPrioritas &&
                                                                     periodeGanti &&
                                                                     handleClassSelect(
                                                                         course,

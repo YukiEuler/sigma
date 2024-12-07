@@ -50,8 +50,11 @@ class BuatIRSController extends Controller
     }
 
     $mahasiswa->tahun_ajaran = ''.($tahun-$periode).'/'.($tahun-$periode+1).' '.$semester;  
-    $pengisianIRS = KalenderAkademik::where('tahun_akademik', $tahunAkademik->tahun_akademik)
-        ->where('keterangan', 'Pengisian IRS')
+    $pengisianIRS1 = KalenderAkademik::where('tahun_akademik', $tahunAkademik->tahun_akademik)
+        ->where('keterangan', 'Pengisian IRS Periode 1')
+        ->first();
+    $pengisianIRS2 = KalenderAkademik::where('tahun_akademik', $tahunAkademik->tahun_akademik)
+        ->where('keterangan', 'Pengisian IRS Periode 2')
         ->first();
     $penggantianIRS = KalenderAkademik::where('tahun_akademik', $tahunAkademik->tahun_akademik)
         ->where('keterangan', 'Periode Penggantian')
@@ -60,18 +63,20 @@ class BuatIRSController extends Controller
         ->where('keterangan', 'Periode Pembatalan')
         ->first();
 
-    $pengisianIRS->tanggal_mulai = date('Y-m-d', strtotime($pengisianIRS->tanggal_mulai));
-    $pengisianIRS->tanggal_selesai = date('Y-m-d', strtotime($pengisianIRS->tanggal_selesai));
+    $pengisianIRS1->tanggal_mulai = date('Y-m-d', strtotime($pengisianIRS1->tanggal_mulai));
+    $pengisianIRS1->tanggal_selesai = date('Y-m-d', strtotime($pengisianIRS1->tanggal_selesai));
+    $pengisianIRS2->tanggal_mulai = date('Y-m-d', strtotime($pengisianIRS2->tanggal_mulai));
+    $pengisianIRS2->tanggal_selesai = date('Y-m-d', strtotime($pengisianIRS2->tanggal_selesai));
     $penggantianIRS->tanggal_mulai = date('Y-m-d', strtotime($penggantianIRS->tanggal_mulai));
     $penggantianIRS->tanggal_selesai = date('Y-m-d', strtotime($penggantianIRS->tanggal_selesai));
     $pembatalanIRS->tanggal_mulai = date('Y-m-d', strtotime($pembatalanIRS->tanggal_mulai));
     $pembatalanIRS->tanggal_selesai = date('Y-m-d', strtotime($pembatalanIRS->tanggal_selesai));
-    $pengisianIRS->status = 'pengisian IRS';
+    $pengisianIRS1->status = 'pengisian IRS';
     $pembatalanIRS->status = 'pembatalan IRS';
     if ($dateNow > $pembatalanIRS->tanggal_selesai){
         return Inertia::render('(mahasiswa)/buat-irs/altPage', ['mahasiswa' => $mahasiswa, 'periode' => $pembatalanIRS]);
-    } elseif ($dateNow < $pengisianIRS->tanggal_mulai){
-        return Inertia::render('(mahasiswa)/buat-irs/altPage', ['mahasiswa' => $mahasiswa, 'periode' => $pengisianIRS]);
+    } elseif ($dateNow < $pengisianIRS1->tanggal_mulai){
+        return Inertia::render('(mahasiswa)/buat-irs/altPage', ['mahasiswa' => $mahasiswa, 'periode' => $pengisianIRS1]);
     }
 
     $ips = Khs::join('mahasiswa', 'khs.nim', '=', 'mahasiswa.nim')
@@ -85,8 +90,9 @@ class BuatIRSController extends Controller
         ->where('mahasiswa.nim', $mahasiswa->nim)
         ->whereRaw('khs.semester + 1 = mahasiswa.semester')
         ->groupBy('mahasiswa.nim')
-        ->first()
-        ->IPS;
+        ->first();
+
+    $ips = $ips ? $ips->IPS : 0;
     $mahasiswa->ips = round($ips, 2);
     $maxSks = 0;
     $semester = $mahasiswa->semester;
@@ -208,7 +214,11 @@ class BuatIRSController extends Controller
         ->values();
     
     $mahasiswa->periode_ganti = $penggantianIRS->tanggal_mulai <= $dateNow && $dateNow <= $penggantianIRS->tanggal_selesai;
-    $mahasiswa->periode_ganti = $mahasiswa->periode_ganti || $pengisianIRS->tanggal_mulai <= $dateNow && $dateNow <= $pengisianIRS->tanggal_selesai;
+    $mahasiswa->periode_ganti = $mahasiswa->periode_ganti || $pengisianIRS1->tanggal_mulai <= $dateNow && $dateNow <= $pengisianIRS2->tanggal_selesai;
+    $mahasiswa->prioritas = 0;
+    if ($pengisianIRS1->tanggal_mulai <= $dateNow && $dateNow <= $pengisianIRS1->tanggal_selesai) {
+        $mahasiswa->prioritas = 1;
+    }
     return Inertia::render('(mahasiswa)/buat-irs/page', ['mahasiswa' => $mahasiswa, 'jadwal' => $jadwal, 'irs' => $irs]);
     }
 
