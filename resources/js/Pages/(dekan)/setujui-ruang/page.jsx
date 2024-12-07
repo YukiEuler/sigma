@@ -7,6 +7,8 @@ import { usePage } from "@inertiajs/inertia-react";
 const SetujuiRuang = () => {
     const [ruanganData, setRuanganData] = useState([]);
     const [dosenData, setDosenData] = useState([]);
+    const [programStudi, setProgramStudi] = useState({});
+    // const programStudiData = props.programStudi;
     const [loading, setLoading] = useState(false);
     const [selectedProdi, setSelectedProdi] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
@@ -21,9 +23,12 @@ const SetujuiRuang = () => {
     // Kelompokkan ruangan berdasarkan program studi
     const groupedByProdi = ruanganData.reduce((acc, room) => {
         if (!acc[room.nama_prodi]) {
-            acc[room.nama_prodi] = [];
+            acc[room.nama_prodi] = {
+                rooms: [],
+                id_prodi: room.id_prodi, // Store the id_prodi for each group
+            };
         }
-        acc[room.nama_prodi].push(room);
+        acc[room.nama_prodi].rooms.push(room);
         return acc;
     }, {});
 
@@ -32,9 +37,10 @@ const SetujuiRuang = () => {
 
     // Filter ruangan berdasarkan pencarian
     const filteredData = Object.entries(groupedByProdi).map(
-        ([prodiName, rooms]) => ({
+        ([prodiName, data]) => ({
             prodiName,
-            rooms: rooms.filter((room) => {
+            id_prodi: data.id_prodi, // Include id_prodi in the filtered data
+            rooms: data.rooms.filter((room) => {
                 return (
                     room.nama_ruang
                         .toLowerCase()
@@ -47,10 +53,12 @@ const SetujuiRuang = () => {
         })
     );
 
-    const handleSetujuiProdi = (prodiName) => {
-        const roomsToApprove = groupedByProdi[prodiName].filter(
+    const handleSetujuiProdi = (prodiName, prodiId) => {
+        // Get rooms for specific prodi that need approval
+        const roomsToApprove = groupedByProdi[prodiName].rooms.filter(
             (room) => room.diajukan === 1 && room.disetujui === 0
         );
+
         if (roomsToApprove.length === 0) {
             Swal.fire({
                 icon: "info",
@@ -94,38 +102,7 @@ const SetujuiRuang = () => {
                                     cancelButton: "btn btn-danger",
                                 },
                             }).then(() => {
-                                // Cek apakah ada ruangan yang belum disetujui
-                                const allRoomsInProdi =
-                                    groupedByProdi[prodiName];
-                                const hasUnapprovedRooms = allRoomsInProdi.some(
-                                    (room) => room.disetujui === 0
-                                );
-                                if (hasUnapprovedRooms) {
-                                    // Setujui ulang semua ruangan di prodi yang sama jika ada ruangan yang belum disetujui
-                                    Inertia.post(
-                                        "/dekan/setujui-ruang/set/setujui-multiple",
-                                        {
-                                            room_ids: allRoomsInProdi.map(
-                                                (room) => room.id_ruang
-                                            ),
-                                        },
-                                        {
-                                            onSuccess: () => {
-                                                window.location.reload(); // Reload halaman setelah disetujui ulang
-                                            },
-                                            onError: () => {
-                                                setLoading(false);
-                                                Swal.fire({
-                                                    title: "Gagal!",
-                                                    text: "Terjadi kesalahan saat menyetujui ulang ruangan.",
-                                                    icon: "error",
-                                                });
-                                            },
-                                        }
-                                    );
-                                } else {
-                                    window.location.reload(); // Jika sudah selesai, reload halaman
-                                }
+                                window.location.reload();
                             });
                         },
                         onError: () => {
@@ -246,20 +223,12 @@ const SetujuiRuang = () => {
                                                         {group.rooms.length}
                                                     </td>
                                                     <td className="px-4 py-2 text-[14px] text-center">
-                                                        <button
-                                                            onClick={() =>
-                                                                toggleDetails(
-                                                                    group.prodiName
-                                                                )
-                                                            }
-                                                            className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-[14px] text-center w-20"
+                                                        <a
+                                                            href={`/dekan/setujui-ruang/detail/${group.id_prodi}`}
+                                                            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
                                                         >
-                                                            {showDetails[
-                                                                group.prodiName
-                                                            ]
-                                                                ? "Detail"
-                                                                : "Detail"}
-                                                        </button>
+                                                            Detail
+                                                        </a>
                                                     </td>
                                                     <td className="px-4 py-2 text-[14px] text-center">
                                                         <button
@@ -268,13 +237,18 @@ const SetujuiRuang = () => {
                                                                     group.prodiName
                                                                 )
                                                             }
+                                                            disabled={group.rooms.every(
+                                                                (room) =>
+                                                                    room.disetujui ===
+                                                                    1
+                                                            )}
                                                             className={`${
                                                                 group.rooms.every(
                                                                     (room) =>
                                                                         room.disetujui ===
                                                                         1
                                                                 )
-                                                                    ? "bg-gray-400"
+                                                                    ? "bg-gray-400 cursor-not-allowed"
                                                                     : "bg-green-500 hover:bg-green-600"
                                                             } text-white px-2 py-1 rounded text-[14px] text-center w-20`}
                                                         >
@@ -288,146 +262,6 @@ const SetujuiRuang = () => {
                                                         </button>
                                                     </td>
                                                 </tr>
-
-                                                {/* detail diklik */}
-                                                {showDetails[
-                                                    group.prodiName
-                                                ] && (
-                                                    <tr>
-                                                        <td
-                                                            colSpan="4"
-                                                            className="px-4 py-2"
-                                                        >
-                                                            <div
-                                                                className="w-full overflow-y-auto"
-                                                                style={{
-                                                                    maxHeight:
-                                                                        "300px",
-                                                                }}
-                                                            >
-                                                                <table className="w-full text-sm text-left text-gray-500">
-                                                                    <thead
-                                                                        className="text-xs text-black uppercase bg-gray-50 dark:text-black-400 sticky top-0"
-                                                                        style={{
-                                                                            backgroundColor:
-                                                                                "#D3D3D3",
-                                                                        }}
-                                                                    >
-                                                                        <tr>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-4 py-3"
-                                                                                style={{
-                                                                                    width: "1%",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                    fontSize:
-                                                                                        "12px",
-                                                                                }}
-                                                                            >
-                                                                                Nama
-                                                                                Ruang
-                                                                            </th>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-4 py-3"
-                                                                                style={{
-                                                                                    width: "1%",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                    fontSize:
-                                                                                        "12px",
-                                                                                }}
-                                                                            >
-                                                                                Kuota
-                                                                            </th>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-4 py-3"
-                                                                                style={{
-                                                                                    width: "1%",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                    fontSize:
-                                                                                        "12px",
-                                                                                }}
-                                                                            >
-                                                                                Status
-                                                                            </th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {group.rooms.map(
-                                                                            (
-                                                                                room
-                                                                            ) => (
-                                                                                <tr
-                                                                                    key={
-                                                                                        room.id_ruang
-                                                                                    }
-                                                                                >
-                                                                                    <td
-                                                                                        scope="col"
-                                                                                        className="px-4 py-3"
-                                                                                        style={{
-                                                                                            width: "1%",
-                                                                                            textAlign:
-                                                                                                "center",
-                                                                                            fontSize:
-                                                                                                "14px",
-                                                                                        }}
-                                                                                    >
-                                                                                        {
-                                                                                            room.nama_ruang
-                                                                                        }
-                                                                                    </td>
-                                                                                    <td
-                                                                                        scope="col"
-                                                                                        className="px-4 py-3"
-                                                                                        style={{
-                                                                                            width: "1%",
-                                                                                            textAlign:
-                                                                                                "center",
-                                                                                            fontSize:
-                                                                                                "14px",
-                                                                                        }}
-                                                                                    >
-                                                                                        {
-                                                                                            room.kuota
-                                                                                        }
-                                                                                    </td>
-                                                                                    <td
-                                                                                        scope="col"
-                                                                                        className="px-4 py-3"
-                                                                                        style={{
-                                                                                            width: "1%",
-                                                                                            textAlign:
-                                                                                                "center",
-                                                                                            fontSize:
-                                                                                                "14px",
-                                                                                        }}
-                                                                                    >
-                                                                                        {room.disetujui ===
-                                                                                        1 ? (
-                                                                                            <span className="text-green-500">
-                                                                                                Disetujui
-                                                                                            </span>
-                                                                                        ) : (
-                                                                                            <span className="text-yellow-500">
-                                                                                                Belum
-                                                                                                Disetujui
-                                                                                            </span>
-                                                                                        )}
-                                                                                    </td>
-                                                                                </tr>
-                                                                            )
-                                                                        )}
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                )}
                                             </React.Fragment>
                                         ))}
                                     </tbody>

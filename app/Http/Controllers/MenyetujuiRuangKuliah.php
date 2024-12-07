@@ -48,8 +48,54 @@ class MenyetujuiRuangKuliah extends Controller
         return Inertia::render('(dekan)/setujui-ruang/page', 
         [
             'ruangan' => $ruangan,
-            'dosen' => $dosen]);
+            'dosen' => $dosen,
+            'programStudi' => $programStudi]);
     }
+
+    public function detail($id)
+{
+    $user = Auth::user();
+
+    if (!$user) {
+        return redirect()->route('login');
+    } elseif ($user->role !== 'Dosen'){
+        return redirect()->route('home');
+    }
+
+    $dosen = Dosen::where('user_id', $user->id)->get()->first();
+    
+    // Get the logged-in user's faculty info
+    $dosenProgramStudi = ProgramStudi::where('id_prodi', $dosen->id_prodi)->first();
+    $dosen->nama_prodi = $dosenProgramStudi->nama_prodi;
+    $fakultas = Fakultas::where('id_fakultas', $dosenProgramStudi->id_fakultas)->first();
+    $dosen->nama_fakultas = $fakultas->nama_fakultas;
+
+    // Get the faculty ID
+    $id_fakultas = $dosenProgramStudi->id_fakultas;
+
+    // Get the specific program study being viewed
+    $programStudi = ProgramStudi::where('id_prodi', $id)->first();
+
+    // Filter rooms by both faculty and specific study program ID
+    $ruangan = Ruangan::where('id_fakultas', $id_fakultas)
+        ->where('id_prodi', $id)
+        ->where('diajukan', 1)
+        ->orderBy('nama_ruang')
+        ->get();
+
+    // Map additional program study information
+    $ruangan = $ruangan->map(function ($room) use ($programStudi) {
+        $room->nama_prodi = $programStudi->nama_prodi;
+        return $room;
+    })->values()->all();
+
+    return Inertia::render('(dekan)/setujui-ruang/detail', 
+    [
+        'ruangan' => $ruangan,
+        'dosen' => $dosen,
+        'programStudi' => $programStudi // Now this will be the correct program study
+    ]);
+}
 
     public function update($id_ruang)
     {
