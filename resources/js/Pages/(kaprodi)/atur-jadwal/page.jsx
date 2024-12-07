@@ -494,20 +494,24 @@ const AturJadwal = () => {
 
     const closeModal = () => {
         // Simpan state form saat ini ke courseForms
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Perubahan yang belum disimpan akan hilang!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, tutup!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                setIsModalOpen(false);
-            }
-        });
+        if (status === 'belum'){
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Perubahan yang belum disimpan akan hilang!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, tutup!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    setIsModalOpen(false);
+                }
+            });
+        } else {
+            setIsModalOpen(false);
+        }
     };
 
     // Modifikasi handler untuk search dan filter
@@ -963,7 +967,8 @@ const AturJadwal = () => {
                                                 </div>
                                                 <div className="col-span-1 flex items-end gap-2">
                                                     {jadwalIndex === form.jadwal.length - 1 && 
-                                                    form.jadwal.reduce((sum, j) => sum + (parseInt(j.sks) || 0), 0) < selectedCourse.sks ? (
+                                                    form.jadwal.reduce((sum, j) => sum + (parseInt(j.sks) || 0), 0) < selectedCourse.sks &&
+                                                    status === 'belum' ? (
                                                         <button
                                                             type="button"
                                                             onClick={() => handleAddForm(formIndex)}
@@ -979,7 +984,7 @@ const AturJadwal = () => {
                                                         </div>
                                                     )}
 
-                                                    {form.jadwal.length > 1 ? (
+                                                    {form.jadwal.length > 1 && status === 'belum' ? (
                                                         <button
                                                             type="button"
                                                             onClick={() => {

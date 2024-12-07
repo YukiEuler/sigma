@@ -4,13 +4,13 @@ import SidebarKaprodi from "./SidebarKaprodi";
 import MarginWithWrapper from "./MarginWithWrapper";
 import PageWrapper from "./PageWrapper";
 
-const DekanLayout = ({ children, dosen }) => {
+const DekanLayout = ({ children, kaprodi }) => {
     return (
         <>
             <html lang="en">
                 <body className="bg-white">
                     <div className="flex">
-                        <SidebarKaprodi dosen={dosen} />
+                        <SidebarKaprodi kaprodi={kaprodi} />
                         <main className="flex-1">
                             <MarginWithWrapper>
                                 {/* <Header /> */}

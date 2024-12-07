@@ -32,14 +32,14 @@ class AturKelasController extends Controller
         $tahun = KalenderAkademik::getTahunAkademik();
 
         // Mendapatkan data dosen berdasarkan user ID
-        $dosen = Dosen::where('user_id', $user->id)->get()->first();
-        $programStudi = ProgramStudi::where('id_prodi', $dosen->id_prodi)->first();
-        $dosen->nama_prodi = $programStudi->nama_prodi;
+        $kaprodi = Dosen::where('user_id', $user->id)->get()->first();
+        $programStudi = ProgramStudi::where('id_prodi', $kaprodi->id_prodi)->first();
+        $kaprodi->nama_prodi = $programStudi->nama_prodi;
         $fakultas = Fakultas::where('id_fakultas', $programStudi->id_fakultas)->first();
-        $dosen->nama_fakultas = $fakultas->nama_fakultas;
+        $kaprodi->nama_fakultas = $fakultas->nama_fakultas;
         
         // Mengambil semua data mata kuliah dari database
-        $mataKuliah = MataKuliah::where('id_prodi', $dosen->id_prodi)
+        $mataKuliah = MataKuliah::where('id_prodi', $kaprodi->id_prodi)
             ->with(['kelas' => function ($query) use ($tahun) {
             $query->where('tahun_akademik', $tahun);
             }])
@@ -61,7 +61,7 @@ class AturKelasController extends Controller
         // Mengirim data ke komponen React melalui Inertia
         return Inertia::render('(kaprodi)/atur-kelas/page', [
             'mataKuliah' => $mataKuliah,
-            'dosen' => $dosen,
+            'kaprodi' => $kaprodi,
             'listDosen' => $listDosen
         ]);
     }
