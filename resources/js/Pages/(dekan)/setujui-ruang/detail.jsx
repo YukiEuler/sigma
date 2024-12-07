@@ -148,7 +148,7 @@ const DetailRuang = () => {
                                             : "Setujui"}
                                     </button>
                                 </div>
-                                <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[540px] scrollbar-hide">
+                                <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[490px] scrollbar-hide">
                                     <style jsx>{`
                                         .scrollbar-hide::-webkit-scrollbar {
                                             display: none;
