@@ -37,9 +37,31 @@ const RekapIRS = () => {
             [name]: value,
         }));
     };
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+    };
+
 
     const applyFilters = () => {
         let result = [...mahasiswaData];
+
+        // Apply "Belum IRS" filter
+        if (activeTab !== "Belum Disetujui" && activeTab !== "Sudah Disetujui") {
+            result = result.filter(
+            (item) => item.is_verified === null || item.diajukan === 0
+            );
+        }
+        if (activeTab === "Belum Disetujui" ) {
+            result = result.filter(
+            (item) => item.is_verified === 0 && item.diajukan === 1
+            );
+        }
+        if (activeTab === "Sudah Disetujui") {
+            result = result.filter(
+            (item) => item.is_verified === 1 && item.diajukan === 1
+            );
+        }
+
 
         // Apply angkatan filter only if not "all"
         if (filters.angkatan && filters.angkatan !== "all") {
@@ -73,19 +95,22 @@ const RekapIRS = () => {
             );
         }
 
+        
+
         setFilteredMahasiswa(result);
         // Reset checked items when filters change
         setCheckedItems(new Array(result.length).fill(false));
         setSelectAll(false);
     };
+    useEffect(() => {
+        console.log("Filtered Mahasiswa:", filteredMahasiswa);
+    }, [filteredMahasiswa]);
 
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-    };
+    
 
     useEffect(() => {
         applyFilters();
-    }, [filters]);
+    }, [filters, activeTab]);
 
     useEffect(() => {
         setDosen(dosenData);
@@ -110,7 +135,8 @@ const RekapIRS = () => {
                                 : "text-gray-500"
                         }`}
                     >
-                        Belum IRS (50)
+                        Belum IRS ({mahasiswaData.filter(item => item.is_verified === null || item.diajukan === 0).length})
+                    
                     </button>
                     <button
                         onClick={() => handleTabClick("Belum Disetujui")}
@@ -120,7 +146,7 @@ const RekapIRS = () => {
                                 : "text-gray-500"
                         }`}
                     >
-                        Belum Disetujui (50)
+                        Belum Disetujui ({mahasiswaData.filter(item => item.is_verified === 0 && item.diajukan === 1).length})
                     </button>
                     <button
                         onClick={() => handleTabClick("Sudah Disetujui")}
@@ -130,7 +156,7 @@ const RekapIRS = () => {
                                 : "text-gray-500"
                         }`}
                     >
-                        Sudah Disetujui (50)
+                        Sudah Disetujui ({mahasiswaData.filter(item => item.is_verified === 1 && item.diajukan === 1).length})
                     </button>
                 </div>
                 <div className="grid grid-cols-1 mt-3">
