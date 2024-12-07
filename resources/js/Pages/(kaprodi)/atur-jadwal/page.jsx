@@ -127,7 +127,7 @@ const AturJadwal = () => {
     };
 
     const calculateEndTime = (hour, minute, sks) => {
-        if (!hour || !minute) return "";
+        if (!hour || !minute || sks === "" || sks === 0 || sks === undefined) return "";
         const totalMinutes = parseInt(hour) * 60 + parseInt(minute) + sks * 50;
         const newHours = Math.floor(totalMinutes / 60);
         const newMinutes = totalMinutes % 60;
@@ -136,35 +136,37 @@ const AturJadwal = () => {
             .padStart(2, "0")}`;
     };
 
-    const handleTimeChange = (index, type, value) => {
+    const handleTimeChange = (formIndex, jadwalIndex, type, value) => {
         const newForms = [...scheduleForms];
-        const before = newForms[index][type];
-        newForms[index][type] = value;
+        console.log(newForms[formIndex]);
+        const before = newForms[formIndex].jadwal[jadwalIndex][type];
+        const sks = newForms[formIndex].jadwal[jadwalIndex].sks;
+        newForms[formIndex].jadwal[jadwalIndex][type] = value;
 
-        if (newForms[index].hour && newForms[index].minute) {
-            const roomId = newForms[index].idRuang;
-            const day = newForms[index].day;
-            const startTime = `${newForms[index].hour}:${newForms[index].minute}`;
+        if (newForms[formIndex].jadwal[jadwalIndex].hour && newForms[formIndex].jadwal[jadwalIndex].minute) {
+            const roomId = newForms[formIndex].jadwal[jadwalIndex].idRuang;
+            const day = newForms[formIndex].jadwal[jadwalIndex].day;
+            const startTime = `${newForms[formIndex].jadwal[jadwalIndex].hour}:${newForms[formIndex].jadwal[jadwalIndex].minute}`;
             const endTime = calculateEndTime(
-                newForms[index].hour,
-                newForms[index].minute,
-                selectedCourse?.sks || 0
+                newForms[formIndex].jadwal[jadwalIndex].hour,
+                newForms[formIndex].jadwal[jadwalIndex].minute,
+                sks
             );
-            const kodeKelas = newForms[index].class;
+            const kodeKelas = newForms[formIndex].class;
             if (isRoomAvailable(roomId, day, startTime, endTime, kodeKelas)) {
-                newForms[index].startTime = startTime;
-                newForms[index].endTime = endTime;
-                setErrorMessages((prev) => ({ ...prev, [index]: "" }));
+                newForms[formIndex].jadwal[jadwalIndex].startTime = startTime;
+                newForms[formIndex].jadwal[jadwalIndex].endTime = endTime;
             } else {
-                newForms[index][type] = before;
-                setErrorMessages((prev) => ({
-                    ...prev,
-                    [index]: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
-                }));
+                newForms[formIndex].jadwal[jadwalIndex][type] = before;
+                Swal.fire({
+                    icon: "error",
+                    title: "Ruangan Tidak Tersedia",
+                    text: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
+                });
             }
             setScheduleForms(newForms);
         } else {
-            newForms[index].endTime = "";
+            newForms[formIndex].jadwal[jadwalIndex].endTime = "";
         }
 
         setScheduleForms(newForms);
@@ -189,79 +191,119 @@ const AturJadwal = () => {
                         parseTime(jadwal.waktu_mulai) <= parseTime(endTime) &&
                         parseTime(jadwal.waktu_selesai) >= parseTime(startTime)
                     ) {
+                        console.log(jadwal, roomId);
                         return false;
                     }
                 }
             }
         }
-        for (const jadwal of scheduleForms){
-            if (kode_kelas === jadwal.class) continue;
-            if (
-                jadwal.idRuang === roomId &&
-                jadwal.day === day &&
-                parseTime(jadwal.startTime+":00") <= parseTime(endTime) &&
-                parseTime(jadwal.endTime+":00") >= parseTime(startTime)
-            ) {
-                return false;
+        for (const kelas of scheduleForms){
+            if (kode_kelas === kelas.class) continue;
+            for (const jadwal of kelas.jadwal){
+                if (
+                    jadwal.idRuang == roomId &&
+                    jadwal.day === day &&
+                    parseTime(jadwal.startTime) <= parseTime(endTime) &&
+                    parseTime(jadwal.endTime+":00") >= parseTime(startTime)
+                ) {
+                    console.log(jadwal, roomId);
+                    return false;
+                }
             }
         }
-        console.log(scheduleForms);
         return true;
     };
 
-    const handleRoomChange = (formIndex, roomId, roomName) => {
+    const handleSksChange = (formIndex, jadwalIndex, sks) => {
         const newForms = [...scheduleForms];
-        const startTime = newForms[formIndex].startTime;
-        const endTime = newForms[formIndex].endTime;
-        const day = newForms[formIndex].day;
-    
-        if (isRoomAvailable(roomId, day, startTime, endTime)) {
-            newForms[formIndex].room = roomName;
-            newForms[formIndex].idRuang = roomId;
-            setScheduleForms(newForms);
-            setErrorMessages((prev) => ({ ...prev, [formIndex]: "" }));
+        const roomId = newForms[formIndex].jadwal[jadwalIndex].idRuang;
+        const day = newForms[formIndex].jadwal[jadwalIndex].day;
+        const startTime = `${newForms[formIndex].jadwal[jadwalIndex].hour}:${newForms[formIndex].jadwal[jadwalIndex].minute}`;
+        const endTime = calculateEndTime(
+            newForms[formIndex].jadwal[jadwalIndex].hour,
+            newForms[formIndex].jadwal[jadwalIndex].minute,
+            sks
+        );
+        const kodeKelas = newForms[formIndex].class;
+        if (isRoomAvailable(roomId, day, startTime, endTime, kodeKelas)) {
+            newForms[formIndex].jadwal[jadwalIndex].sks = sks;
+            newForms[formIndex].jadwal[jadwalIndex].endTime = endTime;
         } else {
-            setErrorMessages((prev) => ({
-                ...prev,
-                [formIndex]: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
-            }));
+            Swal.fire({
+                icon: "error",
+                title: "Ruangan Tidak Tersedia",
+                text: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
+            });
+        }
+        setScheduleForms(newForms);
+    };
+
+    const handleRoomChange = (formIndex, jadwalIndex, roomId, roomName) => {
+        const newForms = [...scheduleForms];
+        const startTime = newForms[formIndex].jadwal[jadwalIndex].startTime;
+        const endTime = newForms[formIndex].jadwal[jadwalIndex].endTime;
+        const day = newForms[formIndex].jadwal[jadwalIndex].day;
+        const kodeKelas = newForms[formIndex].class;
+
+        if (isRoomAvailable(roomId, day, startTime, endTime, kodeKelas)) {
+            newForms[formIndex].jadwal[jadwalIndex].room = roomName;
+            newForms[formIndex].jadwal[jadwalIndex].idRuang = roomId;
+            setScheduleForms(newForms);
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Ruangan Tidak Tersedia",
+                text: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
+            });
         }
     };
 
-    const handleDayChange = (formIndex, day) => {
+    const handleDayChange = (formIndex, jadwalIndex, day) => {
         const newForms = [...scheduleForms];
-        const roomId = newForms[formIndex].idRuang;
-        const startTime = newForms[formIndex].startTime;
-        const endTime = newForms[formIndex].endTime;
+        const roomId = newForms[formIndex].jadwal[jadwalIndex].idRuang;
+        const startTime = newForms[formIndex].jadwal[jadwalIndex].startTime;
+        const endTime = newForms[formIndex].jadwal[jadwalIndex].endTime;
+        const kodeKelas = newForms[formIndex].class;
 
-        if (isRoomAvailable(roomId, day, startTime, endTime)) {
-            newForms[formIndex].day = day;
+        if (isRoomAvailable(roomId, day, startTime, endTime, kodeKelas)) {
+            newForms[formIndex].jadwal[jadwalIndex].day = day;
             setScheduleForms(newForms);
-            setErrorMessages((prev) => ({ ...prev, [formIndex]: "" }));
         } else {
-            setErrorMessages((prev) => ({
-                ...prev,
-                [formIndex]: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
-            }));
+            Swal.fire({
+                icon: "error",
+                title: "Ruangan Tidak Tersedia",
+                text: "Ruangan sudah dipakai dalam rentang waktu yang dipilih.",
+            });
         }
     };
 
-    const handleAddForm = () => {
-        setScheduleForms([
-            ...scheduleForms,
-            {
-                class: "",
-                quota: "",
-                listDosenData: [""],
-                room: "",
-                day: "",
-                startTime: "",
-                endTime: "",
-                hour: "",
-                minute: "",
-                idRuang: "",
-            },
-        ]);
+    const handleAddForm = (formIndex) => {
+        const newForms = [...scheduleForms];
+        newForms[formIndex].jadwal.push({
+            day: "",
+            startTime: "",
+            endTime: "",
+            hour: "",
+            minute: "",
+            idRuang: "",
+            room: "",
+        });
+        setScheduleForms(newForms);
+        // setScheduleForms([
+        //     ...scheduleForms,
+        //     {
+        //         class: "",
+        //         quota: "",
+        //         listDosenData: [""],
+        //         room: "",
+        //         day: "",
+        //         startTime: "",
+        //         endTime: "",
+        //         hour: "",
+        //         minute: "",
+        //         idRuang: "",
+        //     },
+        // ]);
     };
 
     const handleRemoveForm = (index) => {
@@ -289,16 +331,30 @@ const AturJadwal = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        for (const form of scheduleForms) {
-            const { room, day, startTime, endTime } = form;
-            const allFilled = room && day && startTime && endTime;
-            const allEmpty = !room && !day && !startTime && !endTime;
-    
-            if (!allFilled && !allEmpty) {
+        for (const kelas of scheduleForms) {
+            let jumSks = 0;
+            for (const jadwal of kelas.jadwal) {
+                const { room, day, startTime, endTime, sks } = jadwal;
+                const allFilled = room && day && startTime && endTime && sks;
+                const allEmpty = !room && !day && !startTime && !endTime && !sks;
+                jumSks += parseInt(sks || 0);
+        
+                if (!allFilled && !allEmpty) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: `Atribut harus diisi semua atau tidak diisi semua pada kelas ${kelas.class}.`,
+                        icon: "error",
+                        customClass: {
+                            confirmButton: "btn btn-danger",
+                        },
+                    });
+                    return;
+                }
+            }
+            if (jumSks != 0 && jumSks != selectedCourse.sks) {
                 Swal.fire({
                     title: "Error!",
-                    text: `Atribut harus diisi semua atau tidak diisi semua pada kelas ${form.class}.`,
+                    text: `Jumlah SKS kurang pada kelas ${kelas.class}.`,
                     icon: "error",
                     customClass: {
                         confirmButton: "btn btn-danger",
@@ -350,8 +406,10 @@ const AturJadwal = () => {
                     icon: "success",
                     title: "Berhasil",
                     text: "Jadwal berhasil disimpan",
+                }).then(() => {
+                    setIsModalOpen(false);
+                    window.location.reload();
                 });
-                window.location.reload();
             },
             onError: (errors) => {
                 Swal.fire({
@@ -361,8 +419,6 @@ const AturJadwal = () => {
                 });
             },
         });
-
-        setIsModalOpen(false);
     };
 
     const openModal = (course) => {
@@ -371,41 +427,43 @@ const AturJadwal = () => {
         for (const matkul of mataKuliahData){
             if (matkul.kode_mk !== course.kode_mk) continue;
             for (const kelas of matkul.kelas){
+                const listJadwal = [];
                 for (const jadwal of kelas.jadwal_kuliah){
+                    const sks = (parseTime(jadwal.waktu_selesai)-parseTime(jadwal.waktu_mulai))/3000000;
                     const endTimeArray = jadwal.waktu_selesai.split(':');
                     endTimeArray.pop();
                     const endTime = endTimeArray.join(':');
-                    daftarJadwal.push({
-                        'class': kelas.kode_kelas,
-                        'courseId': matkul.kode_mk,
-                        'courseName': matkul.nama,
-                        'quota': kelas.kuota,
-                        'room': jadwal.ruangan.nama_ruang,
+                    listJadwal.push({
                         'day': jadwal.hari,
                         'startTime': jadwal.waktu_mulai,
                         'endTime': endTime,
-                        'idKelas': kelas.id,
-                        'idRuang': jadwal.ruangan.id_ruang,
                         'hour': jadwal.waktu_mulai.split(':')[0],
                         'minute': jadwal.waktu_mulai.split(':')[1],
+                        'sks': sks,
+                        'idRuang': jadwal.ruangan.id_ruang,
+                        'room': jadwal.ruangan.nama_ruang,
                     });
                 }
-                if (kelas.jadwal_kuliah.length === 0){
-                    daftarJadwal.push({
-                        'class': kelas.kode_kelas,
-                        'courseId': matkul.kode_mk,
-                        'courseName': matkul.nama,
-                        'quota': kelas.kuota,
-                        'room': "",
+                if (listJadwal.length === 0) {
+                    listJadwal.push({
                         'day': "",
                         'startTime': "",
                         'endTime': "",
-                        'idKelas': kelas.id,
-                        'idRuang': "",
                         'hour': "",
                         'minute': "",
-                    });
+                        'sks': "",
+                        'idRuang': "",
+                        'room': "",
+                    })
                 }
+                daftarJadwal.push({
+                    'class': kelas.kode_kelas,
+                    'courseId': matkul.kode_mk,
+                    'courseName': matkul.nama,
+                    'quota': kelas.kuota,
+                    'idKelas': kelas.id,
+                    'jadwal': listJadwal
+                });
             }
         }
         console.log(mataKuliahData);
@@ -414,45 +472,42 @@ const AturJadwal = () => {
         // if (courseForms[course.id]) {
         //     setScheduleForms(courseForms[course.id]);
         // } else {
-        if (daftarJadwal.length == 0){
-            // Jika belum ada, gunakan form default
-            setScheduleForms([
-                {
-                    class: "",
-                    quota: "",
-                    listDosenData: [""],
-                    room: "",
-                    day: "",
-                    startTime: "",
-                    endTime: "",
-                    hour: "",
-                    minute: "",
-                    idRuang: ""
-                },
-            ]);
-        }
+        // if (daftarJadwal.length == 0){
+        //     // Jika belum ada, gunakan form default
+        //     setScheduleForms([
+        //         {
+        //             class: "",
+        //             quota: "",
+        //             listDosenData: [""],
+        //             room: "",
+        //             day: "",
+        //             startTime: "",
+        //             endTime: "",
+        //             hour: "",
+        //             minute: "",
+        //             idRuang: ""
+        //         },
+        //     ]);
+        // }
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         // Simpan state form saat ini ke courseForms
-        if (selectedCourse) {
-            setCourseForms([
-                {
-                    class: "",
-                    quota: "",
-                    listDosenData: [""],
-                    room: "",
-                    day: "",
-                    startTime: "",
-                    endTime: "",
-                    hour: "",
-                    minute: "",
-                    idRuang: "",
-                },
-            ]);
-        }
-        setIsModalOpen(false);
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Perubahan yang belum disimpan akan hilang!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, tutup!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setIsModalOpen(false);
+            }
+        });
     };
 
     // Modifikasi handler untuk search dan filter
@@ -788,105 +843,164 @@ const AturJadwal = () => {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="grid grid-cols-4 gap-4">
-                                            <div>
-                                                <label className="block mb-1">Ruang</label>
-                                                <select
-                                                    className={"w-full border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
-                                                    value={form.room}
-                                                    onChange={(e) => {
-                                                        const roomId = e.target.options[e.target.selectedIndex].getAttribute('data-key');
-                                                        handleRoomChange(formIndex, roomId, e.target.value);
-                                                    }}
-                                                    disabled={status !== 'belum'}
-                                                >
-                                                    <option value="">Pilih Ruang</option>
-                                                    {ruanganData
-                                                        .filter(
-                                                            (room) =>
-                                                                parseInt(room.kuota) >= parseInt(form.quota)
-                                                        )
-                                                        .map((room) => (
-                                                            <option
-                                                                key={room.id_ruang}
-                                                                value={room.nama_ruang}
-                                                                data-key={room.id_ruang}
-                                                            >
-                                                                {room.nama_ruang}
-                                                            </option>
-                                                        ))}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label className="block mb-1">Hari</label>
-                                                <select
-                                                    className={"w-full border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
-                                                    value={form.day}
-                                                    onChange={(e) => {
-                                                        handleDayChange(formIndex, e.target.value);
-                                                    }}
-                                                    disabled={status !== 'belum'}
-                                                >
-                                                    <option value="">Pilih Hari</option>
-                                                    {DAYS.map((day) => (
-                                                        <option key={day} value={day}>
-                                                            {day}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label className="block mb-1">Jam Mulai</label>
-                                                <div className="flex gap-2 items-center">
+                                        {form.jadwal.map((jadwal, jadwalIndex) => (
+                                            <div key={jadwalIndex} className="grid grid-cols-12 gap-4">
+                                                <div className="col-span-2">
+                                                    <label className="block mb-1">Ruang</label>
                                                     <select
-                                                        className={"w-24 border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
-                                                        value={form.hour}
-                                                        onChange={(e) =>
-                                                            handleTimeChange(formIndex, "hour", e.target.value)
-                                                        }
+                                                        className={"w-full border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
+                                                        value={jadwal.room}
+                                                        onChange={(e) => {
+                                                            const roomId = e.target.options[e.target.selectedIndex].getAttribute('data-key');
+                                                            handleRoomChange(formIndex, jadwalIndex, roomId, e.target.value);
+                                                        }}
                                                         disabled={status !== 'belum'}
                                                     >
-                                                        <option value="">Jam</option>
-                                                        {HOURS.map((hour) => (
-                                                            <option key={hour} value={hour}>
-                                                                {hour}
-                                                            </option>
-                                                        ))}
+                                                        <option value="">Pilih Ruang</option>
+                                                        {ruanganData
+                                                            .filter(
+                                                                (room) =>
+                                                                    parseInt(room.kuota) >= parseInt(form.quota)
+                                                            )
+                                                            .map((room) => (
+                                                                <option
+                                                                    key={room.id_ruang}
+                                                                    value={room.nama_ruang}
+                                                                    data-key={room.id_ruang}
+                                                                >
+                                                                    {room.nama_ruang}
+                                                                </option>
+                                                            ))}
                                                     </select>
-                                                    <span className="text-xl">:</span>
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <label className="block mb-1">Hari</label>
                                                     <select
-                                                        className={"w-24 border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
-                                                        value={form.minute}
-                                                        onChange={(e) =>
-                                                            handleTimeChange(formIndex, "minute", e.target.value)
-                                                        }
+                                                        className={"w-full border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
+                                                        value={jadwal.day}
+                                                        onChange={(e) => {
+                                                            handleDayChange(formIndex, jadwalIndex, e.target.value);
+                                                        }}
                                                         disabled={status !== 'belum'}
                                                     >
-                                                        <option value="">Menit</option>
-                                                        {MINUTES.map((minute) => (
-                                                            <option key={minute} value={minute}>
-                                                                {minute}
+                                                        <option value="">Pilih Hari</option>
+                                                        {DAYS.map((day) => (
+                                                            <option key={day} value={day}>
+                                                                {day}
                                                             </option>
                                                         ))}
                                                     </select>
                                                 </div>
+                                                <div className="col-span-3">
+                                                    <label className="block mb-1">Jam Mulai</label>
+                                                    <div className="flex gap-1 items-center">
+                                                        <select
+                                                            className={"w-full border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
+                                                            value={jadwal.hour}
+                                                            onChange={(e) =>
+                                                                handleTimeChange(formIndex, jadwalIndex, "hour", e.target.value)
+                                                            }
+                                                            disabled={status !== 'belum'}
+                                                        >
+                                                            <option value="">Jam</option>
+                                                            {HOURS.map((hour) => (
+                                                                <option key={hour} value={hour}>
+                                                                    {hour}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        <span className="text-xl">:</span>
+                                                        <select
+                                                            className={"w-full border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
+                                                            value={jadwal.minute}
+                                                            onChange={(e) =>
+                                                                handleTimeChange(formIndex, jadwalIndex, "minute", e.target.value)
+                                                            }
+                                                            disabled={status !== 'belum'}
+                                                        >
+                                                            <option value="">Menit</option>
+                                                            {MINUTES.map((minute) => (
+                                                                <option key={minute} value={minute}>
+                                                                    {minute}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div className="col-span-1">
+                                                    <label className="block mb-1">SKS</label>
+                                                    <select
+                                                        className={"w-full border rounded p-2" + (status !== 'belum' ? " bg-gray-100" : "")}
+                                                        value={jadwal.sks || ""}
+                                                        onChange={(e) => {
+                                                            handleSksChange(formIndex, jadwalIndex, e.target.value);
+                                                        }}
+                                                        disabled={status !== 'belum'}
+                                                    >
+                                                        <option value="">Pilih SKS</option>
+                                                        {(() => {
+                                                            const usedSks = form.jadwal.reduce((sum, j, idx) => {
+                                                                return idx !== jadwalIndex ? sum + (parseInt(j.sks) || 0) : sum;
+                                                            }, 0);
+                                                            const remainingSks = selectedCourse.sks - usedSks;
+                                                            return Array.from({length: remainingSks}, (_, i) => i + 1).map(num => (
+                                                                <option key={num} value={num}>
+                                                                    {num}
+                                                                </option>
+                                                            ));
+                                                        })()}
+                                                    </select>
+                                                </div>
+                                                <div className="col-span-3">
+                                                    <label className="block mb-1">Jam Selesai</label>
+                                                    <input
+                                                        type="text"
+                                                        className="w-full border rounded p-2 bg-gray-100"
+                                                        value={jadwal.endTime}
+                                                        readOnly
+                                                        placeholder="--.--"
+                                                    />
+                                                </div>
+                                                <div className="col-span-1 flex items-end gap-2">
+                                                    {jadwalIndex === form.jadwal.length - 1 && 
+                                                    form.jadwal.reduce((sum, j) => sum + (parseInt(j.sks) || 0), 0) < selectedCourse.sks ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleAddForm(formIndex)}
+                                                            className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
+                                                        >
+                                                            <Plus size={20} />
+                                                        </button>
+                                                    ) : form.jadwal.reduce((sum, j) => sum + (parseInt(j.sks) || 0), 0) < selectedCourse.sks && (
+                                                        <div
+                                                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 opacity-0"
+                                                        >
+                                                            <Plus size={20} />
+                                                        </div>
+                                                    )}
+
+                                                    {form.jadwal.length > 1 ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const newForms = [...scheduleForms];
+                                                                newForms[formIndex].jadwal = newForms[formIndex].jadwal.filter((_, idx) => idx !== jadwalIndex);
+                                                                setScheduleForms(newForms);
+                                                            }}
+                                                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                                                        >
+                                                            <Minus size={20} />
+                                                        </button>
+                                                    ) : (
+                                                        <div
+                                                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 opacity-0"
+                                                        >
+                                                            <Minus size={20} />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label className="block mb-1">Jam Selesai</label>
-                                                <input
-                                                    type="text"
-                                                    className="w-full border rounded p-2 bg-gray-100"
-                                                    value={form.endTime}
-                                                    readOnly
-                                                    placeholder="--.--"
-                                                />
-                                            </div>
-                                        </div>
-                                        {errorMessages[formIndex] && (
-                                            <div className="text-red-500 mt-2">
-                                                {errorMessages[formIndex]}
-                                            </div>
-                                        )}
+                                        ))}
                                     </div>
                                 ))}
 

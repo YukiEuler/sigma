@@ -622,7 +622,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                             setAdaUpdate(true);
                                                         }}
                                                         options={listDosenData.map((l) => ({
-                                                            value: l.nama,
+                                                            value: l.nip,
                                                             label: l.nama,
                                                         }))}
                                                         placeholder="Pilih Dosen"

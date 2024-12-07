@@ -6,6 +6,7 @@ use App\Models\Dosen;
 use App\Models\Kelas;
 use App\Models\Fakultas;
 use App\Models\KalenderAkademik;
+use App\Models\DosenMk;
 use App\Models\MataKuliah;
 use App\Models\ProgramStudi;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class AturKelasController extends Controller
 {
@@ -87,7 +89,6 @@ class AturKelasController extends Controller
             }])
             ->get();
         
-        error_log(count($request['kelas']));
         if (count($request['kelas']) < count($kelas->pluck('kelas')[0])) {
             $existingKelas = $kelas->pluck('kelas')->flatten();
             $requestKelasCodes = collect($request['kelas'])->pluck('kode_kelas');
@@ -110,6 +111,20 @@ class AturKelasController extends Controller
                 'kuota' => $kelas['kuota']
             ]);
         }
-        return;
+        
+        $tahunAkademik = KalenderAkademik::getTahunAkademik();
+
+        DB::table('dosen_mk')
+            ->where('kode_mk', $request->kode_mk)
+            ->where('tahun_akademik', $tahunAkademik)
+            ->delete();
+
+        foreach($request['listDosen'] as $dosen) {
+            DosenMk::create([
+                'nip' => $dosen['value'],
+                'kode_mk' => $request->kode_mk,
+                'tahun_akademik' => $tahunAkademik
+            ]);
+        }
     }
 }
