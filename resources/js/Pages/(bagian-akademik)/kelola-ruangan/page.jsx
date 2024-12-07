@@ -281,10 +281,29 @@ const KelolaRuangan = ({ programStudiList }) => {
                 title: "Error!",
                 text: "Semua field harus diisi",
                 icon: "error",
+                customClass: {
+                    confirmButton: "btn btn-danger",
+                },
             });
             return;
         }
-
+    
+        // Check if all rooms for selected program study are approved
+        const prodiRooms = data.filter(room => room.id_prodi === newRoom.id_prodi);
+        const allApproved = prodiRooms.length > 0 && prodiRooms.every(room => room.disetujui === 1);
+    
+        if (allApproved) {
+            Swal.fire({
+                title: "Tidak dapat menambahkan ruangan!",
+                text: "Semua ruangan untuk program studi ini telah disetujui, Tidak dapat menambahkan ruangan baru.",
+                icon: "warning",
+                customClass: {
+                    confirmButton: "btn btn-warning",
+                },
+            });
+            return;
+        }
+    
         Swal.fire({
             title: "Tambah Ruang Baru",
             html: `Apakah Anda yakin ingin menambahkan ruang berikut?<br><br>
@@ -360,10 +379,34 @@ const KelolaRuangan = ({ programStudiList }) => {
                 title: "Error!",
                 text: "Semua field harus diisi",
                 icon: "error",
+                customClass: {
+                    confirmButton: "btn btn-danger",
+                },
             });
             return;
         }
-
+    
+        // Check if the program study is being changed
+        const isProdiChanged = editRoom.id_prodi !== ruangan.id_prodi;
+    
+        if (isProdiChanged) {
+            // Check if all rooms for the new selected program study are approved
+            const prodiRooms = data.filter(room => room.id_prodi === editRoom.id_prodi);
+            const allApproved = prodiRooms.length > 0 && prodiRooms.every(room => room.disetujui === 1);
+    
+            if (allApproved) {
+                Swal.fire({
+                    title: "Tidak dapat mengubah program studi!",
+                    text: "Tidak dapat memindahkan ruangan ke program studi ini karena semua ruangan pada program studi tersebut telah disetujui.",
+                    icon: "warning",
+                    customClass: {
+                        confirmButton: "btn btn-warning",
+                    },
+                });
+                return;
+            }
+        }
+    
         Swal.fire({
             title: "Edit Ruang",
             html: `Apakah Anda yakin ingin mengubah ruang berikut?<br><br>
