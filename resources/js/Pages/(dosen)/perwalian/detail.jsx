@@ -31,7 +31,7 @@ const DetailPerwalian = () => {
         }));
     };
 
-    const handleDownloadPDF = () => {
+    const handleDownloadPDF = (semesterKey) => {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -42,18 +42,18 @@ const DetailPerwalian = () => {
         doc.text(title, (pageWidth - titleWidth) / 2, 22);
 
         // Tambahkan informasi tambahan
-        const tahunAjaran = "2022/2023 Ganjil";
-        const nim = "123456789";
-        const nama = "John Doe";
-        const programStudi = "Teknik Informatika";
-        const dosenWali = "Dr. Jane Smith";
+        const tahunAjaran = semesterData[semesterKey].title.split('|').pop();
+        const nim = mahasiswaData.nim;
+        const nama = mahasiswaData.nama;
+        const programStudi = mahasiswaData.nama_prodi;
+        const dosenWali = mahasiswaData.nama_dosen_wali;
 
         doc.setFontSize(12);
         const tahunAjaranWidth = doc.getTextWidth(
-            `Tahun Akademik: ${tahunAjaran}`
+            `${tahunAjaran}`
         );
         doc.text(
-            `Tahun Akademik: ${tahunAjaran}`,
+            `${tahunAjaran}`,
             (pageWidth - tahunAjaranWidth) / 2,
             28
         );
@@ -66,7 +66,7 @@ const DetailPerwalian = () => {
 
         // Tambahkan tabel
         doc.autoTable({
-            html: "#irs-mahasiswa",
+            html: `#irs-mahasiswa-${semesterKey}`,
             startY: 62, // Posisi Y di mana tabel akan dimulai
         });
 
@@ -74,277 +74,8 @@ const DetailPerwalian = () => {
         doc.save("Print IRS.pdf");
     };
 
-    // const semesterData = {
-    //     semester1: {
-    //         title: "Semester-1 | Tahun Ajaran 2022/2023 Ganjil",
-    //         sks: 21,
-    //         courses: [
-    //             {
-    //                 no: 1,
-    //                 kode: "UUW00003",
-    //                 mataKuliah: "Pancasila dan Kewarganegaraan",
-    //                 jadwal: "Selasa pukul 18:20 - 20:50",
-    //                 kelas: "C",
-    //                 sks: 3,
-    //                 ruang: ["A303", "E101"],
-    //                 status: "BARU",
-    //                 namaDosen: "Dr. Drs. Slamet Subekti, M.Hum.",
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 2,
-    //                 kode: "UUW00005",
-    //                 mataKuliah: "Olahraga",
-    //                 jadwal: "Rabu pukul 06:00 - 06:50",
-    //                 kelas: "A",
-    //                 sks: 1,
-    //                 ruang: "Lapangan Stadion UNDIP Tembalang",
-    //                 status: "BARU",
-    //                 namaDosen: "Dra. Endang Kumaidah, M.Kes.",
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 3,
-    //                 kode: "PAIK6102",
-    //                 mataKuliah: "Dasar Pemrograman",
-    //                 jadwal: "Rabu pukul 08:50 - 11:20",
-    //                 kelas: "C",
-    //                 sks: 3,
-    //                 ruang: "K202",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Dr.Eng. Adi Wibowo, S.Si., M.Kom.",
-    //                     "Khadijah, S.Kom., M.Cs.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 4,
-    //                 kode: "PAIK6103",
-    //                 mataKuliah: "Dasar Sistem",
-    //                 jadwal: "Kamis pukul 07:00 - 09:30",
-    //                 kelas: "C",
-    //                 sks: 3,
-    //                 ruang: "E102",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Rismiyati, B.Eng, M.Cs",
-    //                     "Muhammad Malik Hakim, S.T., M.T.I.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 5,
-    //                 kode: "PAIK6104",
-    //                 mataKuliah: "Logika Informatika",
-    //                 jadwal: "Kamis pukul 15:40 - 18:10",
-    //                 kelas: "C",
-    //                 sks: 3,
-    //                 ruang: "A205",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Dr. Sutikno, S.T., M.Cs.",
-    //                     "Dr. Aris Sugiharto, S.Si., M.Kom.",
-    //                 ],
-    //                 nilai: "B",
-    //             },
-    //             {
-    //                 no: 6,
-    //                 kode: "PAIK6105",
-    //                 mataKuliah: "Struktur Diskrit",
-    //                 jadwal: [
-    //                     "Kamis pukul 18:20 - 20:00",
-    //                     "Jumat pukul 16:40 - 18:20",
-    //                 ],
-    //                 kelas: "C",
-    //                 sks: 4,
-    //                 ruang: "E101",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Nurdin Bahtiar, S.Si., M.T.",
-    //                     "Sandy Kurniawan, S.Kom., M.Kom.",
-    //                     "Dr. Aris Sugiharto, S.Si., M.Kom.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 7,
-    //                 kode: "UUW00007",
-    //                 mataKuliah: "Bahasa Inggris",
-    //                 jadwal: "Jumat pukul 07:00 - 08:40",
-    //                 kelas: "C",
-    //                 sks: 2,
-    //                 ruang: "E101",
-    //                 status: "BARU",
-    //                 namaDosen: "Dra. R.A.J. Atrinawati, M.Hum.",
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 8,
-    //                 kode: "PAIK6101",
-    //                 mataKuliah: "Matematika I",
-    //                 jadwal: "Jumat pukul 14:50 - 16:30",
-    //                 kelas: "C",
-    //                 sks: 2,
-    //                 ruang: "E101",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Prof. Dr. Dra. Sunarsih, M.Si.",
-    //                     "Solikhin, S.Si., M.Sc.",
-    //                 ],
-    //                 nilai: "B",
-    //             },
-    //         ],
-    //     },
-    //     semester2: {
-    //         title: "Semester-2 | Tahun Ajaran 2022/2023 Genap",
-    //         sks: 24,
-    //         courses: [
-    //             {
-    //                 no: 1,
-    //                 kode: "UUW00004",
-    //                 mataKuliah: "Bahasa Indonesia",
-    //                 jadwal: "Senin pukul 10:40 - 12:20",
-    //                 kelas: "C",
-    //                 sks: 2,
-    //                 ruang: "E103",
-    //                 status: "BARU",
-    //                 namaDosen: "Dr. Drs. Muh Abdullah, M.A.",
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 2,
-    //                 kode: "PAIK6202",
-    //                 mataKuliah: "Algoritma dan Pemrograman",
-    //                 jadwal: [
-    //                     "Senin pukul 13:00 - 14:40",
-    //                     "Rabu pukul 13:00 - 14:40",
-    //                 ],
-    //                 kelas: "C",
-    //                 sks: 4,
-    //                 ruang: "E103",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Dr. Aris Puji Widodo, S.Si., M.T.",
-    //                     "Drs. Eko Adi Sarwoko, M.Komp.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 3,
-    //                 kode: "PAIK6402",
-    //                 mataKuliah: "Jaringan Komputer",
-    //                 jadwal: "Selasa pukul 07:00 - 09:30",
-    //                 kelas: "A",
-    //                 sks: 3,
-    //                 ruang: "K102",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Prajanto Wahyu Adi, M.Kom.",
-    //                     "Dr.Eng. Adi Wibowo, S.Si., M.Kom.",
-    //                     "Dr. Sutikno, S.T., M.Cs.",
-    //                     "Guruh Aryotejo, S.Kom., M.Sc.",
-    //                     "Yunila Dwi Putri Ariyanti, S.Kom., M.Kom.",
-    //                     "Dr. Aris Sugiharto, S.Si., M.Kom.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 4,
-    //                 kode: "UUW00011",
-    //                 mataKuliah: "Pendidikan Agama Islam",
-    //                 jadwal: "Selasa pukul 09:40 - 11:20",
-    //                 kelas: "C",
-    //                 sks: 2,
-    //                 ruang: "E103",
-    //                 status: "BARU",
-    //                 namaDosen: "Muhyidin, S.Ag., M.Ag., M.H.",
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 5,
-    //                 kode: "PAIK6203",
-    //                 mataKuliah: "Organisasi dan Arsitektur Komputer",
-    //                 jadwal: "Rabu pukul 07:00 - 09:30",
-    //                 kelas: "C",
-    //                 sks: 3,
-    //                 ruang: "E103",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Rismiyati, B.Eng, M.Cs",
-    //                     "Muhammad Malik Hakim, S.T., M.T.I.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 6,
-    //                 kode: "PAIK6603",
-    //                 mataKuliah: "Masyarakat dan Etika Profesi",
-    //                 jadwal: "Rabu pukul 15:40 - 18:10",
-    //                 kelas: "C",
-    //                 sks: 3,
-    //                 ruang: "E102",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Yunila Dwi Putri Ariyanti, S.Kom., M.Kom.",
-    //                     "Nurdin Bahtiar, S.Si., M.T.",
-    //                     "Khadijah, S.Kom., M.Cs.",
-    //                     "Muhammad Malik Hakim, S.T., M.T.I.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 7,
-    //                 kode: "PAIK6201",
-    //                 mataKuliah: "Matematika II",
-    //                 jadwal: "Jumat pukul 07:00 - 08:40",
-    //                 kelas: "C",
-    //                 sks: 2,
-    //                 ruang: "E103",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Solikhin, S.Si., M.Sc.",
-    //                     "Farikhin, S.Si., M.Si., Ph.D.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 8,
-    //                 kode: "UUW00006",
-    //                 mataKuliah: "Internet of Things (IoT)",
-    //                 jadwal: "Jumat pukul 09:40 - 11:20",
-    //                 kelas: "C",
-    //                 sks: 2,
-    //                 ruang: "E103",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Priyo Sidik Sasongko, S.Si., M.Kom.",
-    //                     "Guruh Aryotejo, S.Kom., M.Sc.",
-    //                     "Nurdin Bahtiar, S.Si., M.T.",
-    //                     "Yunila Dwi Putri Ariyanti, S.Kom., M.Kom.",
-    //                     "Drs. Eko Adi Sarwoko, M.Komp.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //             {
-    //                 no: 9,
-    //                 kode: "PAIK6204",
-    //                 mataKuliah: "Aljabar Linier",
-    //                 jadwal: "Jumat pukul 15:40 - 18:10",
-    //                 kelas: "C",
-    //                 sks: 3,
-    //                 ruang: "B103",
-    //                 status: "BARU",
-    //                 namaDosen: [
-    //                     "Dr. Retno Kusumaningrum, S.Si., M.Kom.",
-    //                     "Priyo Sidik Sasongko, S.Si., M.Kom.",
-    //                     "Dr. Aris Sugiharto, S.Si., M.Kom.",
-    //                 ],
-    //                 nilai: "A",
-    //             },
-    //         ],
-    //     },
-    // };
+     const semesterData = props.irs;
+
 
     // KHS
     function hitungBobot(nilaiHuruf) {
@@ -373,11 +104,11 @@ const DetailPerwalian = () => {
         const titleWidth = doc.getTextWidth(title);
         doc.text(title, (pageWidth - titleWidth) / 2, 22);
 
-        const tahunAjaran = "2022/2023 Ganjil";
-        const nim = "123456789";
-        const nama = "John Doe";
-        const programStudi = "Teknik Informatika";
-        const dosenWali = "Dr. Jane Smith";
+        const tahunAjaran = semesterData[semesterKey].title.split('|').pop();
+        const nim = mahasiswaData.nim;
+        const nama = mahasiswaData.nama;
+        const programStudi = mahasiswaData.nama_prodi;
+        const dosenWali = mahasiswaData.nama_dosen_wali;
 
         doc.setFontSize(12);
         const tahunAjaranWidth = doc.getTextWidth(
@@ -414,11 +145,13 @@ const DetailPerwalian = () => {
         // Simpan PDF
         doc.save("KHS.pdf");
     };
-
+    
     useEffect(() => {
         setMahasiswa(mahasiswaData);
         setDosen(dosenData);
     }, [mahasiswaData, dosenData]);
+
+    console.log(semesterData);
 
     return (
         <DosenLayout dosen={dosen}>
@@ -570,7 +303,7 @@ const DetailPerwalian = () => {
                             {activeTab === "IRS" && (
                                 <div className="w-full max-w-6xl mx-auto p-4">
                                     <div className="border rounded-md shadow-sm">
-                                        IRSSS
+                                        IRS
                                         {Object.entries(semesterData).map(
                                             ([semesterKey, semesterInfo]) => (
                                                 <div
@@ -717,7 +450,7 @@ const DetailPerwalian = () => {
                                                                     <tbody className="text-[14px]">
                                                                         {semesterInfo.courses.map(
                                                                             (
-                                                                                course
+                                                                                course,index
                                                                             ) => (
                                                                                 <React.Fragment
                                                                                     key={
@@ -727,22 +460,22 @@ const DetailPerwalian = () => {
                                                                                     <tr className="border">
                                                                                         <td className="p-2 border text-center">
                                                                                             {
-                                                                                                course.no
+                                                                                                index+1
                                                                                             }
                                                                                         </td>
                                                                                         <td className="p-2 border">
                                                                                             {
-                                                                                                course.kode
+                                                                                                course.kode_mk
                                                                                             }
                                                                                         </td>
                                                                                         <td className="p-2 border">
                                                                                             {
-                                                                                                course.mataKuliah
+                                                                                                course.mata_kuliah.nama
                                                                                             }
                                                                                         </td>
                                                                                         <td className="p-2 border text-center">
                                                                                             {
-                                                                                                course.kelas
+                                                                                                course.kode_kelas
                                                                                             }
                                                                                         </td>
                                                                                         <td className="p-2 border text-center">
@@ -752,11 +485,11 @@ const DetailPerwalian = () => {
                                                                                         </td>
                                                                                         <td className="p-2 border">
                                                                                             {Array.isArray(
-                                                                                                course.ruang
+                                                                                                course.jadwal_kuliah
                                                                                             )
-                                                                                                ? course.ruang.map(
+                                                                                                ? course.jadwal_kuliah.map(
                                                                                                       (
-                                                                                                          ruang,
+                                                                                                          jadwal,
                                                                                                           index
                                                                                                       ) => (
                                                                                                           <div
@@ -765,12 +498,12 @@ const DetailPerwalian = () => {
                                                                                                               }
                                                                                                           >
                                                                                                               {
-                                                                                                                  ruang
+                                                                                                                  jadwal.ruangan.nama_ruang
                                                                                                               }
                                                                                                           </div>
                                                                                                       )
                                                                                                   )
-                                                                                                : course.ruang}
+                                                                                                : course.jadwal_kuliah.ruangan.nama_ruang}
                                                                                         </td>
                                                                                         <td className="p-2 border text-center">
                                                                                             {
@@ -779,9 +512,9 @@ const DetailPerwalian = () => {
                                                                                         </td>
                                                                                         <td className="p-2 border">
                                                                                             {Array.isArray(
-                                                                                                course.namaDosen
+                                                                                                course.mata_kuliah.dosen
                                                                                             )
-                                                                                                ? course.namaDosen.map(
+                                                                                                ? course.mata_kuliah.dosen.map(
                                                                                                       (
                                                                                                           dosen,
                                                                                                           index
@@ -792,7 +525,7 @@ const DetailPerwalian = () => {
                                                                                                               }
                                                                                                           >
                                                                                                               {
-                                                                                                                  dosen
+                                                                                                                  dosen.nama
                                                                                                               }
                                                                                                           </div>
                                                                                                       )
@@ -835,8 +568,8 @@ const DetailPerwalian = () => {
                                                                     </tbody>
                                                                 </table>
                                                                 <button
-                                                                    onClick={
-                                                                        handleDownloadPDF
+                                                                    onClick={() =>
+                                                                        handleDownloadPDF(semesterKey)
                                                                     }
                                                                     className="w-40 mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                                                                 >
@@ -865,7 +598,7 @@ const DetailPerwalian = () => {
                             {activeTab === "KHS" && (
                                 <div className="w-full max-w-6xl mx-auto p-4">
                                     <div className="border rounded-md shadow-sm">
-                                        KHSS
+                                        KHS
                                         {Object.entries(semesterData).map(
                                             ([semesterKey, semesterInfo]) => (
                                                 <div
