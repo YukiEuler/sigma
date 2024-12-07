@@ -360,7 +360,7 @@ const DataMahasiswa = () => {
                                                             {item.status}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
-                                                            {item.status}
+                                                            {item.status_irs}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
                                                             {item.dosen.nama}
