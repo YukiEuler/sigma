@@ -91,6 +91,10 @@ Route::get('dosen/dashboard', [DosenController::class, 'index'])->name('dosen.da
 Route::get('dosen/rekap-irs', [RekapIRSController::class, 'index'])->name('dosen.rekapIRS')->middleware(['auth', 'validateRole:Dosen']);
 Route::get('dosen/perwalian', [PerwalianController::class, 'index'])->name('dosen.perwalian')->middleware(['auth', 'validateRole:Dosen']);
 Route::get('dosen/perwalian/detail/{id}', [PerwalianController::class, 'detail'])->name('dosen.detailmhs')->middleware(['auth', 'validateRole:Dosen']);
+Route::post('dosen/perwalian/setujui-irs', [PerwalianController::class, 'verifyIRS'])->name('dosen.verifyIRS')->middleware(['auth', 'validateRole:Dosen']);
+Route::post('dosen/perwalian/batalkan-irs', [PerwalianController::class, 'redoverifyIRS'])->name('dosen.redoverifyIRS')->middleware(['auth', 'validateRole:Dosen']);
+
+
 
 Route::get('kaprodi/dashboard', [KaprodiController::class, 'index'])->name('kaprodi.dashboard')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/data-mahasiswa', [DataMahasiswaController::class, 'index'])->name('kaprodi.dataMahasiswa')->middleware(['auth', 'validateRole:Kaprodi']);

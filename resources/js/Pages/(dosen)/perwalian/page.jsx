@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/inertia-react";
 import DosenLayout from "../../../Layouts/DosenLayout";
 import { Icon } from "@iconify/react";
+import { Inertia } from '@inertiajs/inertia';
+import Swal from "sweetalert2";
 
 const Perwalian = () => {
     const { props } = usePage();
@@ -120,7 +122,7 @@ const Perwalian = () => {
                                                 Angkatan
                                             </td>
                                             <td>
-                                                <select
+                                             <select
                                                     id="angkatan"
                                                     name="angkatan"
                                                     value={filters.angkatan}
@@ -178,10 +180,64 @@ const Perwalian = () => {
                                     </table>
                                 <div className="flex justify-between items-center mt-2">
                                     <div className="flex gap-2">
-                                        <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-[14px] w-40`">
+                                        <button
+                                        onClick={() => {
+                                            const selectedMahasiswa = filteredMahasiswa.filter((_, index) => checkedItems[index]);
+                                            Inertia.post(
+                                                "/dosen/perwalian/setujui-irs",
+                                                {
+                                                    checkedItems: selectedMahasiswa.map(m => m.nim),
+                                                },
+                                                {
+                                                    onSuccess: () => {
+                                                        Swal.fire({
+                                                            title: "Sukses!",
+                                                            text: "IRS berhasil disetujui",
+                                                            icon: "success",
+                                                            confirmButtonText: "OK",
+                                                        });
+                                                    },
+                                                    onError: () => {
+                                                        Swal.fire({
+                                                            icon: "error",
+                                                            title: "Gagal",
+                                                            text: "Terdapat Kesalahan",
+                                                        });
+                                                    },
+                                                }
+                                            );
+                                        }}
+                                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-[14px] w-40">
                                             Setujui IRS
                                         </button>
-                                        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-[14px] w-40`">
+                                        <button 
+                                            onClick={() => {
+                                                const selectedMahasiswa = filteredMahasiswa.filter((_, index) => checkedItems[index]);
+                                                Inertia.post(
+                                                    "/dosen/perwalian/batalkan-irs",
+                                                    {
+                                                        checkedItems: selectedMahasiswa.map(m => m.nim),
+                                                    },
+                                                    {
+                                                        onSuccess: () => {
+                                                            Swal.fire({
+                                                                title: "Sukses!",
+                                                                text: "IRS berhasil dibatalkan",
+                                                                icon: "success",
+                                                                confirmButtonText: "OK",
+                                                            });
+                                                        },
+                                                        onError: () => {
+                                                            Swal.fire({
+                                                                icon: "error",
+                                                                title: "Gagal",
+                                                                text: "Terdapat Kesalahan",
+                                                            });
+                                                        },
+                                                    }
+                                                );
+                                            }}
+                                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-[14px] w-40`">
                                             Batalkan Persetujuan IRS
                                         </button>
                                     </div>

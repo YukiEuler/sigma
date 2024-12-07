@@ -8,6 +8,7 @@ use App\Models\Mahasiswa;
 use App\Models\ProgramStudi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class PerwalianController extends Controller
@@ -80,4 +81,46 @@ class PerwalianController extends Controller
             'mahasiswa' => $mahasiswa
         ]);
     }
+    public function verifyIRS(Request $request)
+{
+    $user = Auth::user();
+
+    if (!$user) {
+        return redirect()->route('login');
+    } elseif ($user->role !== 'Dosen'){
+        return redirect()->route('home');
+    }
+
+    $checkedItems = $request->input('checkedItems');
+
+    if (!empty($checkedItems)) {
+        foreach ($checkedItems as $nim) {
+            DB::table('irs')
+                ->where('nim', $nim)
+                ->update(['is_verified' => 1]);
+        }
+    }
+    return redirect()->back();
+}
+public function redoverifyIRS(Request $request)
+{
+    $user = Auth::user();
+
+    if (!$user) {
+        return redirect()->route('login');
+    } elseif ($user->role !== 'Dosen'){
+        return redirect()->route('home');
+    }
+
+    $checkedItems = $request->input('checkedItems');
+
+    if (!empty($checkedItems)) {
+        foreach ($checkedItems as $nim) {
+            DB::table('irs')
+                ->where('nim', $nim)
+                ->update(['is_verified' => 0]);
+        }
+    }
+    return redirect()->back();
+}
 }
