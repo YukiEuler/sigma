@@ -207,6 +207,11 @@ class MenentukanRuangKuliahController extends Controller
             $ruangan->diajukan = 1;
             $ruangan->save();
 
+            // Set disetujui to 0 for rooms with the same id_prodi
+            Ruangan::where('id_prodi', $ruangan->id_prodi)
+                ->where('id_ruang', '!=', $id)
+                ->update(['disetujui' => 0]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Ruangan berhasil diajukan untuk persetujuan.'

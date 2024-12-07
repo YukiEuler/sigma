@@ -66,21 +66,30 @@ class AturJadwalController extends Controller
     {
         $tahunAkademik = KalenderAkademik::getTahunAkademik();
 
-        DB::table('jadwal_kuliah')
+        DB::beginTransaction();
+        try {
+            DB::table('jadwal_kuliah')
             ->join('kelas', 'jadwal_kuliah.id_kelas', '=', 'kelas.id')
             ->where('kelas.kode_mk', $request->scheduleForms[0]['courseId'])
             ->where('kelas.tahun_akademik', $tahunAkademik)
             ->delete();
 
-        foreach ($request->scheduleForms as $jadwal) {
-            if ($jadwal['day'] == '') continue;
-            JadwalKuliah::create([
-                'hari' => $jadwal['day'],
-                'waktu_mulai' => $jadwal['startTime'],
-                'waktu_selesai' => ''.$jadwal['endTime'].':00',
-                'id_ruang' => $jadwal['idRuang'],
-                'id_kelas' => $jadwal['idKelas'],
-            ]);
+            foreach ($request->scheduleForms as $kelas) {
+                foreach ($kelas['jadwal'] as $jadwal){
+                    if ($jadwal['day'] == '') continue;
+                    JadwalKuliah::create([
+                    'hari' => $jadwal['day'],
+                    'waktu_mulai' => $jadwal['startTime'],
+                    'waktu_selesai' => ''.$jadwal['endTime'].':00',
+                    'id_ruang' => $jadwal['idRuang'],
+                    'id_kelas' => $kelas['idKelas'],
+                    ]);
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan jadwal.');
         }
 
         return redirect()->back()->with('success', 'Jadwal berhasil disimpan.');

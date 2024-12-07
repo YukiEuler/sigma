@@ -11,7 +11,7 @@ import { RiContactsBook2Line } from "react-icons/ri";
 import { HiOutlineAcademicCap } from "react-icons/hi2";
 import { IoIosLogOut } from "react-icons/io";
 
-const SidebarKaprodi = ({ dosen }) => {
+const SidebarKaprodi = ({ kaprodi }) => {
     return (
         <aside
             id="default-sidebar"
@@ -41,13 +41,13 @@ const SidebarKaprodi = ({ dosen }) => {
             >
                 <div className="flex flex-col p-2 mb-2">
                     <span className="dark:text-white text-xl">
-                        {dosen.nama}
+                        {kaprodi.nama}
                     </span>
                     <span className="dark:text-slate-300 text-l">
-                        {dosen.nip}
+                        {kaprodi.nip}
                     </span>
                     <span className="dark:text-slate-300 text-m">
-                        {dosen.nama_fakultas}
+                        {kaprodi.nama_fakultas}
                     </span>
                 </div>
 

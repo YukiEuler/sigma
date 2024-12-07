@@ -8,7 +8,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import Select from 'react-select';
 
-const DataMataKuliah = ({ mataKuliah }) => {
+const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
     const { props } = usePage();
     const dosenData = props.dosen;
     const listDosenData = props.listDosen;
@@ -261,7 +261,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
     }, [dosen, searchTerm, mataKuliah]);
 
     return (
-        <KaprodiLayout dosen={dosen}>
+        <KaprodiLayout kaprodi={kaprodi}>
             <main className="flex-1 max-h-full">
                 <div className="flex flex-col items-start justify-between mt-2 pb-3 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
                     <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
@@ -622,7 +622,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                             setAdaUpdate(true);
                                                         }}
                                                         options={listDosenData.map((l) => ({
-                                                            value: l.nama,
+                                                            value: l.nip,
                                                             label: l.nama,
                                                         }))}
                                                         placeholder="Pilih Dosen"
@@ -667,13 +667,6 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                         className="bg-blue-600 text-white px-4 py-2  mr-2 rounded hover:bg-blue-700"
                                     >
                                         Simpan
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleAddForm}
-                                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                                    >
-                                        Tambah Kelas
                                     </button>
                                 </div>
                             </form>
