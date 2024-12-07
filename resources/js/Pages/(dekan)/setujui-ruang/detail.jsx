@@ -29,29 +29,31 @@ const DetailRuang = () => {
     }, {});
 
     const handleSetujuiProdi = () => {
-        // Filter rooms only for current program study
-        const currentProdiRooms = ruanganData.filter(
-            (room) =>
-                room.nama_prodi === programStudiData.nama_prodi &&
-                room.diajukan === 1 &&
-                room.disetujui === 0
+        // Get only the unapproved but proposed rooms
+        const roomsToApprove = ruanganData.filter(
+            (room) => room.diajukan === 1 && room.disetujui === 0
         );
-
-        if (currentProdiRooms.length === 0) {
+    
+        if (roomsToApprove.length === 0) {
             Swal.fire({
                 icon: "info",
-                title: "Semua ruangan sudah disetujui atau belum diajukan!",
-                text: `Tidak ada ruangan yang perlu disetujui untuk Program Studi ${programStudiData.nama_prodi}`,
+                title: "Tidak ada ruangan baru yang perlu disetujui",
+                text: `Semua ruangan yang diajukan untuk Program Studi ${programStudiData.nama_prodi} sudah disetujui`,
             });
             return;
         }
-
+    
+        // Get count of rooms that are already approved
+        const approvedRoomsCount = ruanganData.filter(
+            (room) => room.disetujui === 1
+        ).length;
+    
         Swal.fire({
             title: "Apakah Anda yakin?",
-            text: `Menyetujui semua ruangan untuk Program Studi ${programStudiData.nama_prodi}`,
+            text: `Terdapat ${roomsToApprove.length} ruangan baru yang diajukan untuk Program Studi ${programStudiData.nama_prodi}. Apakah anda ingin menyetujui ruangan tersebut?`,
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Ya, setujui semua!",
+            confirmButtonText: "Ya, setujui ruangan baru!",
             cancelButtonText: "Tidak, batalkan!",
             reverseButtons: true,
             customClass: {
@@ -63,8 +65,8 @@ const DetailRuang = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 setLoading(true);
-                const roomIds = currentProdiRooms.map((room) => room.id_ruang);
-
+                const roomIds = roomsToApprove.map((room) => room.id_ruang);
+    
                 Inertia.post(
                     "/dekan/setujui-ruang/set/setujui-multiple",
                     { room_ids: roomIds },
@@ -73,14 +75,13 @@ const DetailRuang = () => {
                             setLoading(false);
                             Swal.fire({
                                 title: "Disetujui!",
-                                text: `Semua ruangan di Program Studi ${programStudiData.nama_prodi} berhasil disetujui.`,
+                                text: `${roomsToApprove.length} ruangan baru untuk Program Studi ${programStudiData.nama_prodi} berhasil disetujui`,
                                 icon: "success",
                                 customClass: {
                                     confirmButton: "btn btn-success",
                                     cancelButton: "btn btn-danger",
                                 },
                             }).then(() => {
-                                // Reload halaman setelah persetujuan berhasil
                                 window.location.reload();
                             });
                         },
