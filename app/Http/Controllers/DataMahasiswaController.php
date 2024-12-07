@@ -66,4 +66,35 @@ class DataMahasiswaController extends Controller
         return Inertia::render('(kaprodi)/data-mahasiswa/page', ['dosen' => $dosen, 'mahasiswa' => $mahasiswa]);
     }
 
+    public function detail($id){
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        } elseif ($user->role !== 'Dosen'){
+            return redirect()->route('home');
+        }
+
+        $mahasiswa = Mahasiswa::where('nim', $id)->first();
+        $dosen = Dosen::where('user_id', $user->id)->first();
+
+        $programStudi = ProgramStudi::where('id_prodi', $dosen->id_prodi)->first();
+        $dosen->nama_prodi = $programStudi->nama_prodi;
+        $fakultas = Fakultas::where('id_fakultas', $programStudi->id_fakultas)->first();
+        $dosen->nama_fakultas = $fakultas->nama_fakultas;
+
+        // Mengambil data prodi mahasiswa
+        $prodiMahasiswa = ProgramStudi::where('id_prodi', $mahasiswa->id_prodi)->first();
+        $mahasiswa->nama_prodi = $prodiMahasiswa->nama_prodi;
+    
+        // Mengambil data fakultas mahasiswa
+        $fakultasMahasiswa = Fakultas::where('id_fakultas', $prodiMahasiswa->id_fakultas)->first();
+        $mahasiswa->nama_fakultas = $fakultasMahasiswa->nama_fakultas;
+
+        return Inertia::render('(kaprodi)/data-mahasiswa/detail', [
+            'dosen' => $dosen,
+            'mahasiswa' => $mahasiswa
+        ]);
+    }
+
 }

@@ -367,7 +367,7 @@ const DataMahasiswa = () => {
                                                         </td>
                                                         <td className="flex items-center justify-center py-3">
                                                             <a
-                                                                href={`/dosen/perwalian/detail/${item.nim}`}
+                                                                href={`/kaprodi/data-mahasiswa/detail/${item.nim}`}
                                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
                                                             >
                                                                 Detail
