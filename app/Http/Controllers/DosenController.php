@@ -27,6 +27,10 @@ class DosenController extends Controller
             ->whereDate('tanggal_mulai', '<=', $dateNow)
             ->whereDate('tanggal_selesai', '>=', $dateNow)
             ->first()->tahun_akademik;
+        $mahasiswa = Mahasiswa::where('nip_dosen_wali', '=', $dosen->nip);
+        if ($mahasiswa->count() === 0) {
+            $allstudent = collect([]);
+        } else {
         $allstudent = Mahasiswa::where('nip_dosen_wali', '=', $dosen->nip)
             ->leftJoin('irs', function ($join) use ($tahunAkademik) {
                 $join->on('irs.nim', '=', 'mahasiswa.nim')
@@ -41,7 +45,7 @@ class DosenController extends Controller
                 DB::raw('MAX(irs.diajukan) as diajukan') // Menyertakan diajukan
             )
             ->get();
-        
+        }
         error_log ($allstudent);
         return Inertia::render('(dosen)/dashboard-dosen/page', ['dosen' => $dosen, 'allstudent' => $allstudent]);
     }
