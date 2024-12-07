@@ -54,26 +54,31 @@ const SetujuiRuang = () => {
     );
 
     const handleSetujuiProdi = (prodiName, prodiId) => {
-        // Get rooms for specific prodi that need approval
+        // Get only the unapproved but proposed rooms
         const roomsToApprove = groupedByProdi[prodiName].rooms.filter(
             (room) => room.diajukan === 1 && room.disetujui === 0
         );
-
+    
         if (roomsToApprove.length === 0) {
             Swal.fire({
                 icon: "info",
-                title: "Semua ruangan sudah disetujui atau belum diajukan!",
-                text: `Tidak ada ruangan yang perlu disetujui untuk Program Studi ${prodiName}`,
+                title: "Tidak ada ruangan baru yang perlu disetujui",
+                text: `Semua ruangan yang diajukan untuk Program Studi ${prodiName} sudah disetujui`,
             });
             return;
         }
-
+    
+        // Get count of rooms that are already approved
+        const approvedRoomsCount = groupedByProdi[prodiName].rooms.filter(
+            (room) => room.disetujui === 1
+        ).length;
+    
         Swal.fire({
             title: "Apakah Anda yakin?",
-            text: `Menyetujui semua ruangan untuk Program Studi ${prodiName}`,
+            text: `Terdapat ${roomsToApprove.length} ruangan baru yang diajukan untuk Program Studi ${prodiName}. Apakah anda ingin menyetujui ruangan tersebut?`,
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Ya, setujui semua!",
+            confirmButtonText: "Ya, setujui ruangan baru!",
             cancelButtonText: "Tidak, batalkan!",
             reverseButtons: true,
             customClass: {
@@ -86,7 +91,7 @@ const SetujuiRuang = () => {
             if (result.isConfirmed) {
                 setLoading(true);
                 const roomIds = roomsToApprove.map((room) => room.id_ruang);
-
+    
                 Inertia.post(
                     "/dekan/setujui-ruang/set/setujui-multiple",
                     { room_ids: roomIds },
@@ -95,7 +100,7 @@ const SetujuiRuang = () => {
                             setLoading(false);
                             Swal.fire({
                                 title: "Disetujui!",
-                                text: `Semua ruangan di Program Studi ${prodiName} berhasil disetujui.`,
+                                text: `${roomsToApprove.length} ruangan baru untuk Program Studi ${prodiName} berhasil disetujui`,
                                 icon: "success",
                                 customClass: {
                                     confirmButton: "btn btn-success",

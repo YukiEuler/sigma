@@ -133,43 +133,42 @@ class MenyetujuiRuangKuliah extends Controller
     public function setujuiMultipleRuang(Request $request)
     {
         $user = Auth::user();
-        error_log("Halo 3");
-
+    
         // Check if user is authenticated and has proper role
         if (!$user) {
             return redirect()->route('login');
         } elseif ($user->role !== 'Dosen'){
             return redirect()->route('home');
         }
-
+    
         // Validate the request
         $request->validate([
             'room_ids' => 'required|array',
             'room_ids.*' => 'required|integer|exists:ruangan,id_ruang'
         ]);
-
+    
         $dosen = Dosen::where('user_id', $user->id)->get()->first();
-
+    
         try {
             // Begin transaction
             DB::beginTransaction();
-
-            // Get all rooms that match the IDs, are already proposed (diajukan = 1),
-            // and not yet approved (disetujui = 0)
+    
+            // Get only the rooms that need approval (avoid updating already approved rooms)
             $rooms = Ruangan::whereIn('id_ruang', $request->room_ids)
                           ->where('diajukan', 1)
-                          ->where('disetujui', 0)
+                          ->where('disetujui', 0)  // Only get rooms that haven't been approved yet
                           ->get();
-            // Update all matching rooms
+    
+            // Update only unapproved rooms
             foreach ($rooms as $room) {
                 $room->disetujui = 1;
                 $room->save();
             }
-
+    
             DB::commit();
-
+    
             return back()->with('success', 'Ruangan berhasil disetujui.');
-
+    
         } catch (\Exception $e) {
             DB::rollBack();
             
