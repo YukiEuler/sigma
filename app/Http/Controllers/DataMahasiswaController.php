@@ -54,11 +54,11 @@ class DataMahasiswaController extends Controller
             $mhsIps = $ips->firstWhere('nim', $mhs->nim);
             $mhs->ip_lalu = $mhsIps ? $mhsIps->IPS : null;
             if ($mhs->irs->isEmpty() || $mhs->irs[0]->diajukan == 0){
-                $mhs->status = 'Belum Diajukan';
+                $mhs->status_irs = 'Belum Diajukan';
             } elseif ($mhs->irs[0]->disetujui == 0){
-                $mhs->status = 'Belum Disetujui';
+                $mhs->status_irs = 'Belum Disetujui';
             } else {
-                $mhs->status = 'Sudah Disetujui';
+                $mhs->status_irss = 'Sudah Disetujui';
             }
         });
         error_log($mahasiswa);
