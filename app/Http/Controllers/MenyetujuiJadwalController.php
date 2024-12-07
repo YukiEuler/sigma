@@ -7,8 +7,10 @@ use App\Models\Fakultas;
 use App\Models\MataKuliah;
 use App\Models\ProgramStudi;
 use App\Models\Ruangan;
+use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class MenyetujuiJadwalController extends Controller
@@ -39,9 +41,16 @@ class MenyetujuiJadwalController extends Controller
         ->select('id_ruang', 'nama_ruang')
         ->get();
 
+        $jadwal = DB::table('jadwal_kuliah')
+            ->join('kelas', 'jadwal_kuliah.id_kelas', '=', 'kelas.id')
+            ->join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
+            ->join('program_studi', 'mata_kuliah.id_prodi', '=', 'program_studi.id_prodi')
+            ->select('jadwal_kuliah.*', 'mata_kuliah.id_prodi', 'program_studi.nama_prodi')
+            ->get();
+
         return Inertia::render('(dekan)/setujui-jadwal/page', 
         [
-            'dosen' => $dosen, 'mataKuliah' => $mataKuliah, 'ruangan' => $ruangan]);
+            'dosen' => $dosen, 'mataKuliah' => $mataKuliah, 'ruangan' => $ruangan, 'jadwal' => $jadwal]);
     }
 
     public function detail()
