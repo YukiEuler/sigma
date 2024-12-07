@@ -82,6 +82,7 @@ Route::get('mahasiswa/akademik/khs', [KHSController::class, 'index'])->name('mah
 
 Route::get('dekan/dashboard', [DekanController::class, 'index'])->name('dekan.dashboard')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-ruang', [MenyetujuiRuangKuliah::class, 'index'])->name('dekan.setujuiRuang')->middleware(['auth', 'validateRole:Dekan']);
+Route::get('dekan/setujui-ruang/detail/{id}', [MenyetujuiRuangKuliah::class, 'detail'])->name('dekan.detailRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::post('dekan/setujui-ruang/{id}', [MenyetujuiRuangKuliah::class, 'update'])->name('dekan.updateStatusRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::post('dekan/setujui-ruang/set/setujui-multiple', [MenyetujuiRuangKuliah::class, 'setujuiMultipleRuang'])->name('dekan.setujuiMultipleRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-jadwal', [MenyetujuiJadwalController::class, 'index'])->name('dekan.setujuiJadwal')->middleware(['auth', 'validateRole:Dekan']);
