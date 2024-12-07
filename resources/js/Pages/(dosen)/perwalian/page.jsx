@@ -180,7 +180,7 @@ const Perwalian = () => {
                                     </table>
                                 <div className="flex justify-between items-center mt-2">
                                     <div className="flex gap-2">
-                                        <button
+                                        <button 
                                         onClick={() => {
                                             const selectedMahasiswa = filteredMahasiswa.filter((_, index) => checkedItems[index]);
                                             Inertia.post(
@@ -204,6 +204,16 @@ const Perwalian = () => {
                                                             text: "Terdapat Kesalahan",
                                                         });
                                                     },
+                                                onBefore: () => {
+                                                    if (selectedMahasiswa.length === 0) {
+                                                        Swal.fire({
+                                                            icon: "warning",
+                                                            title: "Peringatan", 
+                                                            text: "Tidak ada IRS yang dipilih"
+                                                        });
+                                                        return false;
+                                                    }
+                                                }
                                                 }
                                             );
                                         }}
@@ -213,6 +223,14 @@ const Perwalian = () => {
                                         <button 
                                             onClick={() => {
                                                 const selectedMahasiswa = filteredMahasiswa.filter((_, index) => checkedItems[index]);
+                                                if (selectedMahasiswa.length === 0) {
+                                                    Swal.fire({
+                                                        icon: "warning",
+                                                        title: "Peringatan",
+                                                        text: "Tidak ada IRS yang dipilih",
+                                                    });
+                                                    return;
+                                                }
                                                 Inertia.post(
                                                     "/dosen/perwalian/batalkan-irs",
                                                     {
