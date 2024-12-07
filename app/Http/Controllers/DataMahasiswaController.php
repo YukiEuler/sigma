@@ -69,28 +69,73 @@ class DataMahasiswaController extends Controller
     public function detail($id){
         $user = Auth::user();
 
-        if (!$user) {
-            return redirect()->route('login');
-        } elseif ($user->role !== 'Dosen'){
-            return redirect()->route('home');
-        }
+    if (!$user) {
+        return redirect()->route('login');
+    } elseif ($user->role !== 'Dosen'){
+        return redirect()->route('home');
+    }
 
-        $mahasiswa = Mahasiswa::where('nim', $id)->first();
-        $dosen = Dosen::where('user_id', $user->id)->first();
+    $mahasiswa = Mahasiswa::where('nim', $id)->first();
+    if (!$mahasiswa) {
+        return redirect()->route('home')->with('error', 'Mahasiswa tidak ditemukan');
+    }
 
-        $programStudi = ProgramStudi::where('id_prodi', $dosen->id_prodi)->first();
+    $dosen = Dosen::where('user_id', $user->id)->first();
+    if (!$dosen) {
+        return redirect()->route('home')->with('error', 'Dosen tidak ditemukan');
+    }
+
+    $programStudi = ProgramStudi::where('id_prodi', $dosen->id_prodi)->first();
+    if ($programStudi) {
         $dosen->nama_prodi = $programStudi->nama_prodi;
         $fakultas = Fakultas::where('id_fakultas', $programStudi->id_fakultas)->first();
-        $dosen->nama_fakultas = $fakultas->nama_fakultas;
+        if ($fakultas) {
+            $dosen->nama_fakultas = $fakultas->nama_fakultas;
+        }
+    }
 
-        // Mengambil data prodi mahasiswa
-        $prodiMahasiswa = ProgramStudi::where('id_prodi', $mahasiswa->id_prodi)->first();
+    // Mengambil data prodi mahasiswa
+    $prodiMahasiswa = ProgramStudi::where('id_prodi', $mahasiswa->id_prodi)->first();
+    if ($prodiMahasiswa) {
         $mahasiswa->nama_prodi = $prodiMahasiswa->nama_prodi;
-    
+
         // Mengambil data fakultas mahasiswa
         $fakultasMahasiswa = Fakultas::where('id_fakultas', $prodiMahasiswa->id_fakultas)->first();
-        $mahasiswa->nama_fakultas = $fakultasMahasiswa->nama_fakultas;
+        if ($fakultasMahasiswa) {
+            $mahasiswa->nama_fakultas = $fakultasMahasiswa->nama_fakultas;
+        }
+    }   
 
+    $ips = Khs::join('mahasiswa', 'khs.nim', '=', 'mahasiswa.nim')
+        ->select(DB::raw('SUM(khs.bobot * CASE 
+            WHEN khs.nilai_huruf = "A" THEN 4
+            WHEN khs.nilai_huruf = "B" THEN 3
+            WHEN khs.nilai_huruf = "C" THEN 2
+            WHEN khs.nilai_huruf = "D" THEN 1
+            ELSE 0
+        END) / SUM(khs.bobot) as IPS'))
+        ->where('mahasiswa.nim', $mahasiswa->nim)
+        ->whereRaw('khs.semester + 1 = mahasiswa.semester')
+        ->groupBy('mahasiswa.nim')
+        ->first();
+
+        $ips = $ips ? $ips->IPS : 0;
+        $mahasiswa->ips = round($ips, 2);
+        $maxSks = 0;
+        $semester = $mahasiswa->semester;
+        if ($semester == 1){
+            $maxSks = 20;
+        } elseif ($ips < 2){
+            $maxSks = 18;
+        } elseif ($semester == 2 || $ips < 2.5){
+            $maxSks = 20;
+        } elseif ($ips < 3){
+            $maxSks = 22;
+        } else {
+            $maxSks = 24;
+        }
+        $mahasiswa->maxSks = $maxSks;
+        
         return Inertia::render('(kaprodi)/data-mahasiswa/detail', [
             'dosen' => $dosen,
             'mahasiswa' => $mahasiswa
