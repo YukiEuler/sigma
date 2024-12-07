@@ -8,6 +8,7 @@ const DetailJadwal = () => {
     const dosenData = props.dosen;
     const mataKuliahData = props.mataKuliah;
     const ruanganData = props.ruangan;
+    const selectedProdi = props.selectedProdi;
     const [dosen, setDosen] = useState(dosenData);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -53,7 +54,7 @@ const DetailJadwal = () => {
                         </button>
 
                         <h1 className="ml-2 text-2xl font-semibold whitespace-nowrap text-black">
-                            Jadwal Program Studi Informatika
+                            Jadwal Program Studi {selectedProdi.nama_prodi}
                         </h1>
                     </div>
                 </div>
