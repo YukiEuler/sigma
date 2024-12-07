@@ -503,7 +503,7 @@ const DetailIRS = () => {
                                                 IP lalu
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 3.78
+                                                : {mahasiswa.ips}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -511,7 +511,7 @@ const DetailIRS = () => {
                                                 Beban studi maks
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 24
+                                                : {mahasiswa.maxSks}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -554,7 +554,7 @@ const DetailIRS = () => {
                                                 Total
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 97
+                                                : {mahasiswa.sks_kumulatif}
                                             </span>
                                         </div>
                                     </div>
