@@ -719,7 +719,7 @@ const AturJadwal = () => {
                 {/* Modal */}
                 {isModalOpen && (
                     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                        <div className="bg-white rounded-lg px-6 pb-6 w-2/3 h-[80vh] overflow-y-auto scrollbar-hide">
+                        <div className="bg-white rounded-lg pb-6 w-2/3 h-[80vh] overflow-y-auto scrollbar-hide">
                             <style jsx>{`
                                 .scrollbar-hide::-webkit-scrollbar {
                                     display: none;
@@ -729,7 +729,7 @@ const AturJadwal = () => {
                                     scrollbar-width: none;
                                 }
                             `}</style>
-                            <header className="sticky top-0 bg-white pt-6">
+                            <header className="sticky top-0 w-full px-6 bg-white pt-6">
                                 <div className="flex justify-between items-center mb-2">
                                     <h2 className="text-xl font-bold">
                                         Atur Jadwal Mata Kuliah
@@ -763,7 +763,7 @@ const AturJadwal = () => {
                                 <div className="border-t pt-2"></div>
                             </header>
 
-                            <form onSubmit={handleSubmit} className="space-y-4">
+                            <form onSubmit={handleSubmit} className="space-y-4 px-4">
                                 {scheduleForms.map((form, formIndex) => (
                                     <div key={formIndex} className="p-4 border-2 border-gray-300 rounded-lg shadow-lg bg-white">
                                         <div className="grid grid-cols-2 gap-4">
