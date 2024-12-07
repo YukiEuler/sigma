@@ -115,12 +115,6 @@ const DetailRuang = () => {
                 <div className="flex flex-col items-start justify-between mt-2 pb-3 space-y-4 border-b lg:items-center lg:space-y-0 lg:flex-row">
                     <div className="flex itmes-center justify-center">
                         <button onClick={() => window.history.back()}>
-                            {/* <Icon
-                                icon="weui:back-filled"
-                                className="mt-[5px]"
-                                width="24"
-                                height="24"
-                            /> */}
                             <IoChevronBack style={{ fontSize: "28px" }} />
                         </button>
                         <h1 className="text-2xl font-semibold whitespace-nowrap text-black">
@@ -146,7 +140,11 @@ const DetailRuang = () => {
                                                 : "bg-blue-500 hover:bg-blue-600"
                                         } text-white px-4 py-2 rounded text-[14px]`}
                                     >
-                                        Setujui
+                                        {ruanganData.every(
+                                            (room) => room.disetujui === 1
+                                        )
+                                            ? "Disetujui"
+                                            : "Setujui"}
                                     </button>
                                 </div>
                                 <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[540px] scrollbar-hide">
