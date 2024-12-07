@@ -28,7 +28,7 @@ class IRSController extends Controller
             ->where('diajukan', 1)
             ->join('kelas', 'kelas.id', '=', 'irs.id_kelas')
             ->join('mata_kuliah', 'mata_kuliah.kode_mk', '=', 'kelas.kode_mk')
-            ->select('*', 'irs.semester as irs_semester')
+            ->select('*', 'irs.semester as irs_semester', 'irs.status as status_irs')
             ->with([
                 'kelas.jadwalKuliah' => function ($query) {
                     $query->with('ruangan');
@@ -70,6 +70,7 @@ class IRSController extends Controller
         
         
         // error_log($irs['1']['courses']);
+        error_log($irs);
 
         return Inertia::render('(mahasiswa)/irs/page', ['mahasiswa' => $mahasiswa, 'irs' => $irs]);
     }

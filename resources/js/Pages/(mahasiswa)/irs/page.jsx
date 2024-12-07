@@ -264,7 +264,7 @@ const IRSMahasiswa = () => {
                                                                                     </td>
                                                                                     <td className="p-2 border text-center">
                                                                                         {
-                                                                                            course.status
+                                                                                            course.status_irs
                                                                                         }
                                                                                     </td>
                                                                                     <td className="p-2 border">
