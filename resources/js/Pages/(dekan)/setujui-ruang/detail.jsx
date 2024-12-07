@@ -242,12 +242,12 @@ const DetailRuang = () => {
                                                     <td className="px-4 py-2 text-[14px] text-center">
                                                         {room.disetujui ===
                                                         1 ? (
-                                                            <span className="text-green-500">
-                                                                Disetujui
+                                                            <span>
+                                                                Approved
                                                             </span>
                                                         ) : (
-                                                            <span className="text-red-500">
-                                                                Belum Disetujui
+                                                            <span>
+                                                                Not Approved
                                                             </span>
                                                         )}
                                                     </td>
