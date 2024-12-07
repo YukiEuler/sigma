@@ -7,10 +7,8 @@ use App\Models\Fakultas;
 use App\Models\MataKuliah;
 use App\Models\ProgramStudi;
 use App\Models\Ruangan;
-use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class MenyetujuiJadwalController extends Controller
@@ -41,36 +39,38 @@ class MenyetujuiJadwalController extends Controller
         ->select('id_ruang', 'nama_ruang')
         ->get();
 
-        $jadwal = DB::table('jadwal_kuliah')
-            ->join('kelas', 'jadwal_kuliah.id_kelas', '=', 'kelas.id')
-            ->join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
-            ->join('program_studi', 'mata_kuliah.id_prodi', '=', 'program_studi.id_prodi')
-            ->select('jadwal_kuliah.*', 'mata_kuliah.id_prodi', 'program_studi.nama_prodi')
-            ->get();
+        $programStudiList = ProgramStudi::select('id_prodi', 'nama_prodi')
+        ->where('id_fakultas', $fakultas->id_fakultas)
+        ->get();
 
         return Inertia::render('(dekan)/setujui-jadwal/page', 
         [
-            'dosen' => $dosen, 'mataKuliah' => $mataKuliah, 'ruangan' => $ruangan, 'jadwal' => $jadwal]);
+            'dosen' => $dosen, 'mataKuliah' => $mataKuliah, 'ruangan' => $ruangan, 'programStudiList' => $programStudiList]);
     }
 
-    public function detail()
+    public function detail($id_prodi)
     {
         $user = Auth::user();
-
+    
         if (!$user) {
             return redirect()->route('login');
         } elseif ($user->role !== 'Dosen'){
             return redirect()->route('home');
         }
-
+    
         $dosen = Dosen::where('user_id', $user->id)->get()->first();
         $programStudi = ProgramStudi::where('id_prodi', $dosen->id_prodi)->first();
         $dosen->nama_prodi = $programStudi->nama_prodi;
         $fakultas = Fakultas::where('id_fakultas', $programStudi->id_fakultas)->first();
         $dosen->nama_fakultas = $fakultas->nama_fakultas;
-
-        return Inertia::render('(dekan)/setujui-jadwal/detail', 
-        ['dosen' => $dosen]);
+    
+        // Ambil detail program studi yang dipilih
+        $selectedProdi = ProgramStudi::where('id_prodi', $id_prodi)->first();
+    
+        return Inertia::render('(dekan)/setujui-jadwal/detail', [
+            'dosen' => $dosen,
+            'selectedProdi' => $selectedProdi
+        ]);
     }
 
     

@@ -9,6 +9,7 @@ const SetujuiJadwal = ({}) => {
     const [data, setData] = useState([]);
     const { props } = usePage();
     const dosenData = props.dosen;
+    const programStudiList = props.programStudiList;
     const [dosen, setDosen] = useState(dosenData);
     const [loading, setLoading] = useState(false);
     const [selectedJadwal, setSelectedJadwal] = useState([]);
@@ -249,153 +250,46 @@ const SetujuiJadwal = ({}) => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td className="px-4 py-3">
-                                                    <div className="flex items-center justify-center">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="w-4 h-4 mr-2"
-                                                        />
-                                                    </div>
-                                                </td>
-                                                <td
-                                                    className="px-4 py-3"
-                                                    style={{
-                                                        textAlign: "center",
-                                                        fontSize: "14px",
-                                                    }}
-                                                >
-                                                    1
-                                                </td>
-                                                <td
-                                                    className="px-4 py-3"
-                                                    style={{
-                                                        textAlign: "center",
-                                                        fontSize: "14px",
-                                                    }}
-                                                >
-                                                    Teknik Informatika
-                                                </td>
-                                                <td
-                                                    className="px-4 py-3"
-                                                    style={{
-                                                        textAlign: "center",
-                                                        fontSize: "14px",
-                                                    }}
-                                                >
-                                                    Not Aprroved
-                                                </td>
-                                                <td
-                                                    className="px-4 py-3"
-                                                    style={{
-                                                        textAlign: "center",
-                                                        fontSize: "14px",
-                                                    }}
-                                                >
-                                                    <a
-                                                        href={`/dekan/setujui-jadwal/detail`}
-                                                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
+                                            {programStudiList.map(
+                                                (prodi, index) => (
+                                                    <tr
+                                                        key={prodi.id_prodi}
+                                                        className="bg-gray-100 border-b"
                                                     >
-                                                        Detail
-                                                    </a>
-                                                </td>
-                                                <td
-                                                    className="px-4 py-3"
-                                                    style={{
-                                                        textAlign: "center",
-                                                        fontSize: "14px",
-                                                    }}
-                                                >
-                                                    <button className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[14px] text-center w-16">
-                                                        Setujui
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                        {/* <tbody>
-                                                {filteredData.map(
-                                                    (item, index) => (
-                                                        <tr
-                                                            key={item.id_ruang}
-                                                            className="bg-gray-100 border-b"
-                                                        >
-                                                            <td className="px-4 py-2 flex justify-center">
+                                                        <td className="px-4 py-3">
+                                                            <div className="flex items-center justify-center">
                                                                 <input
                                                                     type="checkbox"
-                                                                    checked={selectedRooms.includes(
-                                                                        item.id_ruang
-                                                                    )}
-                                                                    onChange={() =>
-                                                                        handleSelectRoom(
-                                                                            item.id_ruang
-                                                                        )
-                                                                    }
-                                                                    disabled={
-                                                                        // item.diajukan ===
-                                                                        //     1 ||
-                                                                        item.disetujui ===
-                                                                        1
-                                                                    }
-                                                                    className="w-4 h-4"
+                                                                    className="w-4 h-4 mr-2"
                                                                 />
-                                                            </td>
-                                                            <td className="px-4 py-2 text-[14px] text-center">
-                                                                {index + 1}
-                                                            </td>
-                                                            <td className="px-4 py-2 text-[14px] text-center">
-                                                                {
-                                                                    item.nama_ruang
-                                                                }
-                                                            </td>
-                                                            <td className="px-4 py-2 text-[14px] text-center">
-                                                                {item.kuota}
-                                                            </td>
-                                                            <td className="px-4 py-2 text-[14px] text-center">
-                                                                {
-                                                                    item.nama_prodi
-                                                                }
-                                                            </td>
-                                                            <td className="px-4 py-2 text-[14px] text-center">
-                                                                {item.diajukan ===
-                                                                    0 &&
-                                                                item.disetujui ===
-                                                                    0
-                                                                    ? "Belum Diajukan"
-                                                                    : item.diajukan ===
-                                                                          1 &&
-                                                                      item.disetujui ===
-                                                                          0
-                                                                    ? "Belum Disetujui"
-                                                                    : "Sudah Disetujui"}
-                                                            </td>
-                                                            <td className="px-4 py-2 flex justify-center">
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleSetujui(
-                                                                            item
-                                                                        )
-                                                                    }
-                                                                    disabled={
-                                                                        item.disetujui ===
-                                                                        1
-                                                                    }
-                                                                    className={`${
-                                                                        item.disetujui ===
-                                                                        1
-                                                                            ? "bg-gray-400"
-                                                                            : "bg-green-500 hover:bg-green-600"
-                                                                    } text-white px-2 py-1 rounded text-[14px] text-center w-20`}
-                                                                >
-                                                                    {item.disetujui ===
-                                                                    1
-                                                                        ? "Disetujui"
-                                                                        : "Setujui"}
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                )}
-                                            </tbody> */}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-4 py-3 text-center">
+                                                            {index + 1}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-center">
+                                                            {prodi.nama_prodi}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-center">
+                                                            Not Approved
+                                                        </td>
+                                                        <td className="px-4 py-3 text-center">
+                                                            <a
+                                                                href={`/dekan/setujui-jadwal/detail/${prodi.id_prodi}`}
+                                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
+                                                            >
+                                                                Detail
+                                                            </a>
+                                                        </td>
+                                                        <td className="px-4 py-3 text-center">
+                                                            <button className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[14px] text-center w-16">
+                                                                Setujui
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            )}
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>

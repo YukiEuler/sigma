@@ -87,7 +87,7 @@ Route::get('dekan/setujui-ruang/detail/{id}', [MenyetujuiRuangKuliah::class, 'de
 Route::post('dekan/setujui-ruang/{id}', [MenyetujuiRuangKuliah::class, 'update'])->name('dekan.updateStatusRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::post('dekan/setujui-ruang/set/setujui-multiple', [MenyetujuiRuangKuliah::class, 'setujuiMultipleRuang'])->name('dekan.setujuiMultipleRuang')->middleware(['auth', 'validateRole:Dekan']);
 Route::get('dekan/setujui-jadwal', [MenyetujuiJadwalController::class, 'index'])->name('dekan.setujuiJadwal')->middleware(['auth', 'validateRole:Dekan']);
-Route::get('dekan/setujui-jadwal/detail', [MenyetujuiJadwalController::class, 'detail'])->name('dekan.detailJadwal')->middleware(['auth', 'validateRole:Dekan']);
+Route::get('dekan/setujui-jadwal/detail/{id_prod}', [MenyetujuiJadwalController::class, 'detail'])->name('dekan.detailJadwal')->middleware(['auth', 'validateRole:Dekan']);
 
 Route::get('dosen/dashboard', [DosenController::class, 'index'])->name('dosen.dashboard')->middleware(['auth', 'validateRole:Dosen']);
 Route::get('dosen/rekap-irs', [RekapIRSController::class, 'index'])->name('dosen.rekapIRS')->middleware(['auth', 'validateRole:Dosen']);
