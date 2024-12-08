@@ -84,14 +84,38 @@ const Perwalian = () => {
     const handleSelectAllChange = () => {
         const newSelectAll = !selectAll;
         setSelectAll(newSelectAll);
-        setCheckedItems(new Array(filteredMahasiswa.length).fill(newSelectAll));
+
+        // Buat array baru untuk status checkbox berdasarkan status IRS
+        const newCheckedItems = filteredMahasiswa.map((mhs) =>
+            newSelectAll ? mhs.status_irs === "Not Approved" : false
+        );
+
+        setCheckedItems(newCheckedItems);
     };
 
     const handleCheckboxChange = (index) => {
         const newCheckedItems = [...checkedItems];
         newCheckedItems[index] = !newCheckedItems[index];
         setCheckedItems(newCheckedItems);
-        setSelectAll(newCheckedItems.every((item) => item));
+
+        // Hitung jumlah mahasiswa dengan status "Not Approved"
+        const notApprovedCount = filteredMahasiswa.filter(
+            (mhs) => mhs.status_irs === "Not Approved"
+        ).length;
+
+        // Hitung jumlah item yang tercentang dari mahasiswa "Not Approved"
+        const checkedNotApprovedCount = filteredMahasiswa.reduce(
+            (count, mhs, idx) =>
+                mhs.status_irs === "Not Approved" && newCheckedItems[idx]
+                    ? count + 1
+                    : count,
+            0
+        );
+
+        // Set selectAll true jika semua mahasiswa "Not Approved" tercentang
+        setSelectAll(
+            notApprovedCount > 0 && checkedNotApprovedCount === notApprovedCount
+        );
     };
 
     useEffect(() => {
@@ -181,6 +205,24 @@ const Perwalian = () => {
                                                         (_, index) =>
                                                             checkedItems[index]
                                                     );
+
+                                                // Check if any selected student has status other than "Not Approved"
+                                                const invalidSelection =
+                                                    selectedMahasiswa.some(
+                                                        (mhs) =>
+                                                            mhs.status_irs !==
+                                                            "Not Approved"
+                                                    );
+
+                                                if (invalidSelection) {
+                                                    Swal.fire({
+                                                        icon: "warning",
+                                                        title: "Peringatan",
+                                                        text: "Mahasiswa belum mengajukan IRS atau IRS sudah disetujui",
+                                                    });
+                                                    return;
+                                                }
+
                                                 Inertia.post(
                                                     "/dosen/perwalian/setujui-irs",
                                                     {
@@ -193,7 +235,7 @@ const Perwalian = () => {
                                                         onSuccess: () => {
                                                             // Update status IRS untuk mahasiswa yang dipilih
                                                             const updatedMahasiswa =
-                                                                filteredMahasiswa.map(
+                                                                mahasiswa.map(
                                                                     (mhs) => {
                                                                         if (
                                                                             selectedMahasiswa.find(
@@ -218,14 +260,70 @@ const Perwalian = () => {
                                                             setMahasiswa(
                                                                 updatedMahasiswa
                                                             );
+
+                                                            // Update filtered mahasiswa based on current filters
+                                                            const updatedFilteredMahasiswa =
+                                                                updatedMahasiswa.filter(
+                                                                    (mhs) => {
+                                                                        let matchesFilter = true;
+
+                                                                        if (
+                                                                            filters.angkatan !==
+                                                                            "all"
+                                                                        ) {
+                                                                            matchesFilter =
+                                                                                matchesFilter &&
+                                                                                mhs.angkatan.toString() ===
+                                                                                    filters.angkatan;
+                                                                        }
+
+                                                                        if (
+                                                                            filters.prodi !==
+                                                                            "all"
+                                                                        ) {
+                                                                            matchesFilter =
+                                                                                matchesFilter &&
+                                                                                mhs.nama_prodi
+                                                                                    .toLowerCase()
+                                                                                    .includes(
+                                                                                        filters.prodi.toLowerCase()
+                                                                                    );
+                                                                        }
+
+                                                                        if (
+                                                                            filters.search
+                                                                        ) {
+                                                                            matchesFilter =
+                                                                                matchesFilter &&
+                                                                                (mhs.nama
+                                                                                    .toLowerCase()
+                                                                                    .includes(
+                                                                                        filters.search.toLowerCase()
+                                                                                    ) ||
+                                                                                    mhs.nim
+                                                                                        .toLowerCase()
+                                                                                        .includes(
+                                                                                            filters.search.toLowerCase()
+                                                                                        ) ||
+                                                                                    mhs.nama_prodi
+                                                                                        .toLowerCase()
+                                                                                        .includes(
+                                                                                            filters.search.toLowerCase()
+                                                                                        ));
+                                                                        }
+
+                                                                        return matchesFilter;
+                                                                    }
+                                                                );
+
                                                             setFilteredMahasiswa(
-                                                                updatedMahasiswa
+                                                                updatedFilteredMahasiswa
                                                             );
 
                                                             // Reset checkbox selections
                                                             setCheckedItems(
                                                                 new Array(
-                                                                    updatedMahasiswa.length
+                                                                    updatedFilteredMahasiswa.length
                                                                 ).fill(false)
                                                             );
                                                             setSelectAll(false);
@@ -272,6 +370,7 @@ const Perwalian = () => {
                                                         (_, index) =>
                                                             checkedItems[index]
                                                     );
+
                                                 if (
                                                     selectedMahasiswa.length ===
                                                     0
@@ -283,6 +382,24 @@ const Perwalian = () => {
                                                     });
                                                     return;
                                                 }
+
+                                                // Check if any selected student has status other than "Approved"
+                                                const invalidSelection =
+                                                    selectedMahasiswa.some(
+                                                        (mhs) =>
+                                                            mhs.status_irs !==
+                                                            "Approved"
+                                                    );
+
+                                                if (invalidSelection) {
+                                                    Swal.fire({
+                                                        icon: "warning",
+                                                        title: "Peringatan",
+                                                        text: "IRS belum diajukan atau disetujui",
+                                                    });
+                                                    return;
+                                                }
+
                                                 Inertia.post(
                                                     "/dosen/perwalian/batalkan-irs",
                                                     {
@@ -293,6 +410,101 @@ const Perwalian = () => {
                                                     },
                                                     {
                                                         onSuccess: () => {
+                                                            // Update status IRS untuk mahasiswa yang dipilih
+                                                            const updatedMahasiswa =
+                                                                mahasiswa.map(
+                                                                    (mhs) => {
+                                                                        if (
+                                                                            selectedMahasiswa.find(
+                                                                                (
+                                                                                    selected
+                                                                                ) =>
+                                                                                    selected.nim ===
+                                                                                    mhs.nim
+                                                                            )
+                                                                        ) {
+                                                                            return {
+                                                                                ...mhs,
+                                                                                status_irs:
+                                                                                    "Not Approved",
+                                                                            };
+                                                                        }
+                                                                        return mhs;
+                                                                    }
+                                                                );
+
+                                                            // Update state mahasiswa dan filtered mahasiswa
+                                                            setMahasiswa(
+                                                                updatedMahasiswa
+                                                            );
+
+                                                            // Update filtered mahasiswa based on current filters
+                                                            const updatedFilteredMahasiswa =
+                                                                updatedMahasiswa.filter(
+                                                                    (mhs) => {
+                                                                        let matchesFilter = true;
+
+                                                                        if (
+                                                                            filters.angkatan !==
+                                                                            "all"
+                                                                        ) {
+                                                                            matchesFilter =
+                                                                                matchesFilter &&
+                                                                                mhs.angkatan.toString() ===
+                                                                                    filters.angkatan;
+                                                                        }
+
+                                                                        if (
+                                                                            filters.prodi !==
+                                                                            "all"
+                                                                        ) {
+                                                                            matchesFilter =
+                                                                                matchesFilter &&
+                                                                                mhs.nama_prodi
+                                                                                    .toLowerCase()
+                                                                                    .includes(
+                                                                                        filters.prodi.toLowerCase()
+                                                                                    );
+                                                                        }
+
+                                                                        if (
+                                                                            filters.search
+                                                                        ) {
+                                                                            matchesFilter =
+                                                                                matchesFilter &&
+                                                                                (mhs.nama
+                                                                                    .toLowerCase()
+                                                                                    .includes(
+                                                                                        filters.search.toLowerCase()
+                                                                                    ) ||
+                                                                                    mhs.nim
+                                                                                        .toLowerCase()
+                                                                                        .includes(
+                                                                                            filters.search.toLowerCase()
+                                                                                        ) ||
+                                                                                    mhs.nama_prodi
+                                                                                        .toLowerCase()
+                                                                                        .includes(
+                                                                                            filters.search.toLowerCase()
+                                                                                        ));
+                                                                        }
+
+                                                                        return matchesFilter;
+                                                                    }
+                                                                );
+
+                                                            setFilteredMahasiswa(
+                                                                updatedFilteredMahasiswa
+                                                            );
+
+                                                            // Reset checkbox selections
+                                                            setCheckedItems(
+                                                                new Array(
+                                                                    updatedFilteredMahasiswa.length
+                                                                ).fill(false)
+                                                            );
+                                                            setSelectAll(false);
+
                                                             Swal.fire({
                                                                 title: "Sukses!",
                                                                 text: "IRS berhasil dibatalkan",

@@ -61,19 +61,25 @@ class PerwalianController extends Controller
             ->groupBy('mahasiswa.nim')
             ->get();
 
-        $mahasiswa->each(function ($mhs) use ($ips) {
+            $mahasiswa->each(function ($mhs) use ($ips) {
                 $mhsIps = $ips->firstWhere('nim', $mhs->nim);
                 $mhs->ip_lalu = $mhsIps ? $mhsIps->IPS : null;
                 
                 // Calculate total SKS being taken this semester
                 $mhs->sks_diambil = $mhs->irs->sum('sks') ?? 0;
                 
-                if ($mhs->irs->isEmpty() || $mhs->irs[0]->diajukan == 0){
+                // Update the status_irs logic based on diajukan and is_verified
+                if ($mhs->irs->isEmpty()) {
                     $mhs->status_irs = 'Not Submitted';
-                } elseif ($mhs->irs[0]->disetujui == 0){
-                    $mhs->status_irs = 'Not Approved';
-                } elseif ($mhs->irs[0]->disetujui == 1) {
-                    $mhs->status_irs = 'Approved';
+                } else {
+                    $irs = $mhs->irs[0];
+                    if ($irs->diajukan === 1 && $irs->is_verified === 1) {
+                        $mhs->status_irs = 'Approved';
+                    } elseif ($irs->diajukan === 1 && $irs->is_verified === 0) {
+                        $mhs->status_irs = 'Not Approved';
+                    } else {
+                        $mhs->status_irs = 'Not Submitted';
+                    }
                 }
             });
         $jumlahMahasiswa = Mahasiswa::where('nip_dosen_wali', $dosen->nip)->count();
@@ -269,6 +275,8 @@ class PerwalianController extends Controller
             }
         }
         return redirect()->back();
+
+        
     }
     public function redoverifyIRS(Request $request)
     {
