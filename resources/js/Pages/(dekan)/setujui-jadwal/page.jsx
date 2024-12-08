@@ -33,7 +33,7 @@ const SetujuiJadwal = ({}) => {
                 </div>
                 <div className="grid grid-cols-1 gap-5 mt-6">
                     <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100 mb-3">
-                        <div className="justify-between px-4 pb-3 border rounded-lg shadow-lg bg-white">
+                        <div className="justify-between px-4 pb-3 border rounded-lg shadow-lg bg-white h-[580px]">
                             <div className="flex flex-col space-y-2">
                                 <div className="flex justify-between items-center mt-4">
                                     {/* Search Input */}
@@ -41,7 +41,7 @@ const SetujuiJadwal = ({}) => {
                                         <div className="relative w-full"></div>
                                     </div>
                                 </div>
-                                <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[530px] scrollbar-hide">
+                                <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto max-h-[calc(100vh-200px)] scrollbar-hide">
                                     <style jsx>{`
                                         .scrollbar-hide::-webkit-scrollbar {
                                             display: none;
@@ -129,16 +129,16 @@ const SetujuiJadwal = ({}) => {
                                                         key={prodi.id_prodi}
                                                         className="bg-gray-100 border-b"
                                                     >
-                                                        <td className="px-4 py-3">
+                                                        <td className="px-4 py-2">
                                                             <div className="flex items-center justify-center"></div>
                                                         </td>
-                                                        <td className="px-4 py-3 text-center">
+                                                        <td className="px-4 py-2 text-center">
                                                             {index + 1}
                                                         </td>
-                                                        <td className="px-4 py-3 text-center">
+                                                        <td className="px-4 py-2 text-center">
                                                             {prodi.nama_prodi}
                                                         </td>
-                                                        <td className="px-4 py-3 text-center">
+                                                        <td className="px-4 py-2 text-center">
                                                             {prodi.disetujui ===
                                                             0 ? (
                                                                 <span>
@@ -150,7 +150,7 @@ const SetujuiJadwal = ({}) => {
                                                                 </span>
                                                             )}
                                                         </td>
-                                                        <td className="px-4 py-3 text-center">
+                                                        <td className="px-4 py-2 text-center">
                                                             <a
                                                                 href={`/dekan/setujui-jadwal/detail/${prodi.id_prodi}`}
                                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
@@ -158,7 +158,7 @@ const SetujuiJadwal = ({}) => {
                                                                 Detail
                                                             </a>
                                                         </td>
-                                                        <td className="px-4 py-3 text-center">
+                                                        <td className="px-4 py-2 text-center">
                                                             <button
                                                                 disabled={
                                                                     prodi.disetujui !==

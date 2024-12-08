@@ -7,12 +7,8 @@ import { usePage } from "@inertiajs/inertia-react";
 const SetujuiRuang = () => {
     const [ruanganData, setRuanganData] = useState([]);
     const [dosenData, setDosenData] = useState([]);
-    const [programStudi, setProgramStudi] = useState({});
-    // const programStudiData = props.programStudi;
     const [loading, setLoading] = useState(false);
-    const [selectedProdi, setSelectedProdi] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
-    const [showDetails, setShowDetails] = useState({});
     const { props } = usePage();
 
     useEffect(() => {
@@ -25,21 +21,18 @@ const SetujuiRuang = () => {
         if (!acc[room.nama_prodi]) {
             acc[room.nama_prodi] = {
                 rooms: [],
-                id_prodi: room.id_prodi, // Store the id_prodi for each group
+                id_prodi: room.id_prodi,
             };
         }
         acc[room.nama_prodi].rooms.push(room);
         return acc;
     }, {});
 
-    // Daftar program studi
-    const prodiList = Object.keys(groupedByProdi);
-
     // Filter ruangan berdasarkan pencarian
     const filteredData = Object.entries(groupedByProdi).map(
         ([prodiName, data]) => ({
             prodiName,
-            id_prodi: data.id_prodi, // Include id_prodi in the filtered data
+            id_prodi: data.id_prodi,
             rooms: data.rooms.filter((room) => {
                 return (
                     room.nama_ruang
@@ -54,11 +47,10 @@ const SetujuiRuang = () => {
     );
 
     const handleSetujuiProdi = (prodiName, prodiId) => {
-        // Get only the unapproved but proposed rooms
         const roomsToApprove = groupedByProdi[prodiName].rooms.filter(
             (room) => room.diajukan === 1 && room.disetujui === 0
         );
-    
+
         if (roomsToApprove.length === 0) {
             Swal.fire({
                 icon: "info",
@@ -67,12 +59,7 @@ const SetujuiRuang = () => {
             });
             return;
         }
-    
-        // Get count of rooms that are already approved
-        const approvedRoomsCount = groupedByProdi[prodiName].rooms.filter(
-            (room) => room.disetujui === 1
-        ).length;
-    
+
         Swal.fire({
             title: "Apakah Anda yakin?",
             text: `Terdapat ${roomsToApprove.length} ruangan baru yang diajukan untuk Program Studi ${prodiName}. Apakah anda ingin menyetujui ruangan tersebut?`,
@@ -91,7 +78,7 @@ const SetujuiRuang = () => {
             if (result.isConfirmed) {
                 setLoading(true);
                 const roomIds = roomsToApprove.map((room) => room.id_ruang);
-    
+
                 Inertia.post(
                     "/dekan/setujui-ruang/set/setujui-multiple",
                     { room_ids: roomIds },
@@ -120,26 +107,17 @@ const SetujuiRuang = () => {
                         },
                     }
                 );
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                Swal.fire({
-                    title: "Dibatalkan",
-                    text: "Persetujuan ruangan dibatalkan",
-                    icon: "error",
-                    customClass: {
-                        confirmButton: "btn btn-success",
-                        cancelButton: "btn btn-danger",
-                    },
-                    buttonsStyling: false,
-                });
             }
         });
     };
 
-    const toggleDetails = (prodiName) => {
-        setShowDetails((prevDetails) => ({
-            ...prevDetails,
-            [prodiName]: !prevDetails[prodiName],
-        }));
+    const getApprovalStatus = (rooms) => {
+        const totalRooms = rooms.length;
+        const approvedRooms = rooms.filter(room => room.disetujui === 1).length;
+        
+        if (approvedRooms === 0) return "Not Approved";
+        if (approvedRooms === totalRooms) return "Approved";
+        return `${approvedRooms}/${totalRooms} Disetujui`;
     };
 
     return (
@@ -153,9 +131,18 @@ const SetujuiRuang = () => {
 
                 <div className="grid grid-cols-1 gap-5 mt-6 flex-grow">
                     <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100 mb-3 flex-grow">
-                        <div className="justify-between px-4 pb-3 border rounded-lg shadow-lg bg-white">
+                        <div className="justify-between px-4 pb-3 border rounded-lg shadow-lg bg-white h-[580px]">
                             <br />
                             <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto max-h-[calc(100vh-200px)] scrollbar-hide">
+                                <style jsx>{`
+                                    .scrollbar-hide::-webkit-scrollbar {
+                                        display: none;
+                                    }
+                                    .scrollbar-hide {
+                                        -ms-overflow-style: none;
+                                        scrollbar-width: none;
+                                    }
+                                `}</style>
                                 <table className="w-full text-sm text-left rounded-lg text-gray-500 sticky-header">
                                     <thead
                                         className="text-xs text-white uppercase bg-gray-50 dark:text-gray-400 sticky top-0"
@@ -164,110 +151,65 @@ const SetujuiRuang = () => {
                                         }}
                                     >
                                         <tr>
-                                            <th
-                                                scope="col"
-                                                className="px-4 py-3"
-                                                style={{
-                                                    width: "1%",
-                                                    textAlign: "center",
-                                                    fontSize: "14px",
-                                                }}
-                                            >
+                                            <th scope="col" className="px-4 py-3 text-center" style={{ width: "1%", fontSize: "14px" }}>
+                                                NO
+                                            </th>
+                                            <th scope="col" className="px-4 py-3 text-center" style={{ width: "20%", fontSize: "14px" }}>
                                                 Nama Prodi
                                             </th>
-                                            <th
-                                                scope="col"
-                                                className="px-4 py-3"
-                                                style={{
-                                                    width: "1%",
-                                                    textAlign: "center",
-                                                    fontSize: "14px",
-                                                }}
-                                            >
+                                            <th scope="col" className="px-4 py-3 text-center" style={{ width: "10%", fontSize: "14px" }}>
                                                 Jumlah Ruang
                                             </th>
-                                            <th
-                                                scope="col"
-                                                className="px-4 py-3"
-                                                style={{
-                                                    width: "1%",
-                                                    textAlign: "center",
-                                                    fontSize: "14px",
-                                                }}
-                                            >
+                                            <th scope="col" className="px-4 py-3 text-center" style={{ width: "15%", fontSize: "14px" }}>
+                                                Status
+                                            </th>
+                                            <th scope="col" className="px-4 py-3 text-center" style={{ width: "5%", fontSize: "14px" }}>
                                                 Detail
                                             </th>
-                                            <th
-                                                scope="col"
-                                                className="px-4 py-3"
-                                                style={{
-                                                    width: "1%",
-                                                    textAlign: "center",
-                                                    fontSize: "14px",
-                                                }}
-                                            >
+                                            <th scope="col" className="px-4 py-3 text-center" style={{ width: "5%", fontSize: "14px" }}>
                                                 Aksi
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {filteredData.map((group) => (
-                                            <React.Fragment
-                                                key={group.prodiName}
-                                            >
-                                                <tr
-                                                    style={{
-                                                        backgroundColor:
-                                                            "#F5F5F5",
-                                                    }}
-                                                >
-                                                    <td className="px-4 py-2 text-[14px] text-center font-bold">
-                                                        {group.prodiName}
-                                                    </td>
-                                                    <td className="px-4 py-2 text-[14px] text-center font-bold">
-                                                        {group.rooms.length}
-                                                    </td>
-                                                    <td className="px-4 py-2 text-[14px] text-center">
-                                                        <a
-                                                            href={`/dekan/setujui-ruang/detail/${group.id_prodi}`}
-                                                            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
-                                                        >
-                                                            Detail
-                                                        </a>
-                                                    </td>
-                                                    <td className="px-4 py-2 text-[14px] text-center">
-                                                        <button
-                                                            onClick={() =>
-                                                                handleSetujuiProdi(
-                                                                    group.prodiName
-                                                                )
-                                                            }
-                                                            disabled={group.rooms.every(
-                                                                (room) =>
-                                                                    room.disetujui ===
-                                                                    1
-                                                            )}
-                                                            className={`${
-                                                                group.rooms.every(
-                                                                    (room) =>
-                                                                        room.disetujui ===
-                                                                        1
-                                                                )
-                                                                    ? "bg-gray-400 cursor-not-allowed"
-                                                                    : "bg-green-500 hover:bg-green-600"
-                                                            } text-white px-2 py-1 rounded text-[14px] text-center w-20`}
-                                                        >
-                                                            {group.rooms.every(
-                                                                (room) =>
-                                                                    room.disetujui ===
-                                                                    1
-                                                            )
-                                                                ? "Disetujui"
-                                                                : "Setujui"}
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </React.Fragment>
+                                        {filteredData.map((group, index) => (
+                                            <tr key={group.prodiName} style={{ backgroundColor: "#F5F5F5" }}>
+                                                <td className="px-4 py-2 text-center">
+                                                    {index + 1}
+                                                </td>
+                                                <td className="px-4 py-2 text-[14px] text-center">
+                                                    {group.prodiName}
+                                                </td>
+                                                <td className="px-4 py-2 text-[14px] text-center">
+                                                    {group.rooms.length}
+                                                </td>
+                                                <td className="px-4 py-2 text-[14px] text-center">
+                                                        {getApprovalStatus(group.rooms)}
+                                                </td>
+                                                <td className="px-4 py-2 text-[14px] text-center">
+                                                    <a
+                                                        href={`/dekan/setujui-ruang/detail/${group.id_prodi}`}
+                                                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
+                                                    >
+                                                        Detail
+                                                    </a>
+                                                </td>
+                                                <td className="px-4 py-2 text-[14px] text-center">
+                                                    <button
+                                                        onClick={() => handleSetujuiProdi(group.prodiName)}
+                                                        disabled={group.rooms.every((room) => room.disetujui === 1)}
+                                                        className={`${
+                                                            group.rooms.every((room) => room.disetujui === 1)
+                                                                ? "bg-gray-400 cursor-not-allowed"
+                                                                : "bg-green-500 hover:bg-green-600"
+                                                        } text-white px-2 py-1 rounded text-[14px] text-center w-20`}
+                                                    >
+                                                        {group.rooms.every((room) => room.disetujui === 1)
+                                                            ? "Disetujui"
+                                                            : "Setujui"}
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         ))}
                                     </tbody>
                                 </table>
