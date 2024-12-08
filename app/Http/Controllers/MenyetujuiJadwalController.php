@@ -86,6 +86,26 @@ class MenyetujuiJadwalController extends Controller
         $fakultas = Fakultas::where('id_fakultas', $programStudi->id_fakultas)->first();
         $dosen->nama_fakultas = $fakultas->nama_fakultas;
 
+        $tahun = KalenderAkademik::getTahunAkademik();
+
+        $mataKuliah = MataKuliah::where('id_prodi', $dosen->id_prodi)
+            ->with(['kelas' => function ($query) use ($tahun) {
+                $query->where('tahun_akademik', $tahun);
+            }])
+            ->get();
+        $mataKuliah->each(function ($mk) {
+            $mk->kelas->each(function ($kelas) {
+                $kelas->load('jadwalKuliah');
+            });
+        });
+        $mataKuliah->each(function ($mk) {
+            $mk->kelas->each(function ($kelas) {
+                $kelas->load(['jadwalKuliah' => function ($query) {
+                    $query->with('ruangan');
+                }]);
+            });
+        });
+
         $dateNow = now();
         $tahunAkademik = KalenderAkademik::where('keterangan', 'Periode Tahun Akademik')
             ->whereDate('tanggal_mulai', '<=', $dateNow)
@@ -139,7 +159,8 @@ class MenyetujuiJadwalController extends Controller
             'dosen' => $dosen,
             'selectedProdi' => $selectedProdi,
             'jadwal' => $daftarJadwal,
-            'programStudiList' => $programStudiList
+            'programStudiList' => $programStudiList,
+            'mataKuliah' => $mataKuliah,
         ]);
     }
 
