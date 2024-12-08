@@ -260,6 +260,7 @@ const SetujuiJadwal = ({}) => {
                                                             <div className="flex items-center justify-center">
                                                                 <input
                                                                     type="checkbox"
+                                                                    
                                                                     className="w-4 h-4 mr-2"
                                                                 />
                                                             </div>
@@ -282,7 +283,19 @@ const SetujuiJadwal = ({}) => {
                                                             </a>
                                                         </td>
                                                         <td className="px-4 py-3 text-center">
-                                                            <button className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[14px] text-center w-16">
+                                                            <button 
+                                                                onClick={() => {
+                                                                    Inertia.post(`/dekan/setujui-jadwal${prodi.id_prodi}`, null, {
+                                                                        onSuccess: () => {
+                                                                            Swal.fire({
+                                                                                icon: 'success',
+                                                                                title: 'Berhasil',
+                                                                                text: 'Jadwal berhasil disetujui'
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                }}
+                                                                className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[14px] text-center w-16">
                                                                 Setujui
                                                             </button>
                                                         </td>
