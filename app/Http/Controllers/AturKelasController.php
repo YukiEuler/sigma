@@ -37,6 +37,11 @@ class AturKelasController extends Controller
         $kaprodi->nama_prodi = $programStudi->nama_prodi;
         $fakultas = Fakultas::where('id_fakultas', $programStudi->id_fakultas)->first();
         $kaprodi->nama_fakultas = $fakultas->nama_fakultas;
+        $dateNow = now();
+        $tahunAkademik = KalenderAkademik::where('keterangan', 'Periode Tahun Akademik')
+        ->whereDate('tanggal_mulai', '<=', $dateNow)
+        ->whereDate('tanggal_selesai', '>=', $dateNow)
+        ->first()->tahun_akademik;
         
         // Mengambil semua data mata kuliah dari database
         $mataKuliah = MataKuliah::where('id_prodi', $kaprodi->id_prodi)
@@ -54,7 +59,7 @@ class AturKelasController extends Controller
             }
         }
         
-        $listDosen = Dosen::where('id_prodi', $kaprodi->id_prodi)
+        $listDosen = Dosen::where('id_prodi', $dosen->id_prodi)
         ->select('nip', 'nama')
         ->get();
 
@@ -62,7 +67,8 @@ class AturKelasController extends Controller
         return Inertia::render('(kaprodi)/atur-kelas/page', [
             'mataKuliah' => $mataKuliah,
             'kaprodi' => $kaprodi,
-            'listDosen' => $listDosen
+            'listDosen' => $listDosen,
+            'tahun_akademik' => $tahunAkademik
         ]);
     }
 
