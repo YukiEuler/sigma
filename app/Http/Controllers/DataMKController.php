@@ -71,13 +71,23 @@ class DataMKController extends Controller
                 'jenis.in' => 'Jenis mata kuliah harus Wajib atau Pilihan!'
             ]);
 
-            $exist = MataKuliah::where('kode_mk', $validated['kode'])  // Perhatikan menggunakan 'kode' bukan 'kode_mk'
-            ->where('id_prodi', $dosen->id_prodi)
-            ->first();
+            $existByKode = MataKuliah::where('kode_mk', $validated['kode'])  // Perhatikan menggunakan 'kode' bukan 'kode_mk'
+                ->where('id_prodi', $dosen->id_prodi)
+                ->first();
 
-            if ($exist) {
+            $existByNama = MataKuliah::where('nama', $validated['nama'])  // Memeriksa berdasarkan nama mata kuliah
+                ->where('id_prodi', $dosen->id_prodi)
+                ->first();
+
+            if ($existByKode) {
                 return response()->json([
-                    'error' => 'Mata kuliah sudah ada.'
+                    'error' => 'Mata kuliah dengan kode ini sudah ada.'
+                ], 422);
+            }
+
+            if ($existByNama) {
+                return response()->json([
+                    'error' => 'Mata kuliah dengan nama ini sudah ada.'
                 ], 422);
             }
     

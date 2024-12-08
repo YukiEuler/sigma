@@ -91,7 +91,7 @@ const DetailJadwal = () => {
                                 }}
                                 className={`w-20 mb-1 mt-2 mx-2 p-2 text-sm text-white rounded-md ${
                                     status === 1
-                                        ? "bg-gray-400 hover:bg-gray-600 cursor-not-allowed"
+                                        ? "bg-gray-400 cursor-not-allowed"
                                         : "bg-blue-500 hover:bg-blue-600"
                                 }`}
                             >

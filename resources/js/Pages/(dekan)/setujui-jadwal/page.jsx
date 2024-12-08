@@ -35,33 +35,27 @@ const SetujuiJadwal = ({}) => {
                     <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100 mb-3">
                         <div className="justify-between px-4 pb-3 border rounded-lg shadow-lg bg-white">
                             <div className="flex flex-col space-y-2">
-                                
                                 <div className="flex justify-between items-center mt-4">
-                                    
                                     {/* Search Input */}
-                                                                        <div className="w-64">
-                                                                            <div className="relative w-full">
-                                                                                
-                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        
-                                                                    </div>
-                                                                    <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[385px] scrollbar-hide">
-                                                                        <style jsx>{`
-                                                                            .scrollbar-hide::-webkit-scrollbar {
-                                                                                display: none;
-                                                                            }
-                                                                            .scrollbar-hide {
-                                                                                -ms-overflow-style: none;
-                                                                                scrollbar-width: none;
-                                                                            }
-                                                                        `}</style>
-                                                                        <table className="w-full text-sm text-left rounded-lg text-gray-500 sticky-header">
-                                                                            <thead
-                                                                                className="text-xs text-white uppercase bg-gray-50 dark:text-gray-400 sticky top-0"
-                                                                                style={{
-                                                                                    backgroundColor: "#1EAADF",
+                                    <div className="w-64">
+                                        <div className="relative w-full"></div>
+                                    </div>
+                                </div>
+                                <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[530px] scrollbar-hide">
+                                    <style jsx>{`
+                                        .scrollbar-hide::-webkit-scrollbar {
+                                            display: none;
+                                        }
+                                        .scrollbar-hide {
+                                            -ms-overflow-style: none;
+                                            scrollbar-width: none;
+                                        }
+                                    `}</style>
+                                    <table className="w-full text-sm text-left rounded-lg text-gray-500 sticky-header">
+                                        <thead
+                                            className="text-xs text-white uppercase bg-gray-50 dark:text-gray-400 sticky top-0"
+                                            style={{
+                                                backgroundColor: "#1EAADF",
                                             }}
                                         >
                                             <tr>
@@ -69,9 +63,7 @@ const SetujuiJadwal = ({}) => {
                                                     className="px-4 py-3"
                                                     style={{ width: "5%" }}
                                                 >
-                                                    <div className="flex items-center justify-center">
-                                                        
-                                                    </div>
+                                                    <div className="flex items-center justify-center"></div>
                                                 </th>
                                                 <th
                                                     scope="col"
@@ -138,9 +130,7 @@ const SetujuiJadwal = ({}) => {
                                                         className="bg-gray-100 border-b"
                                                     >
                                                         <td className="px-4 py-3">
-                                                            <div className="flex items-center justify-center">
-                                                                
-                                                            </div>
+                                                            <div className="flex items-center justify-center"></div>
                                                         </td>
                                                         <td className="px-4 py-3 text-center">
                                                             {index + 1}
@@ -149,10 +139,15 @@ const SetujuiJadwal = ({}) => {
                                                             {prodi.nama_prodi}
                                                         </td>
                                                         <td className="px-4 py-3 text-center">
-                                                            {prodi.disetujui === 0 ? (
-                                                                <span className="text-red-500">Belum Disetujui</span>
+                                                            {prodi.disetujui ===
+                                                            0 ? (
+                                                                <span>
+                                                                    Not Approved
+                                                                </span>
                                                             ) : (
-                                                                <span className="text-green-500">Disetujui</span>
+                                                                <span>
+                                                                    Approved
+                                                                </span>
                                                             )}
                                                         </td>
                                                         <td className="px-4 py-3 text-center">
@@ -164,22 +159,36 @@ const SetujuiJadwal = ({}) => {
                                                             </a>
                                                         </td>
                                                         <td className="px-4 py-3 text-center">
-                                                            <button 
-                                                                disabled={prodi.disetujui !== 0}   
+                                                            <button
+                                                                disabled={
+                                                                    prodi.disetujui !==
+                                                                    0
+                                                                }
                                                                 onClick={() => {
-                                                                    Inertia.post(`/dekan/setujui-jadwal${prodi.id_prodi}`, null, {
-                                                                        onSuccess: () => {
-                                                                            Swal.fire({
-                                                                                icon: 'success',
-                                                                                title: 'Berhasil',
-                                                                                text: 'Jadwal berhasil disetujui'
-                                                                            });
+                                                                    Inertia.post(
+                                                                        `/dekan/setujui-jadwal${prodi.id_prodi}`,
+                                                                        null,
+                                                                        {
+                                                                            onSuccess:
+                                                                                () => {
+                                                                                    Swal.fire(
+                                                                                        {
+                                                                                            icon: "success",
+                                                                                            title: "Berhasil",
+                                                                                            text: "Jadwal berhasil disetujui",
+                                                                                        }
+                                                                                    );
+                                                                                },
                                                                         }
-                                                                    });
+                                                                    );
                                                                 }}
                                                                 className={`${
-                                                                    prodi.disetujui !== 0 ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'
-                                                                } text-white px-2 py-1 rounded text-[14px] text-center w-16`}>
+                                                                    prodi.disetujui !==
+                                                                    0
+                                                                        ? "bg-gray-400"
+                                                                        : "bg-green-500 hover:bg-green-600"
+                                                                } text-white px-2 py-1 rounded text-[14px] text-center w-16`}
+                                                            >
                                                                 Setujui
                                                             </button>
                                                         </td>
