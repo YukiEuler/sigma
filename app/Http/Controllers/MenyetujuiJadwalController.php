@@ -47,14 +47,13 @@ class MenyetujuiJadwalController extends Controller
             ->whereDate('tanggal_selesai', '>=', $dateNow)
             ->first()->tahun_akademik;
 
-        $kelas = DB::table('kelas')
-            ->select('kode_mk', 'status')
-            ->groupBy('kode_mk', 'status')
-            ->where('tahun_akademik', $tahunAkademik)
-            ->get();
+        
         
         $programStudiList = DB::table('kelas')
-            ->leftJoin('mata_kuliah', 'mata_kuliah.kode_mk', '=', 'kelas.kode_mk')
+            ->leftJoin('mata_kuliah', function ($join) use ($tahunAkademik) {
+                $join->on('mata_kuliah.kode_mk', '=', 'kelas.kode_mk')
+                    ->where('kelas.tahun_akademik', '=', $tahunAkademik);
+            })
             ->leftJoin('program_studi', 'program_studi.id_prodi', '=', 'mata_kuliah.id_prodi')
             ->select('program_studi.id_prodi', 'program_studi.nama_prodi', 
                 DB::raw('COUNT(DISTINCT mata_kuliah.kode_mk) as total_mk'),
@@ -96,15 +95,11 @@ class MenyetujuiJadwalController extends Controller
         $selectedProdi = ProgramStudi::where('id_prodi', $id_prodi)->first();
         
         $jadwal = DB::table('jadwal_kuliah')
-        
-            ->leftJoin('kelas', function($join) use ($tahunAkademik) {
-                $join->on('jadwal_kuliah.id_kelas', '=', 'kelas.id')
-                     ->where('kelas.tahun_akademik', '=', $tahunAkademik);
-            })
+            ->join('kelas', 'jadwal_kuliah.id_kelas', '=', 'kelas.id')
             ->join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
-            
             ->join('ruangan', 'jadwal_kuliah.id_ruang', '=', 'ruangan.id_ruang')
             ->where('mata_kuliah.id_prodi', '=', $selectedProdi->id_prodi)
+            ->where('kelas.tahun_akademik', '=', $tahunAkademik)
             ->get();
 
         foreach ($jadwal as $j) {
@@ -121,13 +116,29 @@ class MenyetujuiJadwalController extends Controller
                     'idRuang' => $j->id_ruang,
                     'hour' => explode(':', $j->waktu_mulai)[0],
                     'minute' => explode(':', $j->waktu_mulai)[1],
+                    'tahunAkademik' => $j->tahun_akademik,
                 ];
         }
+
+        $programStudiList = DB::table('kelas')
+            ->leftJoin('mata_kuliah', function ($join) use ($tahunAkademik) {
+                $join->on('mata_kuliah.kode_mk', '=', 'kelas.kode_mk')
+                    ->where('kelas.tahun_akademik', '=', $tahunAkademik);
+            })
+            ->leftJoin('program_studi', 'program_studi.id_prodi', '=', 'mata_kuliah.id_prodi')
+            ->select('program_studi.id_prodi', 'program_studi.nama_prodi', 
+                DB::raw('COUNT(DISTINCT mata_kuliah.kode_mk) as total_mk'),
+                DB::raw('COUNT(DISTINCT CASE WHEN kelas.status = "disetujui" THEN kelas.kode_mk END) as disetujui'))
+            ->where('program_studi.id_fakultas', $fakultas->id_fakultas)
+            ->groupBy('program_studi.id_prodi', 'program_studi.nama_prodi')
+            ->get();
+    
     
         return Inertia::render('(dekan)/setujui-jadwal/detail', [
             'dosen' => $dosen,
             'selectedProdi' => $selectedProdi,
-            'jadwal' => $daftarJadwal
+            'jadwal' => $daftarJadwal,
+            'programStudiList' => $programStudiList
         ]);
     }
 
