@@ -7,6 +7,7 @@ use App\Models\Fakultas;
 use App\Models\Irs;
 use App\Models\Mahasiswa;
 use App\Models\ProgramStudi;
+use App\Models\KalenderAkademik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -137,13 +138,19 @@ class PerwalianController extends Controller
         } elseif ($user->role !== 'Dosen'){
             return redirect()->route('home');
         }
+        $dateNow = now();
+        $tahunAkademik = KalenderAkademik::where('keterangan', 'Periode Tahun Akademik')
+            ->whereDate('tanggal_mulai', '<=', $dateNow)
+            ->whereDate('tanggal_selesai', '>=', $dateNow)
+            ->first()->tahun_akademik;
 
         $checkedItems = $request->input('checkedItems');
 
         if (!empty($checkedItems)) {
             foreach ($checkedItems as $nim) {
                 DB::table('irs')
-                    ->where('nim', $nim)
+                    ->where('nim', $nim) 
+                    ->where('tahun_akademik', $tahunAkademik)
                     ->update(['is_verified' => 0]);
             }
         }
