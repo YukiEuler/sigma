@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use \App\Models\Dosen;
 use \App\Models\ProgramStudi;
 use \App\Models\Fakultas;
 use App\Models\Ruangan;
+use App\Models\KalenderAkademik;
 
 class DekanController extends Controller
 {
@@ -43,9 +45,31 @@ class DekanController extends Controller
             return $room;
         })->values()->all();
 
+        $dateNow = now();
+        $tahunAkademik = KalenderAkademik::where('keterangan', 'Periode Tahun Akademik')
+            ->whereDate('tanggal_mulai', '<=', $dateNow)
+            ->whereDate('tanggal_selesai', '>=', $dateNow)
+            ->first()->tahun_akademik;
+
+        
+        
+        $programStudiList = DB::table('kelas')
+            ->leftJoin('mata_kuliah', function ($join) use ($tahunAkademik) {
+                $join->on('mata_kuliah.kode_mk', '=', 'kelas.kode_mk')
+                    ->where('kelas.tahun_akademik', '=', $tahunAkademik);
+            })
+            ->leftJoin('program_studi', 'program_studi.id_prodi', '=', 'mata_kuliah.id_prodi')
+            ->select('program_studi.id_prodi', 'program_studi.nama_prodi', 
+                DB::raw('COUNT(DISTINCT mata_kuliah.kode_mk) as total_mk'),
+                DB::raw('COUNT(DISTINCT CASE WHEN kelas.status = "disetujui" THEN kelas.kode_mk END) as disetujui'))
+            ->where('program_studi.id_fakultas', $fakultas->id_fakultas)
+            ->groupBy('program_studi.id_prodi', 'program_studi.nama_prodi')
+            ->get();
+
         return Inertia::render('(dekan)/dashboard-dekan/page', 
         [
             'ruangan' => $ruangan,
-            'dosen' => $dosen]);
+            'dosen' => $dosen,
+            'jadwal' => $programStudiList]);
     }
 }
