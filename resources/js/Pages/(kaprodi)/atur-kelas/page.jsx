@@ -248,16 +248,28 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
             [name]: value,
         }));
     };
+    const tahunakademik = props.tahunAkademik;
+
+    
+    let filteredMataKuliahdata = props.mataKuliah;
+    
+    const lastChar = tahunakademik ? tahunakademik.slice(-1) : '1'; 
+    if (lastChar === '2') {
+        // Filter semester genap
+        filteredMataKuliahdata = filteredMataKuliahdata.filter(mk => ['2','4','6','8'].includes(mk.semester));
+    } else {
+        // Filter semester ganjil 
+        filteredMataKuliahdata = filteredMataKuliahdata.filter(mk => ['1','3','5','7'].includes(mk.semester));
+    }
 
     useEffect(() => {
-        const filtered = mataKuliah.filter(
+        const filtered = filteredMataKuliahdata.filter(
             (mk) =>
                 mk.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 mk.kode_mk.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredMataKuliah(filtered);
-        // setMataKuliah(mataKuliahData);
-        // getStackedData(mataKuliah);
+
     }, [dosen, searchTerm, mataKuliah]);
 
     return (
@@ -272,27 +284,7 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                     <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
                         <div className="justify-between px-4 pb-4 border rounded-lg shadow-lg bg-white">
                             <div className="flex flex-col space-y-2">
-                                <div className="mt-4">
-                                    {/* Program Studi Filter */}
-                                    <span className="mr-[1rem]">Semester</span>
-                                    <select
-                                        value={selectedSemester}
-                                        onChange={(e) =>
-                                            setSelectedSemester(e.target.value)
-                                        }
-                                        className="px-2 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
-                                    >
-                                        <option value="">Semua Semester</option>
-                                        <option value="1">Semester 1</option>
-                                        <option value="2">Semester 2</option>
-                                        <option value="3">Semester 3</option>
-                                        <option value="4">Semester 4</option>
-                                        <option value="5">Semester 5</option>
-                                        <option value="6">Semester 6</option>
-                                        <option value="7">Semester 7</option>
-                                        <option value="8">Semester 8</option>
-                                    </select>
-                                </div>
+                                
                                 <div className="flex justify-between items-center mt-4 mb-2">
                                     <div className="flex justify-center items-center w-64">
                                         <div className="relative w-full">
