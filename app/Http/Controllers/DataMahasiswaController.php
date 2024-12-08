@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Khs;
 use App\Models\Dosen;
 use App\Models\Fakultas;
+use App\Models\Irs;
 use App\Models\Mahasiswa;
 use App\Models\ProgramStudi;
 use App\Models\KalenderAkademik;
@@ -169,10 +170,103 @@ class DataMahasiswaController extends Controller
 
         $mahasiswa->sks_wajib = $jumlahSksWajib ?? 0;
         $mahasiswa->sks_pilihan = $jumlahSksPilihan ?? 0;
+
+        $irs = Irs::where('nim', $mahasiswa->nim)
+            ->where('diajukan', 1)
+            ->join('kelas', 'kelas.id', '=', 'irs.id_kelas')
+            ->join('mata_kuliah', 'mata_kuliah.kode_mk', '=', 'kelas.kode_mk')
+            ->select('*', 'irs.semester as irs_semester', 'irs.status as status_irs')
+            ->with([
+                'kelas.jadwalKuliah' => function ($query) {
+                    $query->with('ruangan');
+                },
+                'mataKuliah.dosenMk.dosen'
+            ])
+            ->get()
+            ->sortBy(function ($row) {
+                $days = ['Senin' => 1, 'Selasa' => 2, 'Rabu' => 3, 'Kamis' => 4, 'Jumat' => 5];
+                $dayOrder = $days[$row->kelas->jadwalKuliah->first()->hari] ?? 6;
+                $timeOrder = strtotime($row->kelas->jadwalKuliah->first()->waktu_mulai);
+                return $dayOrder * 1000000000 + $timeOrder;
+            })
+            ->groupBy('irs_semester')
+            ->map(function ($rows, $semester) {
+                $totalSks = $rows->sum('sks');
+                $tahunAkademik = $rows->first()->tahun_akademik;
+                $tahunAkademikSplit = explode('-', $tahunAkademik);
+                $tahun = (int) $tahunAkademikSplit[0];
+                $periode = (int) $tahunAkademikSplit[1] % 2;
+                $paritasSemester = $periode == 0 ? "Ganjil" : "Genap";
+                $semester = $rows->first()->irs_semester;
+                $jadwal = $rows->map(function ($row) {
+                    $row->mataKuliah->dosen = collect($row->mataKuliah->dosenMk)->filter(function ($dosenMk) use ($row) {
+                        return $dosenMk['tahun_akademik'] === $row->tahun_akademik;
+                    })->map(function ($dosenMk) {
+                        return $dosenMk['dosen'];
+                    })->values()->toArray();
+        
+                    $row->jadwal_kuliah = $row->kelas->jadwalKuliah->toArray();
+                    return $row->toArray();
+                });
+                return [
+                    'title' => 'Semester '.$semester.' | Tahun Ajaran '.($tahun-$periode).'/'.($tahun-$periode+1).' '.$paritasSemester,
+                    'sks' => $totalSks,
+                    'courses' => $jadwal,
+                ];
+            });
+        
+        
+        // error_log($irs['1']['courses']);
+        error_log($irs);
+
+        $khs = Khs::where('nim', $mahasiswa->nim)
+            ->join('mata_kuliah', 'mata_kuliah.kode_mk', '=', 'khs.kode_mk')
+            ->select('*', 'khs.semester as khs_semester', 'khs.status as status_khs')
+            ->get()
+            ->groupBy('khs_semester')
+            ->map(function ($rows, $semester) {
+                $totalSks = $rows->sum('sks');
+                // $tahunAkademik = $rows->first()->tahun_akademik;
+                // $tahunAkademikSplit = explode('-', $tahunAkademik);
+                // $tahun = (int) $tahunAkademikSplit[0];
+                $periode = 1 - $rows->first()->semester % 2;
+                $tahun = $rows->first()->tahun;
+                $paritasSemester = $periode == 0 ? "Ganjil" : "Genap";
+                $semester = $rows->first()->khs_semester;
+                return [
+                    'title' => 'Semester '.$semester.' | Tahun Ajaran '.($tahun-$periode).'/'.($tahun-$periode+1).' '.$paritasSemester,
+                    'sks' => $totalSks,
+                    'courses' => $rows->map(function ($row) {
+                        $bobot = match ($row->nilai_huruf) {
+                            'A' => 4,
+                            'B' => 3,
+                            'C' => 2,
+                            'D' => 1,
+                            'E' => 0,
+                            default => 0,
+                        };
+                        return [
+                            'kode_mk' => $row->kode_mk,
+                            'nama' => $row->nama,
+                            'sks' => $row->sks,
+                            'nilai_huruf' => $row->nilai_huruf,
+                            'bobot' => $bobot,
+                            'sks_x_bobot' => $bobot * $row->sks,
+                            'status' => $row->status_khs,
+                        ];
+                    }),
+                ];
+            });
+        
+        
+        // error_log($khs['1']['courses']);
+        error_log($khs);
         
         return Inertia::render('(kaprodi)/data-mahasiswa/detail', [
             'dosen' => $dosen,
-            'mahasiswa' => $mahasiswa
+            'mahasiswa' => $mahasiswa,
+            'irs' => $irs,
+            'khs' => $khs
         ]);
     }
 
