@@ -20,7 +20,7 @@ const AturJadwal = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [errorMessages, setErrorMessages] = useState({});
     const [semesterFilter, setSemesterFilter] = useState("");
-    const [status, setStatus] = useState("");
+    const [status, setStatus] = useState("belum");
     const [courseForms, setCourseForms] = useState({});
     const [scheduleForms, setScheduleForms] = useState([
         {
