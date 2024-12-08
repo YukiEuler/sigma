@@ -68,12 +68,12 @@ const BuatIRS = () => {
     useEffect(() => {
         // Initial fetch
         fetchJadwal();
-        
+
         // // Set up interval
         // const interval = setInterval(() => {
         //     fetchJadwal();
         // }, 5000);
-        
+
         // setJadwalInterval(interval);
 
         // // Cleanup on unmount
@@ -84,30 +84,39 @@ const BuatIRS = () => {
         // };
     }, []);
 
-    // Add fetch function 
+    // Add fetch function
     const fetchJadwal = async () => {
         try {
-            const response = await axios.get('/mahasiswa/akademik/buat-irs/get-jadwal');
+            const response = await axios.get(
+                "/mahasiswa/akademik/buat-irs/get-jadwal"
+            );
             console.log(response.data);
             if (response.data) {
                 setJadwal(response.data);
-                
+
                 // Update filteredCourses
                 const newFilteredCourses = response.data.filter(
                     (course) =>
-                        (course.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        course.kode_mk.toLowerCase().includes(searchQuery.toLowerCase())) &&
-                        !irs.some((registeredCourse) => registeredCourse.kode_mk === course.kode_mk) &&
+                        (course.nama
+                            .toLowerCase()
+                            .includes(searchQuery.toLowerCase()) ||
+                            course.kode_mk
+                                .toLowerCase()
+                                .includes(searchQuery.toLowerCase())) &&
+                        !irs.some(
+                            (registeredCourse) =>
+                                registeredCourse.kode_mk === course.kode_mk
+                        ) &&
                         course.semester != mahasiswa.semester
                 );
                 setFilteredCourses(newFilteredCourses);
-    
+
                 // Update selectedCourses with new jadwal data
-                setSelectedCourses(prevSelected => {
-                    return prevSelected.map(course => {
+                setSelectedCourses((prevSelected) => {
+                    return prevSelected.map((course) => {
                         console.log(course);
                         const updatedCourse = response.data.find(
-                            newCourse => newCourse.kode_mk === course.kode_mk
+                            (newCourse) => newCourse.kode_mk === course.kode_mk
                         );
                         return updatedCourse || course;
                     });
@@ -157,8 +166,6 @@ const BuatIRS = () => {
         setSearchQuery("");
     };
 
-
-
     // Handle course visibility toggle
     const handleToggleCourse = (courseId) => {
         setSelectedCourses(
@@ -185,13 +192,16 @@ const BuatIRS = () => {
                     selectedClass: classInfo,
                 },
             ]);
-            Inertia.visit("/mahasiswa/akademik/buat-irs/insert/" + classInfo.id_kelas, {
-                method: "get",
-                preserveState: true,
-                onSuccess: () => {
-                    fetchJadwal();
-                },
-            });
+            Inertia.visit(
+                "/mahasiswa/akademik/buat-irs/insert/" + classInfo.id_kelas,
+                {
+                    method: "get",
+                    preserveState: true,
+                    onSuccess: () => {
+                        fetchJadwal();
+                    },
+                }
+            );
         }
     };
 
@@ -236,13 +246,16 @@ const BuatIRS = () => {
                         (course) => course.selectedClass.id_kelas !== courseId
                     )
                 );
-                Inertia.visit("/mahasiswa/akademik/buat-irs/delete/" + courseId, {
-                    method: "get",
-                    preserveState: true,
-                    onSuccess: () => {
-                        fetchJadwal();
-                    },
-                });
+                Inertia.visit(
+                    "/mahasiswa/akademik/buat-irs/delete/" + courseId,
+                    {
+                        method: "get",
+                        preserveState: true,
+                        onSuccess: () => {
+                            fetchJadwal();
+                        },
+                    }
+                );
                 Swal.fire("Deleted!", "Course sudah dihapus.", "success");
             }
         });
@@ -338,7 +351,10 @@ const BuatIRS = () => {
     }, [mahasiswaData]);
 
     const Schedule = () => (
-        <div ref={scheduleRef} className="space-y-2 max-h-[75vh] overflow-y-auto scrollbar-hide">
+        <div
+            ref={scheduleRef}
+            className="space-y-2 max-h-[75vh] overflow-y-auto scrollbar-hide"
+        >
             <style jsx>{`
                 .scrollbar-hide::-webkit-scrollbar {
                     display: none;
@@ -429,8 +445,14 @@ const BuatIRS = () => {
                                                             totalCredits +
                                                                 course.sks >
                                                             mahasiswa.maxSks;
-                                                        const penuh = classInfo.kuota === classInfo.jumlah_mahasiswa;
-                                                        const bukanPrioritas = course.semester > mahasiswa.semester && mahasiswa.prioritas == 1;
+                                                        const penuh =
+                                                            classInfo.kuota ===
+                                                            classInfo.jumlah_mahasiswa;
+                                                        const bukanPrioritas =
+                                                            course.semester >
+                                                                mahasiswa.semester &&
+                                                            mahasiswa.prioritas ==
+                                                                1;
                                                         let tooltipMessage = "";
                                                         const periodeGanti =
                                                             Boolean(
@@ -466,8 +488,10 @@ const BuatIRS = () => {
                                                         } else if (penuh) {
                                                             tooltipMessage =
                                                                 "Kelas sudah penuh";
-                                                        } else if (bukanPrioritas) {
-                                                            tooltipMessage = 
+                                                        } else if (
+                                                            bukanPrioritas
+                                                        ) {
+                                                            tooltipMessage =
                                                                 "Bukan mahasiswa prioritas";
                                                         }
 
@@ -851,6 +875,18 @@ const BuatIRS = () => {
                                     {!isVerified && (
                                         <button
                                             onClick={() => {
+                                                if (
+                                                    registeredCourses.length ===
+                                                    0
+                                                ) {
+                                                    Swal.fire({
+                                                        icon: "warning",
+                                                        title: "Peringatan",
+                                                        text: "Anda belum memilih mata kuliah!",
+                                                    });
+                                                    return;
+                                                }
+
                                                 Swal.fire({
                                                     title: "Apakah Anda yakin?",
                                                     icon: "warning",
