@@ -19,32 +19,6 @@ const SetujuiJadwal = ({}) => {
     const [selectedStatus, setSelectedStatus] = useState("");
 
     console.log(programStudiList);
-
-    const prodiList = [...new Set(data.map((jadwal) => jadwal.nama_prodi))];
-
-    const statusOptions = [
-        { value: "", label: "Semua Status" },
-        { value: "belum_disetujui", label: "Belum Disetujui" },
-        { value: "sudah_disetujui", label: "Sudah Disetujui" },
-    ];
-
-    const filteredData = data.filter((jadwal) => {
-        const matchesSearch = jadwal.nama_ruang
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase());
-        const matchesProdi =
-            selectedProdi === "" || jadwal.nama_prodi === selectedProdi;
-        const matchesStatus =
-            selectedStatus === "" ||
-            (selectedStatus === "belum_disetujui" &&
-                jadwal.diajukan === 1 &&
-                jadwal.disetujui === 0) ||
-            (selectedStatus === "sudah_disetujui" && jadwal.disetujui === 1);
-        return matchesSearch && matchesProdi && matchesStatus;
-    });
-
-    const totalJadwal = filteredData.length;
-
     useEffect(() => {
         setDosen(dosenData);
     }, [dosenData]);
