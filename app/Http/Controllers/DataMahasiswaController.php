@@ -185,8 +185,8 @@ class DataMahasiswaController extends Controller
             ->get()
             ->sortBy(function ($row) {
                 $days = ['Senin' => 1, 'Selasa' => 2, 'Rabu' => 3, 'Kamis' => 4, 'Jumat' => 5];
-                $dayOrder = $days[$row->kelas->jadwalKuliah->first()->hari] ?? 6;
-                $timeOrder = strtotime($row->kelas->jadwalKuliah->first()->waktu_mulai);
+                $dayOrder = isset($row->kelas->jadwalKuliah->first()->hari) ? ($days[$row->kelas->jadwalKuliah->first()->hari] ?? 6) : 6;
+                $timeOrder = isset($row->kelas->jadwalKuliah->first()->waktu_mulai) ? strtotime($row->kelas->jadwalKuliah->first()->waktu_mulai) : 0;
                 return $dayOrder * 1000000000 + $timeOrder;
             })
             ->groupBy('irs_semester')
