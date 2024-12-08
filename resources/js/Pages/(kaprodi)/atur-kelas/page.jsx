@@ -43,9 +43,14 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
             minute: "",
         },
     ]);
+    const [semesterFilter, setSemesterFilter] = useState("all");
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
+    };
+
+    const handleSemesterFilterChange = (e) => {
+        setSemesterFilter(e.target.value);
     };
 
     const handleOpenModal = () => setIsModalOpen(true);
@@ -253,24 +258,30 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
     
     let filteredMataKuliahdata = props.mataKuliah;
     
-    const lastChar = tahunakademik ? tahunakademik.slice(-1) : '1'; 
-    if (lastChar === '2') {
-        // Filter semester genap
-        filteredMataKuliahdata = filteredMataKuliahdata.filter(mk => ['2','4','6','8'].includes(mk.semester));
-    } else {
-        // Filter semester ganjil 
-        filteredMataKuliahdata = filteredMataKuliahdata.filter(mk => ['1','3','5','7'].includes(mk.semester));
-    }
+    // const lastChar = tahunakademik ? tahunakademik.slice(-1) : '1'; 
+    // if (lastChar === '2') {
+    //     // Filter semester genap
+    //     filteredMataKuliahdata = filteredMataKuliahdata.filter(mk => ['2','4','6','8'].includes(mk.semester));
+    // } else {
+    //     // Filter semester ganjil 
+    //     filteredMataKuliahdata = filteredMataKuliahdata.filter(mk => ['1','3','5','7'].includes(mk.semester));
+    // }
 
     useEffect(() => {
-        const filtered = filteredMataKuliahdata.filter(
+        let filtered = filteredMataKuliahdata.filter(
             (mk) =>
                 mk.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 mk.kode_mk.toLowerCase().includes(searchTerm.toLowerCase())
         );
-        setFilteredMataKuliah(filtered);
 
-    }, [dosen, searchTerm, mataKuliah]);
+        if (semesterFilter === "odd") {
+            filtered = filtered.filter((mk) => ["1", "3", "5", "7"].includes(mk.semester));
+        } else if (semesterFilter === "even") {
+            filtered = filtered.filter((mk) => ["2", "4", "6", "8"].includes(mk.semester));
+        }
+
+        setFilteredMataKuliah(filtered);
+    }, [dosen, searchTerm, mataKuliah, semesterFilter]);
 
     return (
         <KaprodiLayout kaprodi={kaprodi}>
@@ -305,6 +316,18 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                                                 className="w-full pl-10 pr-4 py-2 text-gray-700 bg-gray-100  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             />
                                         </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <label className="mr-2">Filter Semester:</label>
+                                        <select
+                                            value={semesterFilter}
+                                            onChange={handleSemesterFilterChange}
+                                            className="border rounded p-2"
+                                        >
+                                            <option value="all">Semua</option>
+                                            <option value="odd">Ganjil</option>
+                                            <option value="even">Genap</option>
+                                        </select>
                                     </div>
                                 </div>
 
