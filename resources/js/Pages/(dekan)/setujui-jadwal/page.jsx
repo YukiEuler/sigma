@@ -38,30 +38,30 @@ const SetujuiJadwal = ({}) => {
                                 
                                 <div className="flex justify-between items-center mt-4">
                                     
-                                    {/* Search Input */}
-                                    <div className="w-64">
-                                        <div className="relative w-full">
-                                            
-                                            
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[385px] scrollbar-hide">
-                                    <style jsx>{`
-                                        .scrollbar-hide::-webkit-scrollbar {
-                                            display: none;
-                                        }
-                                        .scrollbar-hide {
-                                            -ms-overflow-style: none;
-                                            scrollbar-width: none;
-                                        }
-                                    `}</style>
-                                    <table className="w-full text-sm text-left rounded-lg text-gray-500 sticky-header">
-                                        <thead
-                                            className="text-xs text-white uppercase bg-gray-50 dark:text-gray-400 sticky top-0"
-                                            style={{
-                                                backgroundColor: "#1EAADF",
+                                    /* Search Input */}
+                                                                        <div className="w-64">
+                                                                            <div className="relative w-full">
+                                                                                
+                                                                                
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                    <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto h-[385px] scrollbar-hide">
+                                                                        <style jsx>{`
+                                                                            .scrollbar-hide::-webkit-scrollbar {
+                                                                                display: none;
+                                                                            }
+                                                                            .scrollbar-hide {
+                                                                                -ms-overflow-style: none;
+                                                                                scrollbar-width: none;
+                                                                            }
+                                                                        `}</style>
+                                                                        <table className="w-full text-sm text-left rounded-lg text-gray-500 sticky-header">
+                                                                            <thead
+                                                                                className="text-xs text-white uppercase bg-gray-50 dark:text-gray-400 sticky top-0"
+                                                                                style={{
+                                                                                    backgroundColor: "#1EAADF",
                                             }}
                                         >
                                             <tr>
@@ -165,6 +165,7 @@ const SetujuiJadwal = ({}) => {
                                                         </td>
                                                         <td className="px-4 py-3 text-center">
                                                             <button 
+                                                                disabled={prodi.disetujui !== 0}   
                                                                 onClick={() => {
                                                                     Inertia.post(`/dekan/setujui-jadwal${prodi.id_prodi}`, null, {
                                                                         onSuccess: () => {

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/inertia-react";
+import { Inertia } from "@inertiajs/inertia";
 import DekanLayout from "../../../Layouts/DekanLayout";
 import { Icon } from "@iconify/react";
+import Swal from 'sweetalert2';
 
 const DetailJadwal = () => {
     const { props } = usePage();
@@ -12,6 +14,11 @@ const DetailJadwal = () => {
     const [dosen, setDosen] = useState(dosenData);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const schedules = props.jadwal;
+    const programStudi = props.programStudiList;
+    const status = programStudi.find(prodi => prodi.id_prodi === selectedProdi.id_prodi)?.disetujui === 0 ? 0 : 1;
+    console.log(status);
+
+
     
 
 
@@ -70,14 +77,37 @@ const DetailJadwal = () => {
                             }}
                         >
                             <button
-                                onClick={handleButtonClick}
+                                disabled={status === 1} 
+                                onClick={() => {
+                                    <button
+                                        disabled={status === 1} 
+                                        onClick={() => {
+                                            Inertia.post(`/dekan/setujui-jadwal${selectedProdi.id_prodi}`, null, {
+                                                onSuccess: () => {
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Berhasil',
+                                                        text: 'Jadwal berhasil disetujui'
+                                                    });
+                                                }
+                                            });
+                                        }}
+                                        className={`w-20 mb-1 mt-2 mx-2 p-2 text-sm text-white rounded-md ${
+                                            status === 1
+                                                ? "bg-gray-400 hover:bg-gray-600 cursor-not-allowed"
+                                                : "bg-blue-500 hover:bg-blue-600"   
+                                        }`}
+                                    >
+                                        setujui
+                                    </button>
+                                }}
                                 className={`w-20 mb-1 mt-2 mx-2 p-2 text-sm text-white rounded-md ${
                                     isSubmitted
-                                        ? "bg-red-500 hover:bg-red-600"
+                                        ? "bg-blue-500 hover:bg-blue-600"
                                         : "bg-blue-500 hover:bg-blue-600"
                                 }`}
                             >
-                                {isSubmitted ? "Batalkan" : "Setujui"}
+                                {isSubmitted ? "setujui" : "Setujui"}
                             </button>
                             <div className="flex flex-col space-y-2 p-2 max-h-[70vh] overflow-x-auto scrollbar-hide">
                                 <style jsx>
