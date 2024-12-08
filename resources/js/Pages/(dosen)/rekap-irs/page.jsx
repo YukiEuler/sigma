@@ -628,7 +628,7 @@ const RekapIRS = () => {
                                             </button>
                                         </div>
 
-                                        <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[370px] scrollbar-hide">
+                                        <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[335px] scrollbar-hide">
                                             <style jsx>{`
                                                 .scrollbar-hide::-webkit-scrollbar {
                                                     display: none;
@@ -955,7 +955,7 @@ const RekapIRS = () => {
                                                 Batalkan IRS
                                             </button>
                                         </div>
-                                        <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[370px] scrollbar-hide">
+                                        <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[335px] scrollbar-hide">
                                             <style jsx>{`
                                                 .scrollbar-hide::-webkit-scrollbar {
                                                     display: none;
