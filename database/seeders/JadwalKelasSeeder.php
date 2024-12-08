@@ -47,6 +47,7 @@ class JadwalKelasSeeder extends Seeder
                     'D' => [],
                 ];
                 foreach ($mkSem as $matkul){
+                    if ($tahun == 2024 && $matkul->semester%2==1) continue;
                     $jadwalMk = [];
                     for ($kelas = 'A'; $kelas <= 'D'; $kelas++) {
                         $hari = $pilihan_hari[array_rand($pilihan_hari)];
