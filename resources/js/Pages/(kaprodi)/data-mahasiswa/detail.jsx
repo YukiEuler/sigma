@@ -538,7 +538,7 @@ const DetailIRS = () => {
                                                 Wajib
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 75
+                                                : {mahasiswa.sks_wajib}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -546,7 +546,7 @@ const DetailIRS = () => {
                                                 Pilihan
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 22
+                                                : {mahasiswa.sks_pilihan}
                                             </span>
                                         </div>
                                         <div className="flex">
