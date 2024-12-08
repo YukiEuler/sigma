@@ -78,11 +78,11 @@ class AturJadwalController extends Controller
                 foreach ($kelas['jadwal'] as $jadwal){
                     if ($jadwal['day'] == '') continue;
                     JadwalKuliah::create([
-                    'hari' => $jadwal['day'],
-                    'waktu_mulai' => $jadwal['startTime'],
-                    'waktu_selesai' => ''.$jadwal['endTime'].':00',
-                    'id_ruang' => $jadwal['idRuang'],
-                    'id_kelas' => $kelas['idKelas'],
+                        'hari' => $jadwal['day'],
+                        'waktu_mulai' => $jadwal['startTime'],
+                        'waktu_selesai' => ''.$jadwal['endTime'].':00',
+                        'id_ruang' => $jadwal['idRuang'],
+                        'id_kelas' => $kelas['idKelas'],
                     ]);
                 }
             }
@@ -97,20 +97,25 @@ class AturJadwalController extends Controller
 
     public function ubah_status(){
         $user = Auth::user();
+        $tahun_akademik = KalenderAkademik::getTahunAkademik();
 
         $dosen = Dosen::where('user_id', $user->id)->get()->first();
         $status = Kelas::join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
             ->where('mata_kuliah.id_prodi', $dosen->id_prodi)
+            ->where('kelas.tahun_akademik', $tahun_akademik)
             ->select('kelas.status')
             ->first()
             ->status;
+        error_log($status);
         if ($status == 'belum'){
             Kelas::join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
                 ->where('mata_kuliah.id_prodi', $dosen->id_prodi)
+                ->where('kelas.tahun_akademik', $tahun_akademik)
                 ->update(['kelas.status' => 'diajukan']);
         } elseif ($status == 'diajukan'){
             Kelas::join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
                 ->where('mata_kuliah.id_prodi', $dosen->id_prodi)
+                ->where('kelas.tahun_akademik', $tahun_akademik)
                 ->update(['kelas.status' => 'belum']);
         }
     }

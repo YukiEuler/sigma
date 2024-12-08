@@ -100,6 +100,14 @@ const AturJadwal = () => {
     };
 
     const handleButtonClick = () => {
+        if (schedules.length === 0 && getUnscheduledClasses().length === 0) {
+            Swal.fire({
+                icon: "info",
+                title: "Tidak Ada Jadwal",
+                text: "Tidak ada jadwal yang tersedia atau belum terjadwal.",
+            });
+            return;
+        }
         Swal.fire({
             title: 'Apakah Anda yakin?',
             text: "Anda akan mengubah status jadwal!",
@@ -111,17 +119,26 @@ const AturJadwal = () => {
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                Inertia.get('/kaprodi/atur-jadwal/ubah-status');
-                if (status === 'belum') {
-                    setStatus('diajukan');
-                } else if (status === 'diajukan'){
-                    setStatus('belum');
-                }
-                Swal.fire({
-                    icon: "success",
-                    title: "Berhasil",
-                    text: "Status sudah diubah!",
-                });
+                Inertia.get('/kaprodi/atur-jadwal/ubah-status')
+                    .then(() => {
+                        if (status === 'belum') {
+                            setStatus('diajukan');
+                        } else if (status === 'diajukan'){
+                            setStatus('belum');
+                        }
+                        Swal.fire({
+                            icon: "success",
+                            title: "Berhasil",
+                            text: "Status sudah diubah!",
+                        });
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Gagal",
+                            text: `Terjadi kesalahan: ${error.message}`,
+                        });
+                    });
             }
         });
     };
@@ -327,6 +344,20 @@ const AturJadwal = () => {
             ].listDosenData.filter((_, i) => i !== lecturerIndex);
             setScheduleForms(newForms);
         }
+    };
+
+    const getUnscheduledClasses = () => {
+        return mataKuliahData.flatMap(course => 
+            course.kelas.filter(kelas => 
+                !kelas.jadwal_kuliah || kelas.jadwal_kuliah.length === 0
+            ).map(kelas => ({
+                kode_mk: course.kode_mk,
+                nama: course.nama,
+                sks: course.sks,
+                kelas: kelas.kode_kelas,
+                kuota: kelas.kuota
+            }))
+        );
     };
 
     const handleSubmit = (e) => {
@@ -771,6 +802,32 @@ const AturJadwal = () => {
                                         ))}
                                     </tbody>
                                 </table>
+                                <div className="mt-4 p-2 border rounded-lg">
+                                    <h3 className="font-semibold mb-2">Kelas Tidak Terjadwal</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                        {getUnscheduledClasses().map((item) => (
+                                            <div 
+                                                key={`${item.kode_mk}-${item.kelas}`}
+                                                className="p-2 bg-gray-100 rounded-lg border flex justify-between items-center"
+                                            >
+                                                <div>
+                                                    <p className="font-medium text-sm">{item.nama}</p>
+                                                    <p className="text-xs text-gray-600">
+                                                        {item.kode_mk} - Kelas {item.kelas}
+                                                    </p>
+                                                    <p className="text-xs text-gray-600">
+                                                        {item.sks} SKS - Kuota: {item.kuota}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {getUnscheduledClasses().length === 0 && (
+                                            <div className="col-span-full text-center text-gray-500 text-sm">
+                                                Semua kelas sudah terjadwal
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
