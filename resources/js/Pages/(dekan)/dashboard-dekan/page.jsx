@@ -10,6 +10,8 @@ const DashboardDekan = ({ ruangan }) => {
     const [dosen, setDosen] = useState(dosenData);
 
     const totalRuang = ruangan.length;
+    const jadwal = props.jadwal;
+    const totaljadwal = jadwal.length;
     const totalRuangBelumDiajukan = ruangan.filter(
         (r) => r.diajukan === 0 && r.disetujui === 0
     ).length;
@@ -19,6 +21,15 @@ const DashboardDekan = ({ ruangan }) => {
     const totalRuangSudahDisetujui = ruangan.filter(
         (r) => r.diajukan === 1 && r.disetujui === 1
     ).length;
+
+    
+    const totaljadwalbelumDisetujui = jadwal.filter(
+        (j) => j.disetujui === 0
+    ).length;
+    const totaljadwalSudahDisetujui = jadwal.filter(
+        (j) => j.disetujui >= 1
+    ).length;
+    console.log(jadwal);
 
     useEffect(() => {
         setData(ruangan);
@@ -69,7 +80,7 @@ const DashboardDekan = ({ ruangan }) => {
                                 <span className="text-gray-400">
                                     Jadwal Kuliah Belum Disetujui
                                 </span>
-                                <span className="text-lg font-semibold">0</span>
+                                <span className="text-lg font-semibold">{totaljadwalbelumDisetujui}</span>
                             </div>
                             <div className="p-8"></div>
                         </div>
@@ -80,7 +91,7 @@ const DashboardDekan = ({ ruangan }) => {
                                 <span className="text-gray-400">
                                     Jadwal Kuliah Sudah Disetujui
                                 </span>
-                                <span className="text-lg font-semibold">0</span>
+                                <span className="text-lg font-semibold">{totaljadwalSudahDisetujui}</span>
                             </div>
                             <div className="p-8"></div>
                         </div>
