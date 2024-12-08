@@ -77,38 +77,27 @@ const DetailJadwal = () => {
                             }}
                         >
                             <button
-                                disabled={status === 1} 
+                                disabled={status === 1}
                                 onClick={() => {
-                                    <button
-                                        disabled={status === 1} 
-                                        onClick={() => {
-                                            Inertia.post(`/dekan/setujui-jadwal${selectedProdi.id_prodi}`, null, {
-                                                onSuccess: () => {
-                                                    Swal.fire({
-                                                        icon: 'success',
-                                                        title: 'Berhasil',
-                                                        text: 'Jadwal berhasil disetujui'
-                                                    });
-                                                }
+                                    Inertia.post(`/dekan/setujui-jadwal${selectedProdi.id_prodi}`, null, {
+                                        onSuccess: () => {
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Berhasil',
+                                                text: 'Jadwal berhasil disetujui'
                                             });
-                                        }}
-                                        className={`w-20 mb-1 mt-2 mx-2 p-2 text-sm text-white rounded-md ${
-                                            status === 1
-                                                ? "bg-gray-400 hover:bg-gray-600 cursor-not-allowed"
-                                                : "bg-blue-500 hover:bg-blue-600"   
-                                        }`}
-                                    >
-                                        setujui
-                                    </button>
+                                        }
+                                    });
                                 }}
                                 className={`w-20 mb-1 mt-2 mx-2 p-2 text-sm text-white rounded-md ${
-                                    isSubmitted
-                                        ? "bg-blue-500 hover:bg-blue-600"
+                                    status === 1
+                                        ? "bg-gray-400 hover:bg-gray-600 cursor-not-allowed"
                                         : "bg-blue-500 hover:bg-blue-600"
                                 }`}
                             >
-                                {isSubmitted ? "setujui" : "Setujui"}
+                                {status === 1 ? "Disetujui" : "Setujui"}
                             </button>
+
                             <div className="flex flex-col space-y-2 p-2 max-h-[70vh] overflow-x-auto scrollbar-hide">
                                 <style jsx>
                                     {`
