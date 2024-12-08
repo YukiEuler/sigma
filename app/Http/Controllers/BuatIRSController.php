@@ -109,84 +109,66 @@ class BuatIRSController extends Controller
     }
     $mahasiswa->maxSks = $maxSks;
 
-    $jadwal = $jadwal = Kelas::join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
-    ->where('kelas.tahun_akademik', $tahun)
-    ->whereRaw('MOD(mata_kuliah.semester, 2) = ?', [1-$periode])
-    ->join('jadwal_kuliah', 'kelas.id', '=', 'jadwal_kuliah.id_kelas')
-    ->where('mata_kuliah.id_prodi', operator: $mahasiswa->id_prodi)
-    ->join('ruangan', 'ruangan.id_ruang', '=', 'jadwal_kuliah.id_ruang')
-    // Add left join with IRS to count students
-    ->leftJoin('irs', 'kelas.id', '=', 'irs.id_kelas')
-    ->select(
-        'kelas.kode_kelas', 
-        'kelas.kuota', 
-        'mata_kuliah.kode_mk',
-        'mata_kuliah.nama',
-        'mata_kuliah.sks',
-        'mata_kuliah.jenis',
-        'mata_kuliah.id_prodi',
-        'mata_kuliah.semester',
-        'jadwal_kuliah.id',
-        'jadwal_kuliah.id_kelas',
-        'jadwal_kuliah.hari',
-        'jadwal_kuliah.waktu_mulai',
-        'jadwal_kuliah.waktu_selesai',
-        'ruangan.nama_ruang',
-        DB::raw('COUNT(DISTINCT irs.nim) as jumlah_mahasiswa')
-    )
-    ->groupBy(
-        'kelas.id',
-        'kelas.kode_kelas',
-        'kelas.kuota',
-        'mata_kuliah.kode_mk',
-        'mata_kuliah.nama',
-        'mata_kuliah.sks',
-        'mata_kuliah.jenis',
-        'mata_kuliah.id_prodi',
-        'mata_kuliah.semester',
-        'jadwal_kuliah.id',
-        'jadwal_kuliah.id_kelas',
-        'jadwal_kuliah.hari',
-        'jadwal_kuliah.waktu_mulai',
-        'jadwal_kuliah.waktu_selesai',
-        'ruangan.nama_ruang'
-    )
+    $tahunAkademik = KalenderAkademik::getTahunAkademik();
+    $jadwal = Kelas::with(['mataKuliah', 'jadwalKuliah.ruangan'])
+    ->where('tahun_akademik', $tahunAkademik)
+    ->where('status', 'disetujui')
+    ->whereHas('mataKuliah', function($query) use ($periode, $mahasiswa) {
+        $query->where('id_prodi', $mahasiswa->id_prodi)
+            ->whereRaw('MOD(semester, 2) = ?', [1-$periode]);
+    })
+    ->withCount('irs as jumlah_mahasiswa')
     ->get()
     ->groupBy('kode_mk')
-    ->map(function ($group) {
-        $mataKuliah = $group->first();
-        $mataKuliah->jadwal_kuliah = $group->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'id_kelas' => $item->id_kelas,
-                'hari' => $item->hari,
-                'waktu_mulai' => $item->waktu_mulai,
-                'waktu_selesai' => $item->waktu_selesai,
-                'ruangan' => $item->nama_ruang,
-                'kelas' => $item->kode_kelas,
-                'kuota' => $item->kuota,
-                'jumlah_mahasiswa' => $item->jumlah_mahasiswa // Add count to output
-            ];
-        });
+    ->map(function($kelasGroup) {
+        $firstKelas = $kelasGroup->first();
+        $mataKuliah = $firstKelas->mataKuliah;
+        
+        $jadwalArray = $kelasGroup->map(function($kelas) {
+            return $kelas->jadwalKuliah->isEmpty() 
+                ? [[
+                    'id' => null,
+                    'id_kelas' => $kelas->id,
+                    'hari' => null,
+                    'waktu_mulai' => null,
+                    'waktu_selesai' => null,
+                    'ruangan' => null,
+                    'kelas' => $kelas->kode_kelas,
+                    'kuota' => $kelas->kuota,
+                    'jumlah_mahasiswa' => $kelas->jumlah_mahasiswa
+                ]]
+                : $kelas->jadwalKuliah->map(function($jadwal) use ($kelas) {
+                    return [
+                        'id' => $jadwal->id,
+                        'id_kelas' => $kelas->id,
+                        'hari' => $jadwal->hari,
+                        'waktu_mulai' => $jadwal->waktu_mulai,
+                        'waktu_selesai' => $jadwal->waktu_selesai,
+                        'ruangan' => optional($jadwal->ruangan)->nama_ruang,
+                        'kelas' => $kelas->kode_kelas,
+                        'kuota' => $kelas->kuota,
+                        'jumlah_mahasiswa' => $kelas->jumlah_mahasiswa
+                    ];
+                });
+        })->flatten(1);
+
         return [
             'kode_mk' => $mataKuliah->kode_mk,
             'nama' => $mataKuliah->nama,
             'sks' => $mataKuliah->sks,
             'semester' => $mataKuliah->semester,
-            'jadwal_kuliah' => $mataKuliah->jadwal_kuliah,
-            'sudah_diajukan' => $mataKuliah->diajukan,
+            'jadwal_kuliah' => $jadwalArray,
+            'sudah_diajukan' => $firstKelas->status
         ];
     })
     ->values();
     
-    error_log($jadwal);
-    
     $irs = Irs::join('kelas', 'irs.id_kelas', '=', 'kelas.id')
         ->where('kelas.tahun_akademik', $tahun)
         ->whereRaw('MOD(mata_kuliah.semester, 2) = ?', [1-$periode])
-        ->join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
+        ->leftJoin('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
         ->where('irs.nim', $mahasiswa->nim)
-        ->join('jadwal_kuliah', 'jadwal_kuliah.id_kelas', '=', 'kelas.id')
+        ->leftJoin('jadwal_kuliah', 'jadwal_kuliah.id_kelas', '=', 'kelas.id')
         ->select('kelas.*', 'mata_kuliah.nama', 'mata_kuliah.sks', 'mata_kuliah.kode_mk', 'jadwal_kuliah.hari', 'jadwal_kuliah.waktu_mulai', 'jadwal_kuliah.waktu_selesai', 'irs.is_verified', 'irs.diajukan')
         ->get()
         ->groupBy('kode_mk')
@@ -212,7 +194,8 @@ class BuatIRSController extends Controller
             ];
         })
         ->values();
-    
+    error_log("irs");
+    error_log($irs);
     $mahasiswa->periode_ganti = $penggantianIRS->tanggal_mulai <= $dateNow && $dateNow <= $penggantianIRS->tanggal_selesai;
     $mahasiswa->periode_ganti = $mahasiswa->periode_ganti || $pengisianIRS1->tanggal_mulai <= $dateNow && $dateNow <= $pengisianIRS2->tanggal_selesai;
     $mahasiswa->prioritas = 0;
@@ -232,77 +215,62 @@ class BuatIRSController extends Controller
         $semester = $periode % 2 == 0 ? "Ganjil" : "Genap";
 
         $mahasiswa = Mahasiswa::where('user_id', $user->id)->get()->first();
+        $tahunAkademik = KalenderAkademik::getTahunAkademik();
 
-        $jadwal = Kelas::join('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
-            ->where('kelas.status', 'disetujui')
-            ->where('kelas.tahun_akademik', $tahun)
-            ->whereRaw('MOD(mata_kuliah.semester, 2) = ?', [1-$periode])
-            ->join('jadwal_kuliah', 'kelas.id', '=', 'jadwal_kuliah.id_kelas')
-            ->where('mata_kuliah.id_prodi', operator: $mahasiswa->id_prodi)
-            ->join('ruangan', 'ruangan.id_ruang', '=', 'jadwal_kuliah.id_ruang')
-            // Add left join with IRS to count students
-            ->leftJoin('irs', 'kelas.id', '=', 'irs.id_kelas')
-            ->select(
-                'kelas.kode_kelas', 
-                'kelas.kuota', 
-                'mata_kuliah.kode_mk',
-                'mata_kuliah.nama',
-                'mata_kuliah.sks',
-                'mata_kuliah.jenis',
-                'mata_kuliah.id_prodi',
-                'mata_kuliah.semester',
-                'jadwal_kuliah.id',
-                'jadwal_kuliah.id_kelas',
-                'jadwal_kuliah.hari',
-                'jadwal_kuliah.waktu_mulai',
-                'jadwal_kuliah.waktu_selesai',
-                'ruangan.nama_ruang',
-                DB::raw('COUNT(DISTINCT irs.nim) as jumlah_mahasiswa')
-            )
-            ->groupBy(
-                'kelas.id',
-                'kelas.kode_kelas',
-                'kelas.kuota',
-                'mata_kuliah.kode_mk',
-                'mata_kuliah.nama',
-                'mata_kuliah.sks',
-                'mata_kuliah.jenis',
-                'mata_kuliah.id_prodi',
-                'mata_kuliah.semester',
-                'jadwal_kuliah.id',
-                'jadwal_kuliah.id_kelas',
-                'jadwal_kuliah.hari',
-                'jadwal_kuliah.waktu_mulai',
-                'jadwal_kuliah.waktu_selesai',
-                'ruangan.nama_ruang'
-            )
+        $jadwal = Kelas::with(['mataKuliah', 'jadwalKuliah.ruangan'])
+            ->where('tahun_akademik', $tahunAkademik)
+            ->where('status', 'disetujui')
+            ->whereHas('mataKuliah', function($query) use ($periode, $mahasiswa) {
+                $query->where('id_prodi', $mahasiswa->id_prodi)
+                    ->whereRaw('MOD(semester, 2) = ?', [1-$periode]);
+            })
+            ->withCount('irs as jumlah_mahasiswa')
             ->get()
             ->groupBy('kode_mk')
-            ->map(function ($group) {
-                $mataKuliah = $group->first();
-                $mataKuliah->jadwal_kuliah = $group->map(function ($item) {
-                    return [
-                        'id' => $item->id,
-                        'id_kelas' => $item->id_kelas,
-                        'hari' => $item->hari,
-                        'waktu_mulai' => $item->waktu_mulai,
-                        'waktu_selesai' => $item->waktu_selesai,
-                        'ruangan' => $item->nama_ruang,
-                        'kelas' => $item->kode_kelas,
-                        'kuota' => $item->kuota,
-                        'jumlah_mahasiswa' => $item->jumlah_mahasiswa // Add count to output
-                    ];
-                });
+            ->map(function($kelasGroup) {
+                $firstKelas = $kelasGroup->first();
+                $mataKuliah = $firstKelas->mataKuliah;
+                
+                $jadwalArray = $kelasGroup->map(function($kelas) {
+                    return $kelas->jadwalKuliah->isEmpty() 
+                        ? [[
+                            'id' => null,
+                            'id_kelas' => $kelas->id,
+                            'hari' => null,
+                            'waktu_mulai' => null,
+                            'waktu_selesai' => null,
+                            'ruangan' => null,
+                            'kelas' => $kelas->kode_kelas,
+                            'kuota' => $kelas->kuota,
+                            'jumlah_mahasiswa' => $kelas->jumlah_mahasiswa
+                        ]]
+                        : $kelas->jadwalKuliah->map(function($jadwal) use ($kelas) {
+                            return [
+                                'id' => $jadwal->id,
+                                'id_kelas' => $kelas->id,
+                                'hari' => $jadwal->hari,
+                                'waktu_mulai' => $jadwal->waktu_mulai,
+                                'waktu_selesai' => $jadwal->waktu_selesai,
+                                'ruangan' => optional($jadwal->ruangan)->nama_ruang,
+                                'kelas' => $kelas->kode_kelas,
+                                'kuota' => $kelas->kuota,
+                                'jumlah_mahasiswa' => $kelas->jumlah_mahasiswa
+                            ];
+                        });
+                })->flatten(1);
+
                 return [
                     'kode_mk' => $mataKuliah->kode_mk,
                     'nama' => $mataKuliah->nama,
                     'sks' => $mataKuliah->sks,
                     'semester' => $mataKuliah->semester,
-                    'jadwal_kuliah' => $mataKuliah->jadwal_kuliah,
-                    'sudah_diajukan' => $mataKuliah->diajukan,
+                    'jadwal_kuliah' => $jadwalArray,
+                    'sudah_diajukan' => $firstKelas->status
                 ];
             })
             ->values();
+            error_log('sini');
+        error_log($jadwal);
 
         return response()->json($jadwal);
     }

@@ -67,6 +67,8 @@ const BuatIRS = () => {
     // Add useEffect for interval
     useEffect(() => {
         // Initial fetch
+        setJadwal(jadwalData);
+        console.log(jadwalData);
         fetchJadwal();
 
         // // Set up interval
@@ -230,6 +232,26 @@ const BuatIRS = () => {
         }));
     };
 
+    const getUnscheduledClasses = () => {
+        console.log(jadwal);
+        return jadwal
+            .filter(course => selectedCourses.some(selected => selected.kode_mk === course.kode_mk))
+            .flatMap(course => 
+                course.jadwal_kuliah
+                    .filter(jadwal => jadwal.id === null)
+                    .map(jadwal => ({
+                        id_kelas: jadwal.id_kelas || course.id_kelas, // Fallback to course.id_kelas
+                        kode_mk: course.kode_mk,
+                        nama: course.nama,
+                        sks: course.sks,
+                        semester: course.semester,
+                        kelas: jadwal.kelas,
+                        kuota: jadwal.kuota,
+                        jumlah_mahasiswa: jadwal.jumlah_mahasiswa
+                    }))
+            );
+    };
+
     // Handle course removal from registration
     const handleRemoveCourse = (courseId) => {
         Swal.fire({
@@ -307,13 +329,18 @@ const BuatIRS = () => {
 
     // Set Registered Awal
     useEffect(() => {
+        fetchJadwal();
+        setJadwal(jadwalData);
+        console.log(jadwalData);
         const initialRegisteredCourses = [],
             initialCourseSelect = [];
         for (const course of irs) {
             initialRegisteredCourses.push(course);
-            const elm = jadwalData.find(
+            console.log(jadwal);
+            const elm = jadwal.find(
                 (filteredCourse) => filteredCourse.kode_mk === course.kode_mk
             );
+            console.log(elm);
             initialCourseSelect.push(elm);
         }
         const filteredJadwal = jadwal.filter(
@@ -608,6 +635,93 @@ const BuatIRS = () => {
                     ))}
                 </tbody>
             </table>
+            <div className="mt-4 p-2 border rounded-lg">
+                <h3 className="font-semibold mb-2">Kelas Tidak Terjadwal</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {getUnscheduledClasses().map((item) => {
+                            console.log(item);
+                        const kelasRegistered = registeredCourses.some(
+                            (rc) => rc.selectedClass.id_kelas === item.id_kelas
+                        );
+                        const matkulRegistered = registeredCourses.some(
+                            (rc) => rc.kode_mk === item.kode_mk
+                        );
+                        const maxSks = totalCredits + item.sks > mahasiswa.maxSks;
+                        const penuh = item.kuota === item.jumlah_mahasiswa;
+                        const bukanPrioritas = item.semester > mahasiswa.semester && mahasiswa.prioritas == 1;
+                        const periodeGanti = Boolean(mahasiswa.periode_ganti);
+
+                        let tooltipMessage = "";
+                        if (!periodeGanti) {
+                            tooltipMessage = "Tidak dalam periode penggantian";
+                        } else if (isVerified) {
+                            tooltipMessage = "IRS telah disetujui";
+                        } else if (isSubmitted) {
+                            tooltipMessage = "IRS telah diajukan";
+                        } else if (kelasRegistered) {
+                            tooltipMessage = "Kelas sudah terdaftar";
+                        } else if (matkulRegistered) {
+                            tooltipMessage = "Mata kuliah sudah terdaftar";
+                        } else if (maxSks) {
+                            tooltipMessage = "Melebihi batasan SKS";
+                        } else if (penuh) {
+                            tooltipMessage = "Kelas sudah penuh";
+                        } else if (bukanPrioritas) {
+                            tooltipMessage = "Bukan mahasiswa prioritas";
+                        }
+
+                        return (
+                            <div 
+                                key={`${item.kode_mk}-${item.kelas}`}
+                                className="p-2 bg-gray-100 rounded-lg border flex justify-between items-center"
+                            >
+                                <div>
+                                    <p className="font-medium text-sm">{item.nama}</p>
+                                    <p className="text-xs text-gray-600">
+                                        {item.kode_mk} - Kelas {item.kelas}
+                                    </p>
+                                    <p className="text-xs text-gray-600">
+                                        {item.sks} SKS - Kuota: {item.jumlah_mahasiswa}/{item.kuota}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => 
+                                        !kelasRegistered &&
+                                        !matkulRegistered &&
+                                        !isSubmitted &&
+                                        !isVerified &&
+                                        !maxSks &&
+                                        !penuh &&
+                                        !bukanPrioritas &&
+                                        periodeGanti &&
+                                        handleClassSelect(item, {
+                                            id_kelas: item.id_kelas,
+                                            kelas: item.kelas,
+                                            kuota: item.kuota,
+                                            jumlah_mahasiswa: item.jumlah_mahasiswa,
+                                            kode_mk: item.kode_mk
+                                        })
+                                    }
+                                    className={`px-3 py-1 rounded text-xs ${
+                                        kelasRegistered || matkulRegistered || isSubmitted || isVerified || maxSks || penuh || bukanPrioritas || !periodeGanti
+                                        ? 'bg-gray-300 cursor-not-allowed'
+                                        : 'bg-blue-500 hover:bg-blue-600 text-white'
+                                    }`}
+                                    disabled={kelasRegistered || matkulRegistered || isSubmitted || isVerified || maxSks || penuh || bukanPrioritas || !periodeGanti}
+                                    title={tooltipMessage}
+                                >
+                                    {kelasRegistered ? 'Terdaftar' : 'Pilih'}
+                                </button>
+                            </div>
+                        );
+                    })}
+                    {getUnscheduledClasses().length === 0 && (
+                        <div className="col-span-full text-center text-gray-500 text-sm">
+                            Semua kelas sudah terjadwal
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 
