@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/inertia-react";
 import DosenLayout from "../../../Layouts/DosenLayout";
 import { BiSearchAlt } from "react-icons/bi";
+import { Inertia } from "@inertiajs/inertia";
+import Swal from "sweetalert2";
 
 const RekapIRS = () => {
     const { props } = usePage();
@@ -11,7 +13,10 @@ const RekapIRS = () => {
     const [mahasiswa, setMahasiswa] = useState(mahasiswaData);
     const [selectAll, setSelectAll] = useState(false);
     const [filteredMahasiswa, setFilteredMahasiswa] = useState(mahasiswaData);
-    const [checkedItems, setCheckedItems] = useState(new Array(10).fill(false));
+    const [checkedItems, setCheckedItems] = useState(
+        new Array(mahasiswaData.length).fill(false)
+    );
+
     const [activeTab, setActiveTab] = useState("Belum IRS");
 
     const jumlahMahasiswa = props.jumlahMahasiswa;
@@ -37,6 +42,7 @@ const RekapIRS = () => {
             [name]: value,
         }));
     };
+    
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
@@ -102,11 +108,84 @@ const RekapIRS = () => {
         setCheckedItems(new Array(result.length).fill(false));
         setSelectAll(false);
     };
+
+    // setujui IRS
+    const handleSelectAllChange = () => {
+        const newSelectAll = !selectAll;
+        setSelectAll(newSelectAll);
+
+        // Buat array baru untuk status checkbox berdasarkan status IRS
+        const newCheckedItems = filteredMahasiswa.map((mhs) =>
+            newSelectAll ? mhs.status_irs === "Not Approved" : false
+        );
+
+        setCheckedItems(newCheckedItems);
+    };
+
+    const handleCheckboxChange = (index) => {
+        const newCheckedItems = [...checkedItems];
+        newCheckedItems[index] = !newCheckedItems[index];
+        setCheckedItems(newCheckedItems);
+
+        // Hitung jumlah mahasiswa dengan status "Not Approved"
+        const notApprovedCount = filteredMahasiswa.filter(
+            (mhs) => mhs.status_irs === "Not Approved"
+        ).length;
+
+        // Hitung jumlah item yang tercentang dari mahasiswa "Not Approved"
+        const checkedNotApprovedCount = filteredMahasiswa.reduce(
+            (count, mhs, idx) =>
+                mhs.status_irs === "Not Approved" && newCheckedItems[idx]
+                    ? count + 1
+                    : count,
+            0
+        );
+
+        // Set selectAll true jika semua mahasiswa "Not Approved" tercentang
+        setSelectAll(
+            notApprovedCount > 0 && checkedNotApprovedCount === notApprovedCount
+        );
+    };
+
+    const updateFilteredMahasiswa = (updatedMahasiswa) => {
+        const updatedFilteredMahasiswa = updatedMahasiswa.filter((mhs) => {
+            let matchesFilter = true;
+
+            if (filters.angkatan !== "all") {
+                matchesFilter = matchesFilter && mhs.angkatan.toString() === filters.angkatan;
+            }
+
+            if (filters.prodi !== "all") {
+                matchesFilter = matchesFilter && mhs.nama_prodi.toLowerCase().includes(filters.prodi.toLowerCase());
+            }
+
+            if (filters.search) {
+                matchesFilter = matchesFilter && (
+                    mhs.nama.toLowerCase().includes(filters.search.toLowerCase()) ||
+                    mhs.nim.toLowerCase().includes(filters.search.toLowerCase()) ||
+                    mhs.nama_prodi.toLowerCase().includes(filters.search.toLowerCase())
+                );
+            }
+
+            if (activeTab === "Belum IRS") {
+                matchesFilter = matchesFilter && (mhs.is_verified === null || mhs.diajukan === 0);
+            } else if (activeTab === "Belum Disetujui") {
+                matchesFilter = matchesFilter && (mhs.is_verified === 0 && mhs.diajukan === 1);
+            } else if (activeTab === "Sudah Disetujui") {
+                matchesFilter = matchesFilter && (mhs.is_verified === 1 && mhs.diajukan === 1);
+            }
+
+            return matchesFilter;
+        });
+
+        setFilteredMahasiswa(updatedFilteredMahasiswa);
+        setCheckedItems(new Array(updatedFilteredMahasiswa.length).fill(false));
+        setSelectAll(false);
+    };
+
     useEffect(() => {
         console.log("Filtered Mahasiswa:", filteredMahasiswa);
     }, [filteredMahasiswa]);
-
-    
 
     useEffect(() => {
         applyFilters();
@@ -117,6 +196,11 @@ const RekapIRS = () => {
         setMahasiswa(mahasiswaData);
         setFilteredMahasiswa(mahasiswaData);
     }, [dosenData, mahasiswaData]);
+
+    useEffect(() => {
+        // Reset checked items when filteredMahasiswa changes
+        setCheckedItems(new Array(filteredMahasiswa.length).fill(false));
+    }, [filteredMahasiswa]);
 
     return (
         <DosenLayout dosen={dosen}>
@@ -441,6 +525,109 @@ const RekapIRS = () => {
                                 )}
                                 {activeTab === "Belum Disetujui" && (
                                     <div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    const selectedMahasiswa =
+                                                        filteredMahasiswa.filter(
+                                                            (_, index) =>
+                                                                checkedItems[index]
+                                                        );
+
+                                                    // Check if any selected student has status other than "Not Approved"
+                                                    const invalidSelection =
+                                                        selectedMahasiswa.some(
+                                                            (mhs) =>
+                                                                mhs.status_irs !==
+                                                                "Not Approved"
+                                                        );
+
+                                                    if (invalidSelection) {
+                                                        Swal.fire({
+                                                            icon: "warning",
+                                                            title: "Peringatan",
+                                                            text: "Mahasiswa belum mengajukan IRS atau IRS sudah disetujui",
+                                                        });
+                                                        return;
+                                                    }
+
+                                                    Inertia.post(
+                                                        "/dosen/perwalian/setujui-irs",
+                                                        {
+                                                            checkedItems:
+                                                                selectedMahasiswa.map(
+                                                                    (m) => m.nim
+                                                                ),
+                                                        },
+                                                        {
+                                                            onSuccess: () => {
+                                                                // Update status IRS untuk mahasiswa yang dipilih
+                                                                const updatedMahasiswa =
+                                                                    mahasiswa.map(
+                                                                        (mhs) => {
+                                                                            if (
+                                                                                selectedMahasiswa.find(
+                                                                                    (
+                                                                                        selected
+                                                                                    ) =>
+                                                                                        selected.nim ===
+                                                                                        mhs.nim
+                                                                                )
+                                                                            ) {
+                                                                                return {
+                                                                                    ...mhs,
+                                                                                    status_irs:
+                                                                                        "Approved",
+                                                                                    is_verified: 1,
+                                                                                    diajukan: 1,
+                                                                                };
+                                                                            }
+                                                                            return mhs;
+                                                                        }
+                                                                    );
+
+                                                                setMahasiswa(
+                                                                    updatedMahasiswa
+                                                                );
+                                                                updateFilteredMahasiswa(updatedMahasiswa);
+
+                                                                Swal.fire({
+                                                                    title: "Sukses!",
+                                                                    text: "IRS berhasil disetujui",
+                                                                    icon: "success",
+                                                                    confirmButtonText:
+                                                                        "OK",
+                                                                });
+                                                            },
+                                                            onError: () => {
+                                                                Swal.fire({
+                                                                    icon: "error",
+                                                                    title: "Gagal",
+                                                                    text: "Terdapat Kesalahan",
+                                                                });
+                                                            },
+                                                            onBefore: () => {
+                                                                if (
+                                                                    selectedMahasiswa.length ===
+                                                                    0
+                                                                ) {
+                                                                    Swal.fire({
+                                                                        icon: "warning",
+                                                                        title: "Peringatan",
+                                                                        text: "Tidak ada IRS yang dipilih",
+                                                                    });
+                                                                    return false;
+                                                                }
+                                                            },
+                                                        }
+                                                    );
+                                                }}
+                                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-[12px] w-40"
+                                            >
+                                                Setujui IRS
+                                            </button>
+                                        </div>
+
                                         <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[370px] scrollbar-hide">
                                             <style jsx>{`
                                                 .scrollbar-hide::-webkit-scrollbar {
@@ -454,6 +641,26 @@ const RekapIRS = () => {
                                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
                                                 <thead className="text-xs text-white uppercase bg-blue-500 dark:text-gray-400 sticky top-0">
                                                     <tr>
+                                                        <th
+                                                            scope="col"
+                                                            className="px-6 py-3"
+                                                            style={{
+                                                                width: "5%",
+                                                                textAlign: "center",
+                                                            }}
+                                                        >
+                                                            <label className="flex items-center">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-checkbox"
+                                                                    checked={selectAll}
+                                                                    onChange={handleSelectAllChange}
+                                                                />
+                                                                <span className="ml-2 text-[10px]">
+                                                                    Semua
+                                                                </span>
+                                                            </label>
+                                                        </th>
                                                         <th
                                                             scope="col"
                                                             className="px-4 py-2"
@@ -580,6 +787,23 @@ const RekapIRS = () => {
                                                                 key={index}
                                                                 className="bg-gray-100 border-b"
                                                             >
+                                                                <td className="px-6 py-3">
+                                                                    <div className="flex justify-center">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={
+                                                                                checkedItems[
+                                                                                    index
+                                                                                ]
+                                                                            }
+                                                                            onChange={() =>
+                                                                                handleCheckboxChange(
+                                                                                    index
+                                                                                )
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                </td>
                                                                 <td className="px-4 py-2 text-[14px] text-center">
                                                                     {index + 1}
                                                                 </td>
@@ -632,6 +856,105 @@ const RekapIRS = () => {
                                 )}
                                 {activeTab === "Sudah Disetujui" && (
                                     <div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    const selectedMahasiswa =
+                                                        filteredMahasiswa.filter(
+                                                            (_, index) =>
+                                                                checkedItems[index]
+                                                        );
+
+                                                    if (
+                                                        selectedMahasiswa.length ===
+                                                        0
+                                                    ) {
+                                                        Swal.fire({
+                                                            icon: "warning",
+                                                            title: "Peringatan",
+                                                            text: "Tidak ada IRS yang dipilih",
+                                                        });
+                                                        return;
+                                                    }
+
+                                                    // Check if any selected student has status other than "Approved"
+                                                    const invalidSelection =
+                                                        selectedMahasiswa.some(
+                                                            (mhs) =>
+                                                                mhs.is_verified !== 1 || mhs.diajukan !== 1
+                                                        );
+
+                                                    if (invalidSelection) {
+                                                        Swal.fire({
+                                                            icon: "warning",
+                                                            title: "Peringatan",
+                                                            text: "IRS belum diajukan atau disetujui",
+                                                        });
+                                                        return;
+                                                    }
+
+                                                    Inertia.post(
+                                                        "/dosen/perwalian/batalkan-irs",
+                                                        {
+                                                            checkedItems:
+                                                                selectedMahasiswa.map(
+                                                                    (m) => m.nim
+                                                                ),
+                                                        },
+                                                        {
+                                                            onSuccess: () => {
+                                                                // Update status IRS untuk mahasiswa yang dipilih
+                                                                const updatedMahasiswa =
+                                                                    mahasiswa.map(
+                                                                        (mhs) => {
+                                                                            if (
+                                                                                selectedMahasiswa.find(
+                                                                                    (
+                                                                                        selected
+                                                                                    ) =>
+                                                                                        selected.nim ===
+                                                                                        mhs.nim
+                                                                                )
+                                                                            ) {
+                                                                                return {
+                                                                                    ...mhs,
+                                                                                    status_irs: "Not Approved",
+                                                                                    is_verified: 0,
+                                                                                    diajukan: 1,
+                                                                                };
+                                                                            }
+                                                                            return mhs;
+                                                                        }
+                                                                    );
+
+                                                                setMahasiswa(
+                                                                    updatedMahasiswa
+                                                                );
+                                                                updateFilteredMahasiswa(updatedMahasiswa);
+
+                                                                Swal.fire({
+                                                                    title: "Sukses!",
+                                                                    text: "IRS berhasil dibatalkan",
+                                                                    icon: "success",
+                                                                    confirmButtonText:
+                                                                        "OK",
+                                                                });
+                                                            },
+                                                            onError: () => {
+                                                                Swal.fire({
+                                                                    icon: "error",
+                                                                    title: "Gagal",
+                                                                    text: "Terdapat Kesalahan",
+                                                                });
+                                                            },
+                                                        }
+                                                    );
+                                                }}
+                                                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-[12px] w-40`"
+                                            >
+                                                Batalkan IRS
+                                            </button>
+                                        </div>
                                         <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[370px] scrollbar-hide">
                                             <style jsx>{`
                                                 .scrollbar-hide::-webkit-scrollbar {
@@ -645,6 +968,26 @@ const RekapIRS = () => {
                                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
                                                 <thead className="text-xs text-white uppercase bg-blue-500 dark:text-gray-400 sticky top-0">
                                                     <tr>
+                                                        <th
+                                                            scope="col"
+                                                            className="px-6 py-3"
+                                                            style={{
+                                                                width: "5%",
+                                                                textAlign: "center",
+                                                            }}
+                                                        >
+                                                            <label className="flex items-center">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-checkbox"
+                                                                    checked={selectAll}
+                                                                    onChange={handleSelectAllChange}
+                                                                />
+                                                                <span className="ml-2 text-[10px]">
+                                                                    Semua
+                                                                </span>
+                                                            </label>
+                                                        </th>
                                                         <th
                                                             scope="col"
                                                             className="px-4 py-2"
@@ -771,6 +1114,23 @@ const RekapIRS = () => {
                                                                 key={index}
                                                                 className="bg-gray-100 border-b"
                                                             >
+                                                                <td className="px-6 py-3">
+                                                                    <div className="flex justify-center">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={
+                                                                                checkedItems[
+                                                                                    index
+                                                                                ]
+                                                                            }
+                                                                            onChange={() =>
+                                                                                handleCheckboxChange(
+                                                                                    index
+                                                                                )
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                </td>
                                                                 <td className="px-4 py-2 text-[14px] text-center">
                                                                     {index + 1}
                                                                 </td>
