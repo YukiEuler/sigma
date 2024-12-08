@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { usePage } from "@inertiajs/inertia-react";
 import DosenLayout from "../../../Layouts/DosenLayout";
 import { Icon } from "@iconify/react";
-import { Inertia } from '@inertiajs/inertia';
+import { Inertia } from "@inertiajs/inertia";
 import Swal from "sweetalert2";
 
 const Perwalian = () => {
@@ -116,114 +116,166 @@ const Perwalian = () => {
                     <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
                         <div className="justify-between px-4 pb-4 border rounded-lg shadow-lg bg-white">
                             <div className="flex flex-col space-y-2">
-                                    <table className="w-full max-w-sm mt-6">
-                                        <tr>
-                                            <td className="text-sm font-medium text-gray-900">
-                                                Angkatan
-                                            </td>
-                                            <td>
-                                             <select
-                                                    id="angkatan"
-                                                    name="angkatan"
-                                                    value={filters.angkatan}
-                                                    onChange={
-                                                        handleFilterChange
-                                                    }
-                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                >
-                                                    <option value="all">
-                                                        Semua Angkatan
+                                <table className="w-full max-w-sm mt-6">
+                                    <tr>
+                                        <td className="text-sm font-medium text-gray-900">
+                                            Angkatan
+                                        </td>
+                                        <td>
+                                            <select
+                                                id="angkatan"
+                                                name="angkatan"
+                                                value={filters.angkatan}
+                                                onChange={handleFilterChange}
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            >
+                                                <option value="all">
+                                                    Semua Angkatan
+                                                </option>
+                                                {uniqueAngkatan.map(
+                                                    (angkatan) => (
+                                                        <option
+                                                            key={angkatan}
+                                                            value={angkatan.toString()}
+                                                        >
+                                                            {angkatan}
+                                                        </option>
+                                                    )
+                                                )}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-sm font-medium text-gray-900">
+                                            Prodi
+                                        </td>
+                                        <td>
+                                            <select
+                                                id="prodi"
+                                                name="prodi"
+                                                value={filters.prodi}
+                                                onChange={handleFilterChange}
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            >
+                                                <option value="all">
+                                                    Semua Program Studi
+                                                </option>
+                                                {uniqueProdi.map((prodi) => (
+                                                    <option
+                                                        key={prodi}
+                                                        value={prodi}
+                                                    >
+                                                        {prodi}
                                                     </option>
-                                                    {uniqueAngkatan.map(
-                                                        (angkatan) => (
-                                                            <option
-                                                                key={angkatan}
-                                                                value={angkatan.toString()}
-                                                            >
-                                                                {angkatan}
-                                                            </option>
-                                                        )
-                                                    )}
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className="text-sm font-medium text-gray-900">
-                                                Prodi
-                                            </td>
-                                            <td>
-                                                <select
-                                                    id="prodi"
-                                                    name="prodi"
-                                                    value={filters.prodi}
-                                                    onChange={
-                                                        handleFilterChange
-                                                    }
-                                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                >
-                                                    <option value="all">
-                                                        Semua Program Studi
-                                                    </option>
-                                                    {uniqueProdi.map(
-                                                        (prodi) => (
-                                                            <option
-                                                                key={prodi}
-                                                                value={prodi}
-                                                            >
-                                                                {prodi}
-                                                            </option>
-                                                        )
-                                                    )}
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                                ))}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </table>
                                 <div className="flex justify-between items-center mt-2">
                                     <div className="flex gap-2">
-                                        <button 
-                                        onClick={() => {
-                                            const selectedMahasiswa = filteredMahasiswa.filter((_, index) => checkedItems[index]);
-                                            Inertia.post(
-                                                "/dosen/perwalian/setujui-irs",
-                                                {
-                                                    checkedItems: selectedMahasiswa.map(m => m.nim),
-                                                },
-                                                {
-                                                    onSuccess: () => {
-                                                        Swal.fire({
-                                                            title: "Sukses!",
-                                                            text: "IRS berhasil disetujui",
-                                                            icon: "success",
-                                                            confirmButtonText: "OK",
-                                                        });
+                                        <button
+                                            onClick={() => {
+                                                const selectedMahasiswa =
+                                                    filteredMahasiswa.filter(
+                                                        (_, index) =>
+                                                            checkedItems[index]
+                                                    );
+                                                Inertia.post(
+                                                    "/dosen/perwalian/setujui-irs",
+                                                    {
+                                                        checkedItems:
+                                                            selectedMahasiswa.map(
+                                                                (m) => m.nim
+                                                            ),
                                                     },
-                                                    onError: () => {
-                                                        Swal.fire({
-                                                            icon: "error",
-                                                            title: "Gagal",
-                                                            text: "Terdapat Kesalahan",
-                                                        });
-                                                    },
-                                                onBefore: () => {
-                                                    if (selectedMahasiswa.length === 0) {
-                                                        Swal.fire({
-                                                            icon: "warning",
-                                                            title: "Peringatan", 
-                                                            text: "Tidak ada IRS yang dipilih"
-                                                        });
-                                                        return false;
+                                                    {
+                                                        onSuccess: () => {
+                                                            // Update status IRS untuk mahasiswa yang dipilih
+                                                            const updatedMahasiswa =
+                                                                filteredMahasiswa.map(
+                                                                    (mhs) => {
+                                                                        if (
+                                                                            selectedMahasiswa.find(
+                                                                                (
+                                                                                    selected
+                                                                                ) =>
+                                                                                    selected.nim ===
+                                                                                    mhs.nim
+                                                                            )
+                                                                        ) {
+                                                                            return {
+                                                                                ...mhs,
+                                                                                status_irs:
+                                                                                    "Approved",
+                                                                            };
+                                                                        }
+                                                                        return mhs;
+                                                                    }
+                                                                );
+
+                                                            // Update state mahasiswa dan filtered mahasiswa
+                                                            setMahasiswa(
+                                                                updatedMahasiswa
+                                                            );
+                                                            setFilteredMahasiswa(
+                                                                updatedMahasiswa
+                                                            );
+
+                                                            // Reset checkbox selections
+                                                            setCheckedItems(
+                                                                new Array(
+                                                                    updatedMahasiswa.length
+                                                                ).fill(false)
+                                                            );
+                                                            setSelectAll(false);
+
+                                                            Swal.fire({
+                                                                title: "Sukses!",
+                                                                text: "IRS berhasil disetujui",
+                                                                icon: "success",
+                                                                confirmButtonText:
+                                                                    "OK",
+                                                            });
+                                                        },
+                                                        onError: () => {
+                                                            Swal.fire({
+                                                                icon: "error",
+                                                                title: "Gagal",
+                                                                text: "Terdapat Kesalahan",
+                                                            });
+                                                        },
+                                                        onBefore: () => {
+                                                            if (
+                                                                selectedMahasiswa.length ===
+                                                                0
+                                                            ) {
+                                                                Swal.fire({
+                                                                    icon: "warning",
+                                                                    title: "Peringatan",
+                                                                    text: "Tidak ada IRS yang dipilih",
+                                                                });
+                                                                return false;
+                                                            }
+                                                        },
                                                     }
-                                                }
-                                                }
-                                            );
-                                        }}
-                                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-[14px] w-40">
+                                                );
+                                            }}
+                                            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-[12px] w-40"
+                                        >
                                             Setujui IRS
                                         </button>
-                                        <button 
+                                        <button
                                             onClick={() => {
-                                                const selectedMahasiswa = filteredMahasiswa.filter((_, index) => checkedItems[index]);
-                                                if (selectedMahasiswa.length === 0) {
+                                                const selectedMahasiswa =
+                                                    filteredMahasiswa.filter(
+                                                        (_, index) =>
+                                                            checkedItems[index]
+                                                    );
+                                                if (
+                                                    selectedMahasiswa.length ===
+                                                    0
+                                                ) {
                                                     Swal.fire({
                                                         icon: "warning",
                                                         title: "Peringatan",
@@ -234,7 +286,10 @@ const Perwalian = () => {
                                                 Inertia.post(
                                                     "/dosen/perwalian/batalkan-irs",
                                                     {
-                                                        checkedItems: selectedMahasiswa.map(m => m.nim),
+                                                        checkedItems:
+                                                            selectedMahasiswa.map(
+                                                                (m) => m.nim
+                                                            ),
                                                     },
                                                     {
                                                         onSuccess: () => {
@@ -242,7 +297,8 @@ const Perwalian = () => {
                                                                 title: "Sukses!",
                                                                 text: "IRS berhasil dibatalkan",
                                                                 icon: "success",
-                                                                confirmButtonText: "OK",
+                                                                confirmButtonText:
+                                                                    "OK",
                                                             });
                                                         },
                                                         onError: () => {
@@ -255,7 +311,8 @@ const Perwalian = () => {
                                                     }
                                                 );
                                             }}
-                                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-[14px] w-40`">
+                                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-[12px] w-40`"
+                                        >
                                             Batalkan Persetujuan IRS
                                         </button>
                                     </div>
@@ -326,7 +383,7 @@ const Perwalian = () => {
                                                     style={{
                                                         width: "3%",
                                                         textAlign: "center",
-                                                        fontSize: "12px",
+                                                        fontSize: "10px",
                                                     }}
                                                 >
                                                     No
@@ -337,7 +394,7 @@ const Perwalian = () => {
                                                     style={{
                                                         width: "15%",
                                                         textAlign: "center",
-                                                        fontSize: "12px",
+                                                        fontSize: "10px",
                                                     }}
                                                 >
                                                     Nama
@@ -346,9 +403,9 @@ const Perwalian = () => {
                                                     scope="col"
                                                     className="px-4 py-2"
                                                     style={{
-                                                        width: "10%",
+                                                        width: "50%",
                                                         textAlign: "center",
-                                                        fontSize: "12px",
+                                                        fontSize: "10px",
                                                     }}
                                                 >
                                                     NIM
@@ -359,7 +416,7 @@ const Perwalian = () => {
                                                     style={{
                                                         width: "15%",
                                                         textAlign: "center",
-                                                        fontSize: "12px",
+                                                        fontSize: "10px",
                                                     }}
                                                 >
                                                     Prodi
@@ -370,7 +427,7 @@ const Perwalian = () => {
                                                     style={{
                                                         width: "10%",
                                                         textAlign: "center",
-                                                        fontSize: "12px",
+                                                        fontSize: "10px",
                                                     }}
                                                 >
                                                     Angkatan
@@ -381,7 +438,7 @@ const Perwalian = () => {
                                                     style={{
                                                         width: "5%",
                                                         textAlign: "center",
-                                                        fontSize: "12px",
+                                                        fontSize: "10px",
                                                     }}
                                                 >
                                                     IP Lalu
@@ -392,7 +449,7 @@ const Perwalian = () => {
                                                     style={{
                                                         width: "3%",
                                                         textAlign: "center",
-                                                        fontSize: "12px",
+                                                        fontSize: "10px",
                                                     }}
                                                 >
                                                     SKS Diambil
@@ -401,9 +458,9 @@ const Perwalian = () => {
                                                     scope="col"
                                                     className="px-4 py-2"
                                                     style={{
-                                                        width: "10%",
+                                                        width: "5%",
                                                         textAlign: "center",
-                                                        fontSize: "12px",
+                                                        fontSize: "10px",
                                                     }}
                                                 >
                                                     Status Mahasiswa
@@ -412,9 +469,20 @@ const Perwalian = () => {
                                                     scope="col"
                                                     className="px-4 py-2"
                                                     style={{
+                                                        width: "5%",
+                                                        textAlign: "center",
+                                                        fontSize: "10px",
+                                                    }}
+                                                >
+                                                    Status IRS
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-4 py-2"
+                                                    style={{
                                                         width: "10%",
                                                         textAlign: "center",
-                                                        fontSize: "12px",
+                                                        fontSize: "10px",
                                                     }}
                                                 >
                                                     Detail
@@ -445,36 +513,42 @@ const Perwalian = () => {
                                                                 />
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                        <td className="px-4 py-2 text-[12px] text-center">
                                                             {index + 1}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px]">
+                                                        <td className="px-4 py-2 text-[12px]">
                                                             {item.nama}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px]">
+                                                        <td className="px-4 py-2 text-[12px] text-center">
                                                             {item.nim}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px]">
+                                                        <td className="px-4 py-2 text-[12px]">
                                                             {item.nama_prodi}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                        <td className="px-4 py-2 text-[12px] text-center">
                                                             {item.angkatan}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px] text-center">
-                                                            {item.ipk.toFixed(
-                                                                2
-                                                            )}
+                                                        <td className="px-4 py-2 text-[12px] text-center">
+                                                            {(
+                                                                parseFloat(
+                                                                    item.ip_lalu
+                                                                ) || 0
+                                                            ).toFixed(2)}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px] text-center">
-                                                            {item.sks_kumulatif}
+                                                        <td className="px-4 py-2 text-[12px] text-center">
+                                                            {item.sks_diambil ||
+                                                                0}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                        <td className="px-4 py-2 text-[12px] text-center">
                                                             {item.status}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-[12px] text-center">
+                                                            {item.status_irs}
                                                         </td>
                                                         <td className="flex items-center justify-center py-3">
                                                             <a
                                                                 href={`/dosen/perwalian/detail/${item.nim}`}
-                                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
+                                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[12px]"
                                                             >
                                                                 Detail
                                                             </a>

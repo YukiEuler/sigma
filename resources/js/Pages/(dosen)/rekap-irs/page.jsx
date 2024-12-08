@@ -250,7 +250,6 @@ const RekapIRS = () => {
 
                                 {activeTab === "Belum IRS" && (
                                     <div>
-                                        Belum IRS
                                         <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[370px] scrollbar-hide">
                                             <style jsx>{`
                                                 .scrollbar-hide::-webkit-scrollbar {
@@ -442,7 +441,6 @@ const RekapIRS = () => {
                                 )}
                                 {activeTab === "Belum Disetujui" && (
                                     <div>
-                                        Belum Disetujui
                                         <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[370px] scrollbar-hide">
                                             <style jsx>{`
                                                 .scrollbar-hide::-webkit-scrollbar {
@@ -634,7 +632,6 @@ const RekapIRS = () => {
                                 )}
                                 {activeTab === "Sudah Disetujui" && (
                                     <div>
-                                        Sudah Disetujui
                                         <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[370px] scrollbar-hide">
                                             <style jsx>{`
                                                 .scrollbar-hide::-webkit-scrollbar {
