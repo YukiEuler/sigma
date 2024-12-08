@@ -362,6 +362,19 @@ const AturJadwal = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // jika jadwal kosong
+        if (scheduleForms.length === 0) {
+            Swal.fire({
+                title: "Error!",
+                text: "Jadwal tidak boleh kosong.",
+                icon: "error",
+                customClass: {
+                    confirmButton: "btn btn-danger",
+                },
+            });
+            return;
+        }
+
         for (const kelas of scheduleForms) {
             let jumSks = 0;
             for (const jadwal of kelas.jadwal) {
@@ -564,7 +577,8 @@ const AturJadwal = () => {
                 return matchesSearch;
             }
 
-            const isOdd = course.semester % 2 === 1;
+ 
+               const isOdd = course.semester % 2 === 1;
             return (
                 matchesSearch &&
                 ((semesterFilter === "ganjil" && isOdd) ||
@@ -1067,12 +1081,14 @@ const AturJadwal = () => {
                                 ))}
 
                                 <div className="flex justify-start">
-                                    {status === 'belum' && (<button
-                                        type="submit"
-                                        className="bg-blue-600 text-white px-4 py-2 mr-2 rounded hover:bg-blue-700"
-                                    >
-                                        Simpan
-                                    </button>)}
+                                    {status === 'belum' && scheduleForms.length > 0 && (
+                                        <button
+                                            type="submit"
+                                            className="bg-blue-600 text-white px-4 py-2 mr-2 rounded hover:bg-blue-700"
+                                        >
+                                            Simpan
+                                        </button>
+                                    )}
                                 </div>
                             </form>
                         </div>
