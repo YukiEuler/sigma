@@ -7,190 +7,7 @@ const DashboardDosen = () => {
     const { props } = usePage();
     const dosenData = props.dosen;
     const [dosen, setDosen] = useState(dosenData);
-
-    // const allStudents = [
-    //     {
-    //         id: 1,
-    //         name: "Budi Santoso",
-    //         nim: "24010121130001",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2024",
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Ani Wijaya",
-    //         nim: "24010121130002",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2024",
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "Dewi Putri",
-    //         nim: "24010121130003",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2024",
-    //     },
-    //     {
-    //         id: 4,
-    //         name: "Eko Prasetyo",
-    //         nim: "24010121130004",
-    //         status: "Aktif",
-    //         irsStatus: "Belum",
-    //         verificationStatus: "Belum",
-    //         angkatan: "2023",
-    //     },
-    //     {
-    //         id: 5,
-    //         name: "Fitri Handayani",
-    //         nim: "24010121130005",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2023",
-    //     },
-    //     {
-    //         id: 6,
-    //         name: "Guntur Prakoso",
-    //         nim: "24010121130006",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2023",
-    //     },
-    //     {
-    //         id: 7,
-    //         name: "Hani Sulistyo",
-    //         nim: "24010121130007",
-    //         status: "Aktif",
-    //         irsStatus: "Belum",
-    //         verificationStatus: "Belum",
-    //         angkatan: "2023",
-    //     },
-    //     {
-    //         id: 8,
-    //         name: "Indra Kusuma",
-    //         nim: "24010121130008",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Belum",
-    //         angkatan: "2022",
-    //     },
-    //     {
-    //         id: 9,
-    //         name: "Joko Widodo",
-    //         nim: "24010121130009",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2022",
-    //     },
-    //     {
-    //         id: 10,
-    //         name: "Kartini Sari",
-    //         nim: "24010121130010",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2022",
-    //     },
-    //     {
-    //         id: 11,
-    //         name: "Lisa Permata",
-    //         nim: "24010121130011",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2022",
-    //     },
-    //     {
-    //         id: 12,
-    //         name: "Mario Teguh",
-    //         nim: "24010121130012",
-    //         status: "Aktif",
-    //         irsStatus: "Belum",
-    //         verificationStatus: "Belum",
-    //         angkatan: "2021",
-    //     },
-    //     {
-    //         id: 13,
-    //         name: "Nina Septiani",
-    //         nim: "24010121130013",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2021",
-    //     },
-    //     {
-    //         id: 14,
-    //         name: "Oscar Putra",
-    //         nim: "24010121130014",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2021",
-    //     },
-    //     {
-    //         id: 15,
-    //         name: "Putri Ayu",
-    //         nim: "24010121130015",
-    //         status: "Aktif",
-    //         irsStatus: "Belum",
-    //         verificationStatus: "Belum",
-    //         angkatan: "2020",
-    //     },
-    //     {
-    //         id: 16,
-    //         name: "Qori Rahman",
-    //         nim: "24010121130016",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2020",
-    //     },
-    //     {
-    //         id: 17,
-    //         name: "Rudi Hartono",
-    //         nim: "24010121130017",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Belum",
-    //         angkatan: "2020",
-    //     },
-    //     {
-    //         id: 18,
-    //         name: "Siti Nurhaliza",
-    //         nim: "24010121130018",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2019",
-    //     },
-    //     {
-    //         id: 19,
-    //         name: "Tono Pradana",
-    //         nim: "24010121130019",
-    //         status: "Aktif",
-    //         irsStatus: "Belum",
-    //         verificationStatus: "Belum",
-    //         angkatan: "2019",
-    //     },
-    //     {
-    //         id: 20,
-    //         name: "Umi Kalsum",
-    //         nim: "24010121130020",
-    //         status: "Aktif",
-    //         irsStatus: "Sudah",
-    //         verificationStatus: "Sudah",
-    //         angkatan: "2019",
-    //     },
-    // ];
-
+    const stats = props.mahasiswaStats;
     const allStudents = props.allstudent;
     console.log (props.allstudent)
 
@@ -209,16 +26,21 @@ const DashboardDosen = () => {
             : allStudents.filter((s) => s.angkatan === selectedYear);
 
     // Calculate statistics
-    const totalStudents = students.length;
-    const notFilledIRS = students.filter(
-        (s) => s.is_verified === null || s.diajukan === 0
-    ).length;
-    const notVerifiedIRS = students.filter(
-        (s) => s.is_verified === 0 && s.diajukan === 1
-    ).length;
-    const verifiedIRS = students.filter(
-        (s) => s.is_verified === 1 && s.diajukan === 1
-    ).length;
+    // const totalStudents = students.filter(s => s.status === "Aktif").length
+    // const notFilledIRS = students.filter(
+    //     (s) => s.is_verified === null || s.diajukan === 0
+    // ).length;
+    // const notVerifiedIRS = students.filter(
+    //     (s) => s.is_verified === 0 && s.diajukan === 1
+    // ).length;
+    // const verifiedIRS = students.filter(
+    //     (s) => s.is_verified === 1 && s.diajukan === 1
+    // ).length;
+
+    const totalStudents = stats.total_aktif;
+    const notFilledIRS = stats.belum_isi_irs;
+    const notVerifiedIRS = stats.belum_disetujui;
+    const verifiedIRS = stats.sudah_disetujui;
 
     
 
