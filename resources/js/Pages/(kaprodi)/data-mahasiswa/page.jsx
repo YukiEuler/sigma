@@ -28,28 +28,28 @@ const DataMahasiswa = () => {
 
     const applyFilters = () => {
         let result = [...mahasiswaData];
-
-        // Apply angkatan filter only if not "all"
+    
+        // Apply angkatan filter
         if (filters.angkatan && filters.angkatan !== "all") {
             result = result.filter(
                 (item) => item.angkatan.toString() === filters.angkatan
             );
         }
-
-        // Apply doswal filter only if not "all"
+    
+        // Apply doswal filter
         if (filters.doswal && filters.doswal !== "all") {
             result = result.filter(
                 (item) => item.dosen.nama === filters.doswal
             );
         }
-
-        // Apply statusIRS filter only if not "all"
-        // if (filters.statusIRS && filters.statusIRS !== "all") {
-        //     result = result.filter(
-        //         (item) => getRandomStatusIRS() === filters.statusIRS
-        //     );
-        // }
-
+    
+        // Apply statusIRS filter - Perbaikan di sini
+        if (filters.statusIRS && filters.statusIRS !== "all") {
+            result = result.filter(
+                (item) => item.status_irs === filters.statusIRS
+            );
+        }
+    
         // Apply search filter
         if (filters.search) {
             result = result.filter(
@@ -62,7 +62,7 @@ const DataMahasiswa = () => {
                         .includes(filters.search.toLowerCase())
             );
         }
-
+    
         setFilteredMahasiswa(result);
     };
 
@@ -133,21 +133,21 @@ const DataMahasiswa = () => {
                                             <select
                                                 id="statusIRS"
                                                 name="statusIRS"
-                                                // value={filters.statusIRS}
-                                                // onChange={handleFilterChange}
+                                                value={filters.statusIRS}
+                                                onChange={handleFilterChange}
                                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             >
                                                 <option value="">
                                                     Semua Status IRS
                                                 </option>
-                                                <option value="Belum Mengisi">
-                                                    Belum Mengisi
+                                                <option value="Not Submitted">
+                                                    Not Submitted
                                                 </option>
-                                                <option value="Belum Disetujui">
-                                                    Belum Disetujui
+                                                <option value="Not Approved">
+                                                    Not Approved
                                                 </option>
-                                                <option value="Sudah Disetujui">
-                                                    Sudah Disetujui
+                                                <option value="Approved">
+                                                    Approved
                                                 </option>
                                             </select>
                                         </td>

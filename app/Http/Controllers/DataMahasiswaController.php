@@ -54,11 +54,11 @@ class DataMahasiswaController extends Controller
             $mhsIps = $ips->firstWhere('nim', $mhs->nim);
             $mhs->ip_lalu = $mhsIps ? $mhsIps->IPS : null;
             if ($mhs->irs->isEmpty() || $mhs->irs[0]->diajukan == 0){
-                $mhs->status_irs = 'Belum Diajukan';
+                $mhs->status_irs = 'Not Submitted';
             } elseif ($mhs->irs[0]->disetujui == 0){
-                $mhs->status_irs = 'Belum Disetujui';
+                $mhs->status_irs = 'Not Approved';
             } else {
-                $mhs->status_irss = 'Sudah Disetujui';
+                $mhs->status_irss = 'Aprroved';
             }
         });
         error_log($mahasiswa);
@@ -135,6 +135,30 @@ class DataMahasiswaController extends Controller
             $maxSks = 24;
         }
         $mahasiswa->maxSks = $maxSks;
+
+        $jumlahSksWajib = Khs::join('mata_kuliah', 'khs.kode_mk', '=', 'mata_kuliah.kode_mk')
+            ->where('khs.nim', $mahasiswa->nim)
+            ->where('mata_kuliah.jenis', 'Wajib')
+            ->sum('mata_kuliah.sks'); // Changed from bobot to sks based on your MataKuliah model
+
+        $jumlahSksPilihan = Khs::join('mata_kuliah', 'khs.kode_mk', '=', 'mata_kuliah.kode_mk')
+            ->where('khs.nim', $mahasiswa->nim)
+            ->where('mata_kuliah.jenis', 'Pilihan')
+            ->sum('mata_kuliah.sks'); // Changed from bobot to sks based on your MataKuliah model
+
+        // For debugging, let's add these queries
+        // $khsData = Khs::with('mataKuliah')
+        //     ->where('nim', $mahasiswa->nim)
+        //     ->get();
+
+        // dd([
+        //     'SKS Wajib' => $jumlahSksWajib,
+        //     'SKS Pilihan' => $jumlahSksPilihan,
+        //     'KHS Data' => $khsData
+        // ]);
+
+        $mahasiswa->sks_wajib = $jumlahSksWajib ?? 0;
+        $mahasiswa->sks_pilihan = $jumlahSksPilihan ?? 0;
         
         return Inertia::render('(kaprodi)/data-mahasiswa/detail', [
             'dosen' => $dosen,
