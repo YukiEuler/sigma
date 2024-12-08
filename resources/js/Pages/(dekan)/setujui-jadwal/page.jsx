@@ -177,7 +177,9 @@ const SetujuiJadwal = ({}) => {
                                                                         }
                                                                     });
                                                                 }}
-                                                                className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[14px] text-center w-16">
+                                                                className={`${
+                                                                    prodi.disetujui !== 0 ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'
+                                                                } text-white px-2 py-1 rounded text-[14px] text-center w-16`}>
                                                                 Setujui
                                                             </button>
                                                         </td>
