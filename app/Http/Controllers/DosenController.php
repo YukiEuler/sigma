@@ -48,9 +48,10 @@ class DosenController extends Controller
             })
             ->leftJoin('kelas', 'irs.id_kelas', '=', 'kelas.id')
             ->leftJoin('mata_kuliah', 'kelas.kode_mk', '=', 'mata_kuliah.kode_mk')
-            ->groupBy('mahasiswa.nim') 
+            ->groupBy('mahasiswa.nim', 'mahasiswa.nama') 
             ->select(
-                'mahasiswa.*',
+                'mahasiswa.nim',
+                'mahasiswa.nama',
                 DB::raw('MAX(irs.id) as irs_id'),
                 DB::raw('MAX(irs.tahun_akademik) as irs_tahun_akademik'),
                 DB::raw('MAX(irs.is_verified) as is_verified'),

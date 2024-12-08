@@ -54,7 +54,7 @@ class AturKelasController extends Controller
             }
         }
         
-        $listDosen = Dosen::where('id_prodi', $dosen->id_prodi)
+        $listDosen = Dosen::where('id_prodi', $kaprodi->id_prodi)
         ->select('nip', 'nama')
         ->get();
 

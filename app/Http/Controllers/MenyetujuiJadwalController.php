@@ -50,6 +50,7 @@ class MenyetujuiJadwalController extends Controller
         
         
         $programStudiList = DB::table('kelas')
+            ->whereIn('kelas.status', ['diajukan', 'disetujui'])
             ->leftJoin('mata_kuliah', function ($join) use ($tahunAkademik) {
                 $join->on('mata_kuliah.kode_mk', '=', 'kelas.kode_mk')
                     ->where('kelas.tahun_akademik', '=', $tahunAkademik);
