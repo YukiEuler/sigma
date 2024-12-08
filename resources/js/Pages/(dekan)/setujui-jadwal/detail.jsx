@@ -20,6 +20,7 @@ const DetailJadwal = () => {
 
 
     const getUnscheduledClasses = () => {
+        console.log(mataKuliahData);
         if (!mataKuliahData) return [];
         return mataKuliahData.flatMap(course => 
             course.kelas.filter(kelas => 
@@ -158,6 +159,7 @@ const DetailJadwal = () => {
                                                                     schedule,
                                                                     index
                                                                 ) => {
+                                                                    console.log(schedule);
                                                                     if (
                                                                         schedule.day ===
                                                                             day &&
@@ -198,7 +200,7 @@ const DetailJadwal = () => {
                                                                                 <p className="text-sm">
                                                                                     Kuota:{" "}
                                                                                     {
-                                                                                        schedule.kuota
+                                                                                        schedule.quota
                                                                                     }
                                                                                 </p>
                                                                                 <p className="text-sm">

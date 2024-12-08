@@ -121,6 +121,7 @@ class MenyetujuiJadwalController extends Controller
             ->join('ruangan', 'jadwal_kuliah.id_ruang', '=', 'ruangan.id_ruang')
             ->where('mata_kuliah.id_prodi', '=', $selectedProdi->id_prodi)
             ->where('kelas.tahun_akademik', '=', $tahunAkademik)
+            ->select('*', 'kelas.kuota as kuota_kelas')
             ->get();
 
         foreach ($jadwal as $j) {
@@ -128,7 +129,7 @@ class MenyetujuiJadwalController extends Controller
                     'class' => $j->kode_kelas,
                     'courseId' => $j->kode_mk,
                     'courseName' => $j->nama,
-                    'quota' => $j->kuota,
+                    'quota' => $j->kuota_kelas,
                     'room' => $j->nama_ruang,
                     'day' => $j->hari,
                     'startTime' => $j->waktu_mulai,

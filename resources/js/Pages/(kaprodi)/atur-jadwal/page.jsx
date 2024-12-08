@@ -793,7 +793,7 @@ const AturJadwal = () => {
                                                                                 <p className="text-sm">
                                                                                     Kuota:{" "}
                                                                                     {
-                                                                                        schedule.kuota
+                                                                                        schedule.quota
                                                                                     }
                                                                                 </p>
                                                                                 <p className="text-sm">

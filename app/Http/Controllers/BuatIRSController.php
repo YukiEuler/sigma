@@ -113,10 +113,10 @@ class BuatIRSController extends Controller
     $jadwal = Kelas::with(['mataKuliah', 'jadwalKuliah.ruangan'])
     ->where('tahun_akademik', $tahunAkademik)
     ->where('status', 'disetujui')
-    ->whereHas('mataKuliah', function($query) use ($periode, $mahasiswa) {
-        $query->where('id_prodi', $mahasiswa->id_prodi)
-            ->whereRaw('MOD(semester, 2) = ?', [1-$periode]);
-    })
+    // ->whereHas('mataKuliah', function($query) use ($periode, $mahasiswa) {
+    //     $query->where('id_prodi', $mahasiswa->id_prodi)
+    //         ->whereRaw('MOD(semester, 2) = ?', [1-$periode]);
+    // })
     ->withCount('irs as jumlah_mahasiswa')
     ->get()
     ->groupBy('kode_mk')
@@ -220,10 +220,10 @@ class BuatIRSController extends Controller
         $jadwal = Kelas::with(['mataKuliah', 'jadwalKuliah.ruangan'])
             ->where('tahun_akademik', $tahunAkademik)
             ->where('status', 'disetujui')
-            ->whereHas('mataKuliah', function($query) use ($periode, $mahasiswa) {
-                $query->where('id_prodi', $mahasiswa->id_prodi)
-                    ->whereRaw('MOD(semester, 2) = ?', [1-$periode]);
-            })
+            // ->whereHas('mataKuliah', function($query) use ($periode, $mahasiswa) {
+            //     $query->where('id_prodi', $mahasiswa->id_prodi)
+            //         ->whereRaw('MOD(semester, 2) = ?', [1-$periode]);
+            // })
             ->withCount('irs as jumlah_mahasiswa')
             ->get()
             ->groupBy('kode_mk')
