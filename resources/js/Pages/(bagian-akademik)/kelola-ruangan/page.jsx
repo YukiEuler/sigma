@@ -781,7 +781,7 @@ const KelolaRuangan = ({ programStudiList }) => {
                                                                   1 &&
                                                               item.disetujui ===
                                                                   0
-                                                            ? "Submitted"
+                                                            ? "Not Approved"
                                                             : "Approved"}
                                                     </td>
                                                     <td className="px-4 py-2 flex justify-center">
