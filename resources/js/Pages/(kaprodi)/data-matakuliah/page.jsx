@@ -116,63 +116,6 @@ const DataMataKuliah = ({ mataKuliah }) => {
             }
         });
     };
-    // onSuccess: () => {
-    //     handleCloseModal();
-    //     setNewMataKuliah({
-    //         kode: "",
-    //         nama: "",
-    //         sks: "",
-    //         semester: "",
-    //         jenis: "Wajib",
-    //     });
-
-    //     Swal.fire({
-    //         title: "Berhasil!",
-    //         text: "Mata kuliah berhasil ditambahkan",
-    //         icon: "success",
-    //         customClass: {
-    //             confirmButton: "btn btn-success",
-    //         },
-    //     }).then(() => {
-    //         // Refresh halaman setelah alert ditutup
-    //         window.location.reload();
-    //     });
-    // },
-    // onError: (errors) => {
-    //     // Check jika error adalah kode MK yang sama
-    //     if (errors.message) {
-    //         let errorMessage = "";
-
-    //         // Handle kasus di mana ada duplikasi kode dan/atau nama
-    //         if (errors.duplicate) {
-    //             if (
-    //                 errors.duplicate.kode &&
-    //                 errors.duplicate.nama
-    //             ) {
-    //                 errorMessage =
-    //                     "Kode dan nama mata kuliah sudah digunakan!";
-    //             } else if (errors.duplicate.kode) {
-    //                 errorMessage =
-    //                     "Kode mata kuliah sudah digunakan!";
-    //             } else if (errors.duplicate.nama) {
-    //                 errorMessage =
-    //                     "Nama mata kuliah sudah digunakan!";
-    //             }
-    //         } else {
-    //             // Handle error lainnya
-    //             errorMessage = Object.values(errors.message)[0];
-    //         }
-
-    //         Swal.fire({
-    //             title: "Gagal!",
-    //             text: errorMessage,
-    //             icon: "error",
-    //             customClass: {
-    //                 confirmButton: "btn btn-danger",
-    //             },
-    //         });
-    //     }
-    // },
 
     const handleDelete = (item) => {
         Swal.fire({
@@ -429,22 +372,22 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                         key={mk.id}
                                                         className="bg-gray-100 border-b"
                                                     >
-                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                        <td className="px-4 py-3 text-[14px] text-center">
                                                             {index + 1}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                        <td className="px-4 py-3 text-[14px] text-center">
                                                             {mk.kode_mk}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px]">
+                                                        <td className="px-4 py-3 text-[14px]">
                                                             {mk.nama}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                        <td className="px-4 py-3 text-[14px] text-center">
                                                             {mk.sks}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                        <td className="px-4 py-3 text-[14px] text-center">
                                                             {mk.semester}
                                                         </td>
-                                                        <td className="px-4 py-2 text-[14px] text-center">
+                                                        <td className="px-4 py-3 text-[14px] text-center">
                                                             {mk.jenis}
                                                         </td>
                                                         {/* <td className="flex items-center justify-center py-3">

@@ -282,7 +282,7 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                 </div>
                 <div className="grid grid-cols-1 gap-5 mt-6">
                     <div className="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg bg-gray-100">
-                        <div className="justify-between px-4 pb-4 border rounded-lg shadow-lg bg-white">
+                        <div className="justify-between px-4 pb-4 border rounded-lg shadow-lg bg-white h-[580px]">
                             <div className="flex flex-col space-y-2">
                                 
                                 <div className="flex justify-between items-center mt-4 mb-2">
@@ -302,13 +302,13 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                                                 value={searchTerm}
                                                 onChange={handleSearchChange}
                                                 placeholder="Cari Mata Kuliah..."
-                                                className="w-full pl-10 pr-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full pl-10 pr-4 py-2 text-gray-700 bg-gray-100  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="relative overflow-x-auto mt-1 rounded-lg overflow-auto h-[420px] scrollbar-hide">
+                                <div className="relative overflow-x-auto mt-2 rounded-lg overflow-auto max-h-[calc(100vh-250px)] scrollbar-hide">
                                     <style jsx>{`
                                         .scrollbar-hide::-webkit-scrollbar {
                                             display: none;
