@@ -191,6 +191,45 @@ const Perwalian = () => {
                                                     },
                                                     {
                                                         onSuccess: () => {
+                                                            // Update status IRS untuk mahasiswa yang dipilih
+                                                            const updatedMahasiswa =
+                                                                filteredMahasiswa.map(
+                                                                    (mhs) => {
+                                                                        if (
+                                                                            selectedMahasiswa.find(
+                                                                                (
+                                                                                    selected
+                                                                                ) =>
+                                                                                    selected.nim ===
+                                                                                    mhs.nim
+                                                                            )
+                                                                        ) {
+                                                                            return {
+                                                                                ...mhs,
+                                                                                status_irs:
+                                                                                    "Approved",
+                                                                            };
+                                                                        }
+                                                                        return mhs;
+                                                                    }
+                                                                );
+
+                                                            // Update state mahasiswa dan filtered mahasiswa
+                                                            setMahasiswa(
+                                                                updatedMahasiswa
+                                                            );
+                                                            setFilteredMahasiswa(
+                                                                updatedMahasiswa
+                                                            );
+
+                                                            // Reset checkbox selections
+                                                            setCheckedItems(
+                                                                new Array(
+                                                                    updatedMahasiswa.length
+                                                                ).fill(false)
+                                                            );
+                                                            setSelectAll(false);
+
                                                             Swal.fire({
                                                                 title: "Sukses!",
                                                                 text: "IRS berhasil disetujui",

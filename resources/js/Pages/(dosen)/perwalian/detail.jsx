@@ -1,16 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
 import { usePage } from "@inertiajs/inertia-react";
+import KaprodiLayout from "../../../Layouts/KaprodiLayout";
 import DosenLayout from "../../../Layouts/DosenLayout";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { Icon } from "@iconify/react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-const DetailPerwalian = () => {
+const DetailMahasiswaPerwalian = () => {
     const { props } = usePage();
     const dosenData = props.dosen;
     const [dosen, setDosen] = useState(dosenData);
     const mahasiswaData = props.mahasiswa;
+    const irsData = props.irs;
+    const khsData = props.khs;
     const [mahasiswa, setMahasiswa] = useState(mahasiswaData);
     const [openSemesters, setOpenSemesters] = useState({});
     const [isApproved, setIsApproved] = useState(false);
@@ -31,7 +34,7 @@ const DetailPerwalian = () => {
         }));
     };
 
-    const handleDownloadPDF = (semesterKey) => {
+    const downloadIRS = (semesterKey) => {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -42,7 +45,7 @@ const DetailPerwalian = () => {
         doc.text(title, (pageWidth - titleWidth) / 2, 22);
 
         // Tambahkan informasi tambahan
-        const tahunAjaran = semesterData[semesterKey].title.split('|').pop();
+        const tahunAjaran = irsData[semesterKey].title.split('|').pop();
         const nim = mahasiswaData.nim;
         const nama = mahasiswaData.nama;
         const programStudi = mahasiswaData.nama_prodi;
@@ -74,37 +77,19 @@ const DetailPerwalian = () => {
         doc.save("Print IRS.pdf");
     };
 
-     const semesterData = props.irs;
-
-
-    // KHS
-    function hitungBobot(nilaiHuruf) {
-        switch (nilaiHuruf.toUpperCase()) {
-            case "A":
-                return 4;
-            case "B":
-                return 3;
-            case "C":
-                return 2;
-            case "D":
-                return 1;
-            case "E":
-                return 0;
-            default:
-                return null;
-        }
-    }
-
-    const downloadKHS = () => {
+    const downloadKHS = (semesterKey) => {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
+        const semesterInfo = khsData[semesterKey];
 
+        // Tambahkan judul
         const title = "KARTU HASIL STUDI";
         doc.setFontSize(18);
         const titleWidth = doc.getTextWidth(title);
         doc.text(title, (pageWidth - titleWidth) / 2, 22);
 
-        const tahunAjaran = semesterData[semesterKey].title.split('|').pop();
+        // Tambahkan informasi tambahan
+        const tahunAjaran = khsData[semesterKey].title.split('|').pop();
         const nim = mahasiswaData.nim;
         const nama = mahasiswaData.nama;
         const programStudi = mahasiswaData.nama_prodi;
@@ -112,10 +97,10 @@ const DetailPerwalian = () => {
 
         doc.setFontSize(12);
         const tahunAjaranWidth = doc.getTextWidth(
-            `Tahun Akademik: ${tahunAjaran}`
+            `${tahunAjaran}`
         );
         doc.text(
-            `Tahun Akademik: ${tahunAjaran}`,
+            `${tahunAjaran}`,
             (pageWidth - tahunAjaranWidth) / 2,
             28
         );
@@ -126,32 +111,47 @@ const DetailPerwalian = () => {
         doc.text(`Program Studi: ${programStudi}`, 14, 50);
         doc.text(`Dosen Wali: ${dosenWali}`, 14, 56);
 
-        // Tambahkan tabel KHS
+        // Tambahkan tabel
         doc.autoTable({
-            html: "#khs-mahasiswa",
+            html: `#khs-mahasiswa-${semesterKey}`,
             startY: 62, // Posisi Y di mana tabel akan dimulai
         });
 
-        // Posisi Y di mana informasi IP akan dimulai, setelah tabel
-        let finalY = doc.lastAutoTable.finalY + 10;
+        const finalY = doc.lastAutoTable.finalY + 10;
+        // Calculate text widths for centering
+        doc.setFont("helvetica", "normal");
+        const numeratorText = "sum(SKS × Bobot)"; 
+        const denominatorText = "sum(SKS)";
+        const numeratorWidth = doc.getTextWidth(numeratorText);
+        const denominatorWidth = doc.getTextWidth(denominatorText);
 
-        const ipSemester = 3.81;
-        const ipKumulatif = 3.85;
+        // Calculate position to center texts
+        const lineStart = 30;
+        const lineLength = 50;
+        const lineEnd = lineStart + lineLength;
+        const centerX = lineStart + (lineLength/2);
+        const numerator = semesterInfo.courses.reduce((sum, course) => sum + (course.sks_x_bobot || 0), 0).toFixed(2);
+        const denominator = semesterInfo.sks;
+        const ip = (numerator/denominator).toFixed(2);
 
-        doc.setFontSize(10);
-        doc.text(`IP Semester: ${ipSemester}`, 14, finalY);
-        doc.text(`IP Kumulatif: ${ipKumulatif}`, 14, finalY + 6);
+        // Draw fraction components
+        doc.text("IP = ", 14, finalY + 10);
+        doc.text(numeratorText, centerX - (numeratorWidth/2), finalY + 8);
+        doc.line(lineStart, finalY + 9, lineEnd, finalY + 9);
+        doc.text(denominatorText, centerX - (denominatorWidth/2), finalY + 14);
+
+        // Rest of the calculation display
+        doc.text(`= ${numerator} / ${denominator}`, lineEnd + 10, finalY + 10);
+        doc.text(`= ${ip}`, lineEnd + 40, finalY + 10);
 
         // Simpan PDF
-        doc.save("KHS.pdf");
+        doc.save("Print KHS.pdf");
     };
-    
+
     useEffect(() => {
         setMahasiswa(mahasiswaData);
         setDosen(dosenData);
     }, [mahasiswaData, dosenData]);
-
-    console.log(semesterData);
 
     return (
         <DosenLayout dosen={dosen}>
@@ -236,7 +236,7 @@ const DetailPerwalian = () => {
                                                 IP lalu
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 3.78
+                                                : {mahasiswa.ips}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -244,7 +244,7 @@ const DetailPerwalian = () => {
                                                 Beban studi maks
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 24
+                                                : {mahasiswa.maxSks}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -271,7 +271,7 @@ const DetailPerwalian = () => {
                                                 Wajib
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 75
+                                                : {mahasiswa.sks_wajib}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -279,7 +279,7 @@ const DetailPerwalian = () => {
                                                 Pilihan
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 22
+                                                : {mahasiswa.sks_pilihan}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -287,7 +287,7 @@ const DetailPerwalian = () => {
                                                 Total
                                             </span>
                                             <span className="ml-2 font-medium">
-                                                : 97
+                                                : {mahasiswa.sks_kumulatif}
                                             </span>
                                         </div>
                                     </div>
@@ -302,357 +302,57 @@ const DetailPerwalian = () => {
                         <div className="flex items-start justify-between p-3 border rounded-lg shadow-lg bg-white">
                             {activeTab === "IRS" && (
                                 <div className="w-full max-w-6xl mx-auto p-4">
-                                    <div className="border rounded-md shadow-sm">
-                                        IRS
-                                        {Object.entries(semesterData).map(
-                                            ([semesterKey, semesterInfo]) => (
+                                   <div className="border rounded-md shadow-sm">
+                                    {Object.entries(irsData).map(
+                                        ([semesterKey, semesterInfo]) => (
+                                            <div
+                                                key={semesterKey}
+                                                className="mb-4"
+                                            >
                                                 <div
-                                                    key={semesterKey}
-                                                    className="mb-4"
-                                                >
-                                                    <div
-                                                        onClick={() =>
-                                                            toggleSemester(
-                                                                semesterKey
-                                                            )
-                                                        }
-                                                        className="flex justify-between items-center p-4 bg-blue-100 hover:bg-blue-200 cursor-pointer rounded-t"
-                                                    >
-                                                        <div>
-                                                            <h2 className="text-blue-900 font-medium">
-                                                                {
-                                                                    semesterInfo.title
-                                                                }
-                                                            </h2>
-                                                            <p className="text-sm text-blue-700">
-                                                                Jumlah SKS{" "}
-                                                                {
-                                                                    semesterInfo.sks
-                                                                }
-                                                            </p>
-                                                        </div>
-                                                        {openSemesters[
+                                                    onClick={() =>
+                                                        toggleSemester(
                                                             semesterKey
-                                                        ] ? (
-                                                            <ChevronUp className="text-blue-900" />
-                                                        ) : (
-                                                            <ChevronDown className="text-blue-900" />
-                                                        )}
+                                                        )
+                                                    }
+                                                    className="flex justify-between items-center p-4 bg-blue-100 hover:bg-blue-200 cursor-pointer rounded-t"
+                                                >
+                                                    <div>
+                                                        <h2 className="text-blue-900 font-medium">
+                                                            {semesterInfo.title}
+                                                        </h2>
+                                                        <p className="text-sm text-blue-700">
+                                                            Jumlah SKS{" "}
+                                                            {semesterInfo.sks}
+                                                        </p>
                                                     </div>
                                                     {openSemesters[
                                                         semesterKey
-                                                    ] && (
-                                                        <div className="border border-gray-200 rounded-b p-4">
-                                                            <h3 className="text-center font-bold mb-4">
-                                                                IRS MAHASISWA
-                                                                (SUDAH DISETUJUI
-                                                                WALI)
-                                                            </h3>
-                                                            <div className="overflow-x-auto">
-                                                                <table
-                                                                    className="w-full table-layout-fixed"
-                                                                    id="irs-mahasiswa"
-                                                                >
-                                                                    <thead className="text-[14px]">
-                                                                        <tr className="bg-blue-500 text-white">
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-6 py-3 border"
-                                                                                style={{
-                                                                                    width: "250px",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                NO
-                                                                            </th>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-6 py-3 border"
-                                                                                style={{
-                                                                                    width: "250px",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                KODE
-                                                                            </th>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-6 py-3 border"
-                                                                                style={{
-                                                                                    width: "250px",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                MATA
-                                                                                KULIAH
-                                                                            </th>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-6 py-3 border"
-                                                                                style={{
-                                                                                    width: "250px",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                KELAS
-                                                                            </th>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-6 py-3 border"
-                                                                                style={{
-                                                                                    width: "250px",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                SKS
-                                                                            </th>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-6 py-3 border"
-                                                                                style={{
-                                                                                    width: "250px",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                RUANG
-                                                                            </th>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-6 py-3 border"
-                                                                                style={{
-                                                                                    width: "250px",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                STATUS
-                                                                            </th>
-                                                                            <th
-                                                                                scope="col"
-                                                                                className="px-6 py-3 border"
-                                                                                style={{
-                                                                                    width: "250px",
-                                                                                    textAlign:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                NAMA
-                                                                                DOSEN
-                                                                            </th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody className="text-[14px]">
-                                                                        {semesterInfo.courses.map(
-                                                                            (
-                                                                                course,index
-                                                                            ) => (
-                                                                                <React.Fragment
-                                                                                    key={
-                                                                                        course.kode
-                                                                                    }
-                                                                                >
-                                                                                    <tr className="border">
-                                                                                        <td className="p-2 border text-center">
-                                                                                            {
-                                                                                                index+1
-                                                                                            }
-                                                                                        </td>
-                                                                                        <td className="p-2 border">
-                                                                                            {
-                                                                                                course.kode_mk
-                                                                                            }
-                                                                                        </td>
-                                                                                        <td className="p-2 border">
-                                                                                            {
-                                                                                                course.mata_kuliah.nama
-                                                                                            }
-                                                                                        </td>
-                                                                                        <td className="p-2 border text-center">
-                                                                                            {
-                                                                                                course.kode_kelas
-                                                                                            }
-                                                                                        </td>
-                                                                                        <td className="p-2 border text-center">
-                                                                                            {
-                                                                                                course.sks
-                                                                                            }
-                                                                                        </td>
-                                                                                        <td className="p-2 border">
-                                                                                            {Array.isArray(
-                                                                                                course.jadwal_kuliah
-                                                                                            )
-                                                                                                ? course.jadwal_kuliah.map(
-                                                                                                      (
-                                                                                                          jadwal,
-                                                                                                          index
-                                                                                                      ) => (
-                                                                                                          <div
-                                                                                                              key={
-                                                                                                                  index
-                                                                                                              }
-                                                                                                          >
-                                                                                                              {
-                                                                                                                  jadwal.ruangan.nama_ruang
-                                                                                                              }
-                                                                                                          </div>
-                                                                                                      )
-                                                                                                  )
-                                                                                                : course.jadwal_kuliah.ruangan.nama_ruang}
-                                                                                        </td>
-                                                                                        <td className="p-2 border text-center">
-                                                                                            {
-                                                                                                course.status
-                                                                                            }
-                                                                                        </td>
-                                                                                        <td className="p-2 border">
-                                                                                            {Array.isArray(
-                                                                                                course.mata_kuliah.dosen
-                                                                                            )
-                                                                                                ? course.mata_kuliah.dosen.map(
-                                                                                                      (
-                                                                                                          dosen,
-                                                                                                          index
-                                                                                                      ) => (
-                                                                                                          <div
-                                                                                                              key={
-                                                                                                                  index
-                                                                                                              }
-                                                                                                          >
-                                                                                                              {
-                                                                                                                  dosen.nama
-                                                                                                              }
-                                                                                                          </div>
-                                                                                                      )
-                                                                                                  )
-                                                                                                : course.ruang}
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    {course.jadwal && (
-                                                                                        <tr className="border bg-gray-50">
-                                                                                            <td
-                                                                                                colSpan="8"
-                                                                                                className="p-2 border text-gray-600 italic"
-                                                                                            >
-                                                                                                {Array.isArray(
-                                                                                                    course.jadwal
-                                                                                                )
-                                                                                                    ? course.jadwal.map(
-                                                                                                          (
-                                                                                                              jadwal,
-                                                                                                              index
-                                                                                                          ) => (
-                                                                                                              <div
-                                                                                                                  key={
-                                                                                                                      index
-                                                                                                                  }
-                                                                                                              >
-                                                                                                                  {
-                                                                                                                      jadwal
-                                                                                                                  }
-                                                                                                              </div>
-                                                                                                          )
-                                                                                                      )
-                                                                                                    : course.jadwal}
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    )}
-                                                                                </React.Fragment>
-                                                                            )
-                                                                        )}
-                                                                    </tbody>
-                                                                </table>
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleDownloadPDF(semesterKey)
-                                                                    }
-                                                                    className="w-40 mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                                                >
-                                                                    <div className="flex items-center justify-center">
-                                                                        <Icon
-                                                                            icon="material-symbols-light:print"
-                                                                            height="24"
-                                                                            width="24"
-                                                                        />
-                                                                        <span className="ml-2">
-                                                                            Cetak
-                                                                            IRS
-                                                                        </span>
-                                                                    </div>
-                                                                </button>
-                                                            </div>
-                                                        </div>
+                                                    ] ? (
+                                                        <ChevronUp className="text-blue-900" />
+                                                    ) : (
+                                                        <ChevronDown className="text-blue-900" />
                                                     )}
                                                 </div>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            )}
 
-                            {activeTab === "KHS" && (
-                                <div className="w-full max-w-6xl mx-auto p-4">
-                                    <div className="border rounded-md shadow-sm">
-                                        KHS
-                                        {Object.entries(semesterData).map(
-                                            ([semesterKey, semesterInfo]) => (
-                                                <div
-                                                    key={semesterKey}
-                                                    className="mb-4"
-                                                >
-                                                    <div
-                                                        onClick={() =>
-                                                            toggleSemester(
-                                                                semesterKey
-                                                            )
-                                                        }
-                                                        className="flex justify-between items-center p-4 bg-blue-100 hover:bg-blue-200 cursor-pointer rounded-t"
-                                                    >
-                                                        <div>
-                                                            <h2 className="text-blue-900 font-medium">
-                                                                {
-                                                                    semesterInfo.title
-                                                                }
-                                                            </h2>
-                                                            <p className="text-sm text-blue-700">
-                                                                Jumlah SKS{" "}
-                                                                {
-                                                                    semesterInfo.sks
-                                                                }
-                                                            </p>
-                                                        </div>
-                                                        {openSemesters[
-                                                            semesterKey
-                                                        ] ? (
-                                                            <ChevronUp className="text-blue-900" />
-                                                        ) : (
-                                                            <ChevronDown className="text-blue-900" />
-                                                        )}
-                                                    </div>
-
-                                                    {openSemesters[
-                                                        semesterKey
-                                                    ] && (
-                                                        <div className="border border-gray-200 rounded-b p-4">
-                                                            <h3 className="text-center font-bold mb-4">
-                                                                KHS Mahasiswa
-                                                            </h3>
+                                                {openSemesters[semesterKey] && (
+                                                    <div className="border border-gray-200 rounded-b p-4">
+                                                        <h3 className="text-center font-bold mb-4">
+                                                            IRS MAHASISWA ({semesterInfo.courses[0].is_verified === 1 ? "SUDAH DISETUJUI WALI" : "BELUM DISETUJUI WALI"})
+                                                        </h3>
+                                                        {console.log(semesterInfo)}
+                                                        <div className="overflow-x-auto">
                                                             <table
                                                                 className="w-full table-layout-fixed"
-                                                                id="khs-mahasiswa"
+                                                                id={`irs-mahasiswa-${semesterKey}`}
                                                             >
-                                                                <thead className="bg-blue-500 text-white text-xs">
-                                                                    <tr>
+                                                                <thead className="text-[14px]">
+                                                                    <tr className="bg-blue-500 text-white">
                                                                         <th
                                                                             scope="col"
                                                                             className="px-6 py-3 border"
                                                                             style={{
-                                                                                width: "250px",
+                                                                                width: "50px",
                                                                                 textAlign:
                                                                                     "center",
                                                                             }}
@@ -663,7 +363,7 @@ const DetailPerwalian = () => {
                                                                             scope="col"
                                                                             className="px-6 py-3 border"
                                                                             style={{
-                                                                                width: "250px",
+                                                                                width: "50px",
                                                                                 textAlign:
                                                                                     "center",
                                                                             }}
@@ -686,18 +386,40 @@ const DetailPerwalian = () => {
                                                                             scope="col"
                                                                             className="px-6 py-3 border"
                                                                             style={{
-                                                                                width: "250px",
+                                                                                width: "50px",
                                                                                 textAlign:
                                                                                     "center",
                                                                             }}
                                                                         >
-                                                                            JENIS
+                                                                            KELAS
                                                                         </th>
                                                                         <th
                                                                             scope="col"
                                                                             className="px-6 py-3 border"
                                                                             style={{
-                                                                                width: "250px",
+                                                                                width: "50px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
+                                                                        >
+                                                                            SKS
+                                                                        </th>
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "50px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
+                                                                        >
+                                                                            RUANG
+                                                                        </th>
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "50px",
                                                                                 textAlign:
                                                                                     "center",
                                                                             }}
@@ -708,183 +430,399 @@ const DetailPerwalian = () => {
                                                                             scope="col"
                                                                             className="px-6 py-3 border"
                                                                             style={{
-                                                                                width: "250px",
+                                                                                width: "300px",
                                                                                 textAlign:
                                                                                     "center",
                                                                             }}
                                                                         >
-                                                                            SKS
-                                                                        </th>
-                                                                        <th
-                                                                            scope="col"
-                                                                            className="px-6 py-3 border"
-                                                                            style={{
-                                                                                width: "250px",
-                                                                                textAlign:
-                                                                                    "center",
-                                                                            }}
-                                                                        >
-                                                                            NILAI
-                                                                            HURUF
-                                                                        </th>
-                                                                        <th
-                                                                            scope="col"
-                                                                            className="px-6 py-3 border"
-                                                                            style={{
-                                                                                width: "250px",
-                                                                                textAlign:
-                                                                                    "center",
-                                                                            }}
-                                                                        >
-                                                                            BOBOT
-                                                                        </th>
-                                                                        <th
-                                                                            scope="col"
-                                                                            className="px-6 py-3 border"
-                                                                            style={{
-                                                                                width: "250px",
-                                                                                textAlign:
-                                                                                    "center",
-                                                                            }}
-                                                                        >
-                                                                            SKS
-                                                                            x
-                                                                            BOBOT
+                                                                            NAMA
+                                                                            DOSEN
                                                                         </th>
                                                                     </tr>
                                                                 </thead>
-                                                                <tbody className="text-xs">
+                                                                <tbody className="text-[14px]">
                                                                     {semesterInfo.courses.map(
                                                                         (
                                                                             course,
-                                                                            index
+                                                                            courseIndex
                                                                         ) => (
-                                                                            <tr
+                                                                            <React.Fragment
                                                                                 key={
-                                                                                    index
+                                                                                    course.kode_mk
                                                                                 }
-                                                                                className="border"
                                                                             >
-                                                                                <td className="p-2 border text-center">
-                                                                                    {
-                                                                                        course.no
-                                                                                    }
-                                                                                </td>
-                                                                                <td className="p-2 border text-center">
-                                                                                    {
-                                                                                        course.kode
-                                                                                    }
-                                                                                </td>
-                                                                                <td className="p-2 border text-center">
-                                                                                    {
-                                                                                        course.mataKuliah
-                                                                                    }
-                                                                                </td>
-                                                                                <td className="p-2 border text-center">
-                                                                                    WAJIB
-                                                                                </td>
-                                                                                <td className="p-2 border text-center">
-                                                                                    {
-                                                                                        course.status
-                                                                                    }
-                                                                                </td>
-                                                                                <td className="p-2 border text-center">
-                                                                                    {
-                                                                                        course.sks
-                                                                                    }
-                                                                                </td>
-                                                                                <td className="p-2 border text-center">
-                                                                                    {
-                                                                                        course.nilai
-                                                                                    }
-                                                                                </td>
-                                                                                <td className="p-2 border text-center">
-                                                                                    {hitungBobot(
-                                                                                        course.nilai
-                                                                                    )}
-                                                                                </td>
-                                                                                <td className="p-2 border text-center">
-                                                                                    {course.sks *
-                                                                                        hitungBobot(
-                                                                                            course.nilai
-                                                                                        )}
-                                                                                </td>
-                                                                            </tr>
+                                                                                <tr className="border">
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            courseIndex + 1
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border">
+                                                                                        {
+                                                                                            course.kode_mk
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border">
+                                                                                        {
+                                                                                            course.nama
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            course.kelas.kode_kelas
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            course.sks
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border">
+                                                                                        {course.jadwal_kuliah.map((jadwal, index) => (
+                                                                                            <div key={index}>
+                                                                                                {jadwal.ruangan.nama_ruang}
+                                                                                            </div>
+                                                                                        ))}
+                                                                                    </td>
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            course.status_irs
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border">
+                                                                                        {course.mata_kuliah.dosen.map((elm, index) => (
+                                                                                            <div key={index}>
+                                                                                                {elm.nama}
+                                                                                            </div>
+                                                                                        ))}
+                                                                                    </td>
+                                                                                </tr>
+                                                                                {course.jadwal_kuliah && (
+                                                                                    <tr className="border bg-gray-50">
+                                                                                        <td
+                                                                                            colSpan="8"
+                                                                                            className="p-2 border text-gray-600 italic"
+                                                                                        >
+                                                                                            {course.jadwal_kuliah.map(
+                                                                                                      (
+                                                                                                          jadwal,
+                                                                                                          index
+                                                                                                      ) => (
+                                                                                                          <div
+                                                                                                              key={
+                                                                                                                  index
+                                                                                                              }
+                                                                                                          >
+                                                                                                              {
+                                                                                                                  `${jadwal.hari} pukul ${jadwal.waktu_mulai.slice(0, -3)} - ${jadwal.waktu_selesai.slice(0, -3)}`
+                                                                                                              }
+                                                                                                          </div>
+                                                                                                      )
+                                                                                                  )
+                                                                                            }
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                )}
+                                                                            </React.Fragment>
                                                                         )
                                                                     )}
-                                                                    <tr className="bg-gray-200 font-semibold">
-                                                                        <td
-                                                                            colSpan="5"
-                                                                            className="border px-2 py-1 text-right"
+                                                                </tbody>
+                                                            </table>
+                                                            <button
+                                                                onClick={() => downloadIRS(semesterKey)}
+                                                                className="w-40 mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                                                            >
+                                                                <div className="flex items-center justify-center">
+                                                                    <Icon
+                                                                        icon="material-symbols-light:print"
+                                                                        height="24"
+                                                                        width="24"
+                                                                    />
+                                                                    <span className="ml-2">
+                                                                        Cetak
+                                                                        IRS
+                                                                    </span>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                                </div>
+                            )}
+
+                            {activeTab === "KHS" && (
+                                <div className="w-full max-w-6xl mx-auto p-4">
+                                    <div className="border rounded-md shadow-sm">
+                                    {Object.entries(khsData).map(
+                                        ([semesterKey, semesterInfo]) => (
+                                            <div
+                                                key={semesterKey}
+                                                className="mb-4"
+                                            >
+                                                <div
+                                                    onClick={() =>
+                                                        toggleSemester(
+                                                            semesterKey
+                                                        )
+                                                    }
+                                                    className="flex justify-between items-center p-4 bg-blue-100 hover:bg-blue-200 cursor-pointer rounded-t"
+                                                >
+                                                    <div>
+                                                        <h2 className="text-blue-900 font-medium">
+                                                            {semesterInfo.title}
+                                                        </h2>
+                                                        <p className="text-sm text-blue-700">
+                                                            Jumlah SKS{" "}
+                                                            {semesterInfo.sks}
+                                                        </p>
+                                                    </div>
+                                                    {openSemesters[
+                                                        semesterKey
+                                                    ] ? (
+                                                        <ChevronUp className="text-blue-900" />
+                                                    ) : (
+                                                        <ChevronDown className="text-blue-900" />
+                                                    )}
+                                                </div>
+
+                                                {openSemesters[semesterKey] && (
+                                                    <div className="border border-gray-200 rounded-b p-4">
+                                                        <h3 className="text-center font-bold mb-4">
+                                                            KHS MAHASISWA
+                                                        </h3>
+                                                        <div className="overflow-x-auto">
+                                                            <table
+                                                                className="w-full table-layout-fixed"
+                                                                id={`khs-mahasiswa-${semesterKey}`}
+                                                            >
+                                                                <thead className="text-[14px]">
+                                                                    <tr className="bg-blue-500 text-white">
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "50px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
                                                                         >
+                                                                            NO
+                                                                        </th>
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "50px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
+                                                                        >
+                                                                            KODE
+                                                                        </th>
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "250px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
+                                                                        >
+                                                                            MATA
+                                                                            KULIAH
+                                                                        </th>
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "50px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
+                                                                        >
+                                                                            STATUS
+                                                                        </th>
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "50px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
+                                                                        >
+                                                                            SKS
+                                                                        </th>
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "50px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
+                                                                        >
+                                                                            NILAI HURUF
+                                                                        </th>
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "50px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
+                                                                        >
+                                                                            BOBOT
+                                                                        </th>
+                                                                        <th
+                                                                            scope="col"
+                                                                            className="px-6 py-3 border"
+                                                                            style={{
+                                                                                width: "50px",
+                                                                                textAlign:
+                                                                                    "center",
+                                                                            }}
+                                                                        >
+                                                                            SKS X BOBOT
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody className="text-[14px]">
+                                                                    {semesterInfo.courses.map(
+                                                                        (
+                                                                            course,
+                                                                            courseIndex
+                                                                        ) => (
+                                                                            <React.Fragment
+                                                                                key={
+                                                                                    course.kode_mk
+                                                                                }
+                                                                            >
+                                                                                <tr className="border">
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            courseIndex + 1
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border">
+                                                                                        {
+                                                                                            course.kode_mk
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border">
+                                                                                        {
+                                                                                            course.nama
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            course.status
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            course.sks
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            course.nilai_huruf
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            course.bobot
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td className="p-2 border text-center">
+                                                                                        {
+                                                                                            course.sks_x_bobot
+                                                                                        }
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </React.Fragment>
+                                                                        )
+                                                                    )}
+                                                                    <tr className="border font-bold bg-gray-100">
+                                                                        <td className="p-2 border text-center" colSpan="4">
                                                                             Total
                                                                         </td>
-                                                                        <td className="border px-2 py-1 text-center">
-                                                                            21
+                                                                        <td className="p-2 border text-center">
+                                                                            {semesterInfo.sks}
                                                                         </td>
-                                                                        <td className="border px-2 py-1"></td>
-                                                                        <td className="border px-2 py-1 text-center">
-                                                                            10
+                                                                        <td className="p-2 border text-center">
+                                                                            -
                                                                         </td>
-                                                                        <td className="border px-2 py-1 text-center">
-                                                                            100
+                                                                        <td className="p-2 border text-center">
+                                                                            {(semesterInfo.courses.reduce((sum, course) => sum + (course.bobot || 0), 0) / 
+                                                                            semesterInfo.courses.length).toFixed(2)}
+                                                                        </td>
+                                                                        <td className="p-2 border text-center">
+                                                                            {semesterInfo.courses.reduce((sum, course) => sum + (course.sks_x_bobot || 0), 0).toFixed(2)}
                                                                         </td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
-                                                            <div className="mt-4 p-4">
-                                                                <p>
-                                                                    <strong>
-                                                                        IP
-                                                                        Semester
-                                                                    </strong>{" "}
-                                                                    : 3,81
-                                                                </p>
-                                                                <p className="text-sm text-gray-500">
-                                                                    80 / 21 |
-                                                                    (total SKS x
-                                                                    BOBOT) /
-                                                                    total SKS
-                                                                </p>
-                                                                <p>
-                                                                    <strong>
-                                                                        IP
-                                                                        Kumulatif
-                                                                    </strong>{" "}
-                                                                    : 3,81
-                                                                </p>
-                                                                <p className="text-sm text-gray-500">
-                                                                    80 / 21 |
-                                                                    (total(SKS x
-                                                                    BOBOT)
-                                                                    terbaik) /
-                                                                    total SKS
-                                                                </p>
-                                                                <button
-                                                                    onClick={
-                                                                        downloadKHS
-                                                                    }
-                                                                    className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                                                >
-                                                                    <div className="flex items-center justify-center">
-                                                                        <Icon
-                                                                            icon="material-symbols-light:print"
-                                                                            height="24"
-                                                                            width="24"
-                                                                        />
-                                                                        <span className="ml-2">
-                                                                            Cetak
-                                                                            KHS
+                                                            <div className="mt-4 p-4 border rounded-lg bg-blue-50">
+                                                                <h4 className="font-bold text-blue-900 mb-2">IP Semester</h4>
+                                                                <div className="flex flex-col space-y-2">
+                                                                    <div className="flex items-center">
+                                                                        <span className="text-blue-800 self-center">IP = </span>
+                                                                        <div className="flex flex-col items-center ml-2">
+                                                                            <div className="border-b border-blue-800">
+                                                                                <span className="text-blue-800">
+                                                                                    Σ(SKS × Bobot)
+                                                                                </span>
+                                                                            </div>
+                                                                            <div className="text-center">
+                                                                                <span className="text-blue-800">
+                                                                                    Σ(SKS)
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="ml-4 flex items-center">
+                                                                            <span className="text-blue-800 self-center">
+                                                                                = {(semesterInfo.courses.reduce((sum, course) => sum + (course.sks_x_bobot || 0), 0) / 
+                                                                                semesterInfo.courses.reduce((sum, course) => sum + course.sks, 0)).toFixed(2)}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="flex items-center">
+                                                                        <span className="text-blue-800 invisible">IP</span>
+                                                                        <span className="text-blue-800 ml-2">
+                                                                            = {semesterInfo.courses.reduce((sum, course) => sum + (course.sks_x_bobot || 0), 0).toFixed(2)} / {semesterInfo.sks}
                                                                         </span>
                                                                     </div>
-                                                                </button>
+                                                                </div>
                                                             </div>
+                                                            <button
+                                                                onClick={() => downloadKHS(semesterKey)}
+                                                                className="w-40 mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                                                            >
+                                                                <div className="flex items-center justify-center">
+                                                                    <Icon
+                                                                        icon="material-symbols-light:print"
+                                                                        height="24"
+                                                                        width="24"
+                                                                    />
+                                                                    <span className="ml-2">
+                                                                        Cetak
+                                                                        KHS
+                                                                    </span>
+                                                                </div>
+                                                            </button>
                                                         </div>
-                                                    )}
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                    )}
+                                </div>
                                 </div>
                             )}
                         </div>
@@ -895,4 +833,4 @@ const DetailPerwalian = () => {
     );
 };
 
-export default DetailPerwalian;
+export default DetailMahasiswaPerwalian;
