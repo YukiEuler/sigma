@@ -141,13 +141,12 @@ const SetujuiJadwal = ({}) => {
                                                         <td className="px-4 py-3 text-center">
                                                             {prodi.disetujui ===
                                                             0 ? (
-                                                                <span className="text-red-500">
-                                                                    Belum
-                                                                    Disetujui
+                                                                <span>
+                                                                    Not Approved
                                                                 </span>
                                                             ) : (
-                                                                <span className="text-green-500">
-                                                                    Disetujui
+                                                                <span>
+                                                                    Approved
                                                                 </span>
                                                             )}
                                                         </td>
