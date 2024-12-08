@@ -25,10 +25,14 @@ const Perwalian = () => {
         ...new Set(mahasiswaData.map((item) => item.nama_prodi)),
     ].sort((a, b) => a.localeCompare(b)); // Mengurutkan secara alfabetis
 
+    // filter status irs
+    // const uniqueIrsStatus = ["all", "Not Submitted", "Not Approved", "Approved"];
+
     const [filters, setFilters] = useState({
         angkatan: "all",
         prodi: "all",
         search: "",
+        // irsStatus: "all",
     });
 
     const handleFilterChange = (e) => {
@@ -58,6 +62,11 @@ const Perwalian = () => {
                     .includes(filters.prodi.toLowerCase())
             );
         }
+
+        // Apply IRS status filter only if not "all"
+        // if (filters.irsStatus && filters.irsStatus !== "all") {
+        //     result = result.filter((item) => item.status_irs === filters.irsStatus);
+        // }
 
         // Apply search filter
         if (filters.search) {
@@ -195,6 +204,24 @@ const Perwalian = () => {
                                             </select>
                                         </td>
                                     </tr>
+                                    {/* <tr>
+                                        <td className="text-sm font-medium text-gray-900">IRS Status</td>
+                                        <td>
+                                            <select
+                                                id="irsStatus"
+                                                name="irsStatus"
+                                                value={filters.irsStatus}
+                                                onChange={handleFilterChange}
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            >
+                                                {uniqueIrsStatus.map((status) => (
+                                                    <option key={status} value={status}>
+                                                        {status === "all" ? "Semua Status IRS" : status}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </td>
+                                    </tr> */}
                                 </table>
                                 <div className="flex justify-between items-center mt-2">
                                     <div className="flex gap-2">

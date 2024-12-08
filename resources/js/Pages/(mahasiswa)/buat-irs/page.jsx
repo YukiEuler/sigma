@@ -350,6 +350,25 @@ const BuatIRS = () => {
         setMahasiswa(mahasiswaData);
     }, [mahasiswaData]);
 
+    // Update filteredCourses when searchQuery changes
+    useEffect(() => {
+        const newFilteredCourses = jadwal.filter(
+            (course) =>
+                (course.nama
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                    course.kode_mk
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase())) &&
+                !irs.some(
+                    (registeredCourse) =>
+                        registeredCourse.kode_mk === course.kode_mk
+                ) &&
+                course.semester != mahasiswa.semester
+        );
+        setFilteredCourses(newFilteredCourses);
+    }, [searchQuery, jadwal, irs, mahasiswa.semester]);
+
     const Schedule = () => (
         <div
             ref={scheduleRef}

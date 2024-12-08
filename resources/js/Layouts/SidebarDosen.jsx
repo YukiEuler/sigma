@@ -17,7 +17,7 @@ const SidebarDosen = ({ dosen }) => {
     return (
         <aside
             id="default-sidebar"
-            className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 border-5 border-blue-500"
+            className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 border-5 border-[#1EAADF]"
             aria-label="Sidebar"
         >
             <div className="container mx-auto py-[13px] bg-[#1EAADF]">
@@ -36,7 +36,7 @@ const SidebarDosen = ({ dosen }) => {
                     </a>
                 </div>
             </div>
-            <div className="border-3 border-blue-500"></div>
+            <div className="border-3 border-[#1EAADF]"></div>
             <div
                 className="h-full px-3 py-2 overflow-y-auto bg-gray-50"
                 style={{ backgroundColor: "#1EAADF" }}
