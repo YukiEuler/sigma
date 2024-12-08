@@ -224,7 +224,7 @@ const Perwalian = () => {
                                     </tr> */}
                                 </table>
                                 <div className="flex justify-between items-center mt-2">
-                                    <div className="flex gap-2">
+                                    {/* <div className="flex gap-2">
                                         <button
                                             onClick={() => {
                                                 const selectedMahasiswa =
@@ -554,7 +554,7 @@ const Perwalian = () => {
                                         >
                                             Batalkan Persetujuan IRS
                                         </button>
-                                    </div>
+                                    </div> */}
                                     <div className="flex justify-center items-center w-64">
                                         <div className="relative w-full">
                                             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -594,7 +594,7 @@ const Perwalian = () => {
                                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sticky-header">
                                         <thead className="text-xs text-white uppercase bg-blue-500 dark:text-gray-400 sticky top-0">
                                             <tr>
-                                                <th
+                                                {/* <th
                                                     scope="col"
                                                     className="px-6 py-3"
                                                     style={{
@@ -615,7 +615,7 @@ const Perwalian = () => {
                                                             Semua
                                                         </span>
                                                     </label>
-                                                </th>
+                                                </th> */}
                                                 <th
                                                     scope="col"
                                                     className="px-4 py-2"
@@ -735,7 +735,7 @@ const Perwalian = () => {
                                                         key={index}
                                                         className="bg-gray-100 border-b"
                                                     >
-                                                        <td className="px-6 py-3">
+                                                        {/* <td className="px-6 py-3">
                                                             <div className="flex justify-center">
                                                                 <input
                                                                     type="checkbox"
@@ -751,7 +751,7 @@ const Perwalian = () => {
                                                                     }
                                                                 />
                                                             </div>
-                                                        </td>
+                                                        </td> */}
                                                         <td className="px-4 py-2 text-[12px] text-center">
                                                             {index + 1}
                                                         </td>
