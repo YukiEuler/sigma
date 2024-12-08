@@ -183,6 +183,7 @@ const AturJadwal = () => {
             }
             setScheduleForms(newForms);
         } else {
+            newForms[formIndex].jadwal[jadwalIndex].startTime = "";
             newForms[formIndex].jadwal[jadwalIndex].endTime = "";
         }
 
@@ -378,9 +379,10 @@ const AturJadwal = () => {
         for (const kelas of scheduleForms) {
             let jumSks = 0;
             for (const jadwal of kelas.jadwal) {
-                const { room, day, startTime, endTime, sks } = jadwal;
-                const allFilled = room && day && startTime && endTime && sks;
-                const allEmpty = !room && !day && !startTime && !endTime && !sks;
+                const { room, day, hour, minute, endTime, sks } = jadwal;
+                console.log(room, day, hour, minute, endTime, sks);
+                const allFilled = room && day && hour && minute && endTime && sks;
+                const allEmpty = !room && !day && !hour && !minute && !endTime && !sks;
                 jumSks += parseInt(sks || 0);
         
                 if (!allFilled && !allEmpty) {
