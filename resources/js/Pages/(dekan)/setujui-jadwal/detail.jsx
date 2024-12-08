@@ -11,6 +11,9 @@ const DetailJadwal = () => {
     const selectedProdi = props.selectedProdi;
     const [dosen, setDosen] = useState(dosenData);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const schedules = props.jadwal;
+    
+
 
     const DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
 
@@ -116,7 +119,7 @@ const DetailJadwal = () => {
                                                         className="border p-2 align-top"
                                                     >
                                                         <div className="flex flex-col gap-2">
-                                                            {/* {schedules.map(
+                                                        {schedules.map(
                                                                 (
                                                                     schedule,
                                                                     index
@@ -178,7 +181,7 @@ const DetailJadwal = () => {
                                                                     }
                                                                     return null;
                                                                 }
-                                                            )} */}
+                                                            )}
                                                         </div>
                                                     </td>
                                                 ))}
