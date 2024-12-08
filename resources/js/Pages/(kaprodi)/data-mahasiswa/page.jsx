@@ -28,28 +28,28 @@ const DataMahasiswa = () => {
 
     const applyFilters = () => {
         let result = [...mahasiswaData];
-    
+
         // Apply angkatan filter
         if (filters.angkatan && filters.angkatan !== "all") {
             result = result.filter(
                 (item) => item.angkatan.toString() === filters.angkatan
             );
         }
-    
+
         // Apply doswal filter
         if (filters.doswal && filters.doswal !== "all") {
             result = result.filter(
                 (item) => item.dosen.nama === filters.doswal
             );
         }
-    
+
         // Apply statusIRS filter - Perbaikan di sini
         if (filters.statusIRS && filters.statusIRS !== "all") {
             result = result.filter(
                 (item) => item.status_irs === filters.statusIRS
             );
         }
-    
+
         // Apply search filter
         if (filters.search) {
             result = result.filter(
@@ -62,7 +62,7 @@ const DataMahasiswa = () => {
                         .includes(filters.search.toLowerCase())
             );
         }
-    
+
         setFilteredMahasiswa(result);
     };
 
@@ -351,10 +351,15 @@ const DataMahasiswa = () => {
                                                             {item.angkatan}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
-                                                            {(parseFloat(item.ip_lalu) || 0).toFixed(2)}
+                                                            {(
+                                                                parseFloat(
+                                                                    item.ip_lalu
+                                                                ) || 0
+                                                            ).toFixed(2)}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
-                                                            {item.sks_kumulatif || 0}
+                                                            {item.sks_diambil ||
+                                                                0}
                                                         </td>
                                                         <td className="px-4 py-2 text-[14px] text-center">
                                                             {item.status}
