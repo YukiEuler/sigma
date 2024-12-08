@@ -617,7 +617,7 @@ const AturJadwal = () => {
                                     Daftar Mata Kuliah
                                 </h2>
                                 <div className="flex-col">
-                                    <div className="flex items-center gap-2 mb-3">
+                                    {/* <div className="flex items-center gap-2 mb-3">
                                         <span className="text-sm font-medium">
                                             Semester
                                         </span>
@@ -638,7 +638,7 @@ const AturJadwal = () => {
                                             </option>
                                             <option value="genap">Genap</option>
                                         </select>
-                                    </div>
+                                    </div> */}
                                     <div className="relative w-full">
                                         <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                                             <Icon
@@ -658,7 +658,7 @@ const AturJadwal = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="space-y-2 max-h-[57vh] overflow-y-auto scrollbar-hide">
+                                <div className="space-y-2 max-h-[63vh] overflow-y-auto scrollbar-hide">
                                     <style jsx>{`
                                         .scrollbar-hide::-webkit-scrollbar {
                                             display: none;
