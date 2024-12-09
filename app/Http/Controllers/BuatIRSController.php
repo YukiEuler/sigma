@@ -217,60 +217,16 @@ class BuatIRSController extends Controller
         $mahasiswa = Mahasiswa::where('user_id', $user->id)->get()->first();
         $tahunAkademik = KalenderAkademik::getTahunAkademik();
 
-        $jadwal = Kelas::with(['mataKuliah', 'jadwalKuliah.ruangan'])
+        $jadwal = Kelas::withCount('irs as jumlah_mahasiswa')
             ->where('tahun_akademik', $tahunAkademik)
             ->where('status', 'disetujui')
-            // ->whereHas('mataKuliah', function($query) use ($periode, $mahasiswa) {
-            //     $query->where('id_prodi', $mahasiswa->id_prodi)
-            //         ->whereRaw('MOD(semester, 2) = ?', [1-$periode]);
-            // })
-            ->withCount('irs as jumlah_mahasiswa')
             ->get()
-            ->groupBy('kode_mk')
-            ->map(function($kelasGroup) {
-                $firstKelas = $kelasGroup->first();
-                $mataKuliah = $firstKelas->mataKuliah;
-                
-                $jadwalArray = $kelasGroup->map(function($kelas) {
-                    return $kelas->jadwalKuliah->isEmpty() 
-                        ? [[
-                            'id' => null,
-                            'id_kelas' => $kelas->id,
-                            'hari' => null,
-                            'waktu_mulai' => null,
-                            'waktu_selesai' => null,
-                            'ruangan' => null,
-                            'kelas' => $kelas->kode_kelas,
-                            'kuota' => $kelas->kuota,
-                            'jumlah_mahasiswa' => $kelas->jumlah_mahasiswa
-                        ]]
-                        : $kelas->jadwalKuliah->map(function($jadwal) use ($kelas) {
-                            return [
-                                'id' => $jadwal->id,
-                                'id_kelas' => $kelas->id,
-                                'hari' => $jadwal->hari,
-                                'waktu_mulai' => $jadwal->waktu_mulai,
-                                'waktu_selesai' => $jadwal->waktu_selesai,
-                                'ruangan' => optional($jadwal->ruangan)->nama_ruang,
-                                'kelas' => $kelas->kode_kelas,
-                                'kuota' => $kelas->kuota,
-                                'jumlah_mahasiswa' => $kelas->jumlah_mahasiswa
-                            ];
-                        });
-                })->flatten(1);
-
+            ->map(function($kelas) {
                 return [
-                    'kode_mk' => $mataKuliah->kode_mk,
-                    'nama' => $mataKuliah->nama,
-                    'sks' => $mataKuliah->sks,
-                    'semester' => $mataKuliah->semester,
-                    'jadwal_kuliah' => $jadwalArray,
-                    'sudah_diajukan' => $firstKelas->status
+                    'id_kelas' => $kelas->id,
+                    'jumlah_mahasiswa' => $kelas->jumlah_mahasiswa
                 ];
-            })
-            ->values();
-            error_log('sini');
-        error_log($jadwal);
+            });
 
         return response()->json($jadwal);
     }
