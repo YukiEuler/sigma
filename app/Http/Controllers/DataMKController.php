@@ -8,6 +8,7 @@ use App\Models\MataKuliah;
 use App\Models\ProgramStudi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -117,6 +118,94 @@ class DataMKController extends Controller
             // return back()->with('error', 'Terjadi kesalahan saat menambahkan ruangan.');
             return response()->json([
                 'error' => 'Terjadi kesalahan saat menambahkan mata kuliah.'
+            ], 422);
+        }
+    }
+
+    public function update(Request $request, $kode_mk)
+    {
+        $user = Auth::user();
+        $dosen = Dosen::where('user_id', $user->id)->first();
+
+        try {
+            // Validasi request
+            $validated = $request->validate([
+                'kode' => 'required|string|max:30',
+                'nama' => 'required|string|max:100',
+                'sks' => 'required|integer|min:1',
+                'semester' => 'required|in:1,2,3,4,5,6,7,8',
+                'jenis' => 'required|in:Wajib,Pilihan',
+            ], [
+                'kode.required' => 'Kode mata kuliah wajib diisi!',
+                'kode.max' => 'Kode mata kuliah maksimal 30 karakter!',
+                'nama.required' => 'Nama mata kuliah wajib diisi!',
+                'sks.required' => 'SKS wajib diisi!',
+                'sks.min' => 'SKS minimal 1!',
+                'semester.required' => 'Semester wajib diisi!',
+                'semester.in' => 'Semester harus antara 1-8!',
+                'jenis.required' => 'Jenis mata kuliah wajib diisi!',
+                'jenis.in' => 'Jenis mata kuliah harus Wajib atau Pilihan!'
+            ]);
+
+            // Cek duplikasi kode MK jika kode diubah
+            if ($validated['kode'] !== $kode_mk) {
+                $existByKode = MataKuliah::where('kode_mk', $validated['kode'])
+                    ->where('id_prodi', $dosen->id_prodi)
+                    ->first();
+
+                if ($existByKode) {
+                    return response()->json([
+                        'error' => 'Kode mata kuliah sudah digunakan.'
+                    ], 422);
+                }
+            }
+
+            // Cek duplikasi nama (kecuali untuk mata kuliah yang sedang diedit)
+            $existByNama = MataKuliah::where('nama', $validated['nama'])
+                ->where('id_prodi', $dosen->id_prodi)
+                ->where('kode_mk', '!=', $kode_mk)
+                ->first();
+
+            if ($existByNama) {
+                return response()->json([
+                    'error' => 'Mata kuliah dengan nama ini sudah ada.'
+                ], 422);
+            }
+
+            // Update mata kuliah menggunakan transaction
+            DB::beginTransaction();
+            try {
+                $mataKuliah = MataKuliah::where('kode_mk', $kode_mk)
+                    ->where('id_prodi', $dosen->id_prodi)
+                    ->first();
+
+                if (!$mataKuliah) {
+                    DB::rollBack();
+                    return response()->json([
+                        'error' => 'Mata kuliah tidak ditemukan.'
+                    ], 404);
+                }
+
+                $mataKuliah->update([
+                    'kode_mk' => $validated['kode'],
+                    'nama' => $validated['nama'],
+                    'sks' => $validated['sks'],
+                    'semester' => $validated['semester'],
+                    'jenis' => $validated['jenis'],
+                ]);
+
+                DB::commit();
+                return response()->json([
+                    'success' => true
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat mengupdate mata kuliah.'
             ], 422);
         }
     }

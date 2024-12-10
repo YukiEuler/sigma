@@ -97,13 +97,12 @@ Route::get('dosen/perwalian/detail/{id}', [PerwalianController::class, 'detail']
 Route::post('dosen/perwalian/setujui-irs', [PerwalianController::class, 'verifyIRS'])->name('dosen.verifyIRS')->middleware(['auth', 'validateRole:Dosen']);
 Route::post('dosen/perwalian/batalkan-irs', [PerwalianController::class, 'redoverifyIRS'])->name('dosen.redoverifyIRS')->middleware(['auth', 'validateRole:Dosen']);
 
-
-
 Route::get('kaprodi/dashboard', [KaprodiController::class, 'index'])->name('kaprodi.dashboard')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/data-mahasiswa', [DataMahasiswaController::class, 'index'])->name('kaprodi.dataMahasiswa')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/data-mahasiswa/detail/{id}', [DataMahasiswaController::class, 'detail'])->name('dosen.detailmhs')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/data-matakuliah', [DataMKController::class, 'index'])->name('kaprodi.dataMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('kaprodi/data-matakuliah/store', [DataMKController::class, 'store'])->name('kaprodi.storeMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
+Route::put('kaprodi/data-matakuliah/update/{kode_mk}', [DataMKController::class, 'update'])->name('kaprodi.matakuliah.update')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('kaprodi/data-matakuliah/delete/{id}', [DataMKController::class, 'destroy'])->name('kaprodi.deleteMataKuliah')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::get('kaprodi/atur-kelas', [AturKelasController::class, 'index'])->name('kaprodi.aturKelas')->middleware(['auth', 'validateRole:Kaprodi']);
 Route::post('kaprodi/atur-kelas/store', [AturKelasController::class, 'store'])->name('kaprodi.tambahKelas')->middleware(['auth', 'validateRole:Kaprodi']);

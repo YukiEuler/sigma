@@ -11,6 +11,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
     const dosenData = props.dosen;
     const [dosen, setDosen] = useState(dosenData);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedSemester, setSelectedSemester] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredMataKuliah, setFilteredMataKuliah] = useState([]);
@@ -21,6 +22,37 @@ const DataMataKuliah = ({ mataKuliah }) => {
         semester: "",
         jenis: "Wajib",
     });
+
+    const [editMataKuliah, setEditMataKuliah] = useState({
+        kode: "",
+        nama: "",
+        sks: "",
+        semester: "",
+        jenis: "Wajib",
+    });
+
+    const handleOpenEditModal = (mk) => {
+        setEditMataKuliah({
+            kode_lama: mk.kode_mk, // Menyimpan kode lama
+            kode: mk.kode_mk,
+            nama: mk.nama,
+            sks: mk.sks.toString(),
+            semester: mk.semester.toString(),
+            jenis: mk.jenis,
+        });
+        setIsEditModalOpen(true);
+    };
+
+    const handleCloseEditModal = () => {
+        setIsEditModalOpen(false);
+        setEditMataKuliah({
+            kode: "",
+            nama: "",
+            sks: "",
+            semester: "",
+            jenis: "Wajib",
+        });
+    };
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -35,6 +67,80 @@ const DataMataKuliah = ({ mataKuliah }) => {
             .querySelector('meta[name="csrf-token"]')
             .getAttribute("content");
     }, []);
+
+    const handleEdit = (e) => {
+        e.preventDefault();
+
+        if (
+            !editMataKuliah.kode ||
+            !editMataKuliah.nama ||
+            !editMataKuliah.sks ||
+            !editMataKuliah.semester
+        ) {
+            Swal.fire({
+                title: "Error!",
+                text: "Semua field harus diisi!",
+                icon: "error",
+                customClass: {
+                    confirmButton: "btn btn-danger",
+                },
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: "Edit Mata Kuliah",
+            html: `Apakah Anda yakin ingin mengubah mata kuliah ini?<br><br>
+                  <b>Kode MK Lama:</b> ${editMataKuliah.kode_lama}<br>
+                  <b>Kode MK Baru:</b> ${editMataKuliah.kode}<br>
+                  <b>Nama:</b> ${editMataKuliah.nama}<br>
+                  <b>SKS:</b> ${editMataKuliah.sks}<br>
+                  <b>Semester:</b> ${editMataKuliah.semester}<br>
+                  <b>Jenis:</b> ${editMataKuliah.jenis}`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Ya, ubah!",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+            customClass: {
+                confirmButton: "btn btn-success mr-2",
+                cancelButton: "btn btn-danger ml-2",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios
+                    .put(
+                        `/kaprodi/data-matakuliah/update/${editMataKuliah.kode_lama}`,
+                        editMataKuliah
+                    )
+                    .then((response) => {
+                        handleCloseEditModal();
+                        Swal.fire({
+                            title: "Berhasil!",
+                            text: "Mata kuliah berhasil diubah",
+                            icon: "success",
+                            customClass: {
+                                confirmButton: "btn btn-success",
+                            },
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    })
+                    .catch((error) => {
+                        const errorMessage =
+                            error.response?.data?.error || "Terjadi kesalahan";
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: errorMessage,
+                            icon: "error",
+                            customClass: {
+                                confirmButton: "btn btn-danger",
+                            },
+                        });
+                    });
+            }
+        });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -352,7 +458,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                 >
                                                     JENIS
                                                 </th>
-                                                {/* <th
+                                                <th
                                                     scope="col"
                                                     className="px-4 py-3"
                                                     style={{
@@ -362,7 +468,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                     }}
                                                 >
                                                     Action
-                                                </th> */}
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -390,18 +496,18 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                                         <td className="px-4 py-3 text-[14px] text-center">
                                                             {mk.jenis}
                                                         </td>
-                                                        {/* <td className="flex items-center justify-center py-3">
+                                                        <td className="flex items-center justify-center py-3">
                                                             <button
                                                                 onClick={() =>
-                                                                    handleDelete(
+                                                                    handleOpenEditModal(
                                                                         mk
                                                                     )
                                                                 }
-                                                                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-[14px]"
+                                                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-[14px]"
                                                             >
-                                                                Delete
+                                                                Edit
                                                             </button>
-                                                        </td> */}
+                                                        </td>
                                                     </tr>
                                                 )
                                             )}
@@ -496,6 +602,130 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                     <button
                                         type="button"
                                         onClick={handleCloseModal}
+                                        className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
+                                    >
+                                        Batal
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
+                                    >
+                                        Simpan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                {isEditModalOpen && (
+                    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                            <h2 className="text-lg font-semibold mb-4">
+                                Edit Mata Kuliah
+                            </h2>
+                            <form onSubmit={handleEdit}>
+                                <div className="mb-4">
+                                    <label className="block text-sm">
+                                        Kode Mata Kuliah
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="kode"
+                                        value={editMataKuliah.kode}
+                                        onChange={(e) =>
+                                            setEditMataKuliah((prev) => ({
+                                                ...prev,
+                                                kode: e.target.value,
+                                            }))
+                                        }
+                                        className="w-full p-2 border rounded"
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block text-sm">
+                                        Nama Mata Kuliah
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="nama"
+                                        value={editMataKuliah.nama}
+                                        onChange={(e) =>
+                                            setEditMataKuliah((prev) => ({
+                                                ...prev,
+                                                nama: e.target.value,
+                                            }))
+                                        }
+                                        className="w-full p-2 border rounded"
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block text-sm">SKS</label>
+                                    <input
+                                        type="number"
+                                        name="sks"
+                                        min="1"
+                                        value={editMataKuliah.sks}
+                                        onChange={(e) =>
+                                            setEditMataKuliah((prev) => ({
+                                                ...prev,
+                                                sks: e.target.value,
+                                            }))
+                                        }
+                                        className="w-full p-2 border rounded"
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block text-sm">
+                                        Semester
+                                    </label>
+                                    <select
+                                        name="semester"
+                                        value={editMataKuliah.semester}
+                                        onChange={(e) =>
+                                            setEditMataKuliah((prev) => ({
+                                                ...prev,
+                                                semester: e.target.value,
+                                            }))
+                                        }
+                                        className="w-full p-2 border rounded"
+                                    >
+                                        <option value="">Pilih Semester</option>
+                                        {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                                            <option key={num} value={num}>
+                                                Semester {num}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block text-sm">
+                                        Jenis
+                                    </label>
+                                    <select
+                                        name="jenis"
+                                        value={editMataKuliah.jenis}
+                                        onChange={(e) =>
+                                            setEditMataKuliah((prev) => ({
+                                                ...prev,
+                                                jenis: e.target.value,
+                                            }))
+                                        }
+                                        className="w-full p-2 border rounded"
+                                    >
+                                        <option value="Wajib">Wajib</option>
+                                        <option value="Pilihan">Pilihan</option>
+                                    </select>
+                                </div>
+
+                                <div className="flex justify-end space-x-2">
+                                    <button
+                                        type="button"
+                                        onClick={handleCloseEditModal}
                                         className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
                                     >
                                         Batal
