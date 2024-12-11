@@ -80,13 +80,8 @@ class BuatIRSController extends Controller
     }
 
     $ips = Khs::join('mahasiswa', 'khs.nim', '=', 'mahasiswa.nim')
-        ->select(DB::raw('SUM(khs.bobot * CASE 
-            WHEN khs.nilai_huruf = "A" THEN 4
-            WHEN khs.nilai_huruf = "B" THEN 3
-            WHEN khs.nilai_huruf = "C" THEN 2
-            WHEN khs.nilai_huruf = "D" THEN 1
-            ELSE 0
-        END) / SUM(khs.bobot) as IPS'))
+        ->join('mata_kuliah', 'khs.kode_mk', '=', 'mata_kuliah.kode_mk')
+        ->select(DB::raw('SUM(khs.bobot * mata_kuliah.sks) / SUM(mata_kuliah.sks) as IPS'), 'mahasiswa.nim')
         ->where('mahasiswa.nim', $mahasiswa->nim)
         ->whereRaw('khs.semester + 1 = mahasiswa.semester')
         ->groupBy('mahasiswa.nim')

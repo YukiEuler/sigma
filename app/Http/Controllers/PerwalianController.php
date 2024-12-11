@@ -109,17 +109,12 @@ class PerwalianController extends Controller
         $mahasiswa->nama_dosen_wali = $dosen->nama;
 
         $ips = Khs::join('mahasiswa', 'khs.nim', '=', 'mahasiswa.nim')
-        ->select(DB::raw('SUM(khs.bobot * CASE 
-            WHEN khs.nilai_huruf = "A" THEN 4
-            WHEN khs.nilai_huruf = "B" THEN 3
-            WHEN khs.nilai_huruf = "C" THEN 2
-            WHEN khs.nilai_huruf = "D" THEN 1
-            ELSE 0
-        END) / SUM(khs.bobot) as IPS'))
-        ->where('mahasiswa.nim', $mahasiswa->nim)
-        ->whereRaw('khs.semester + 1 = mahasiswa.semester')
-        ->groupBy('mahasiswa.nim')
-        ->first();
+            ->join('mata_kuliah', 'khs.kode_mk', '=', 'mata_kuliah.kode_mk')
+            ->select(DB::raw('SUM(khs.bobot * mata_kuliah.sks) / SUM(mata_kuliah.sks) as IPS'), 'mahasiswa.nim')
+            ->where('mahasiswa.nim', $id)
+            ->whereRaw('khs.semester + 1 = mahasiswa.semester')
+            ->groupBy('mahasiswa.nim')
+            ->first();
 
         $ips = $ips ? $ips->IPS : 0;
         $mahasiswa->ips = round($ips, 2);

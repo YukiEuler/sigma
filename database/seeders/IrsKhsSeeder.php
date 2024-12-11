@@ -27,6 +27,7 @@ class IrsKhsSeeder extends Seeder
             $semester = 1;
             $tahun = $mahasiswa->angkatan;
             $sks = 0;
+            $nilai = 0;
             while ($semester < $mahasiswa->semester){
                 $periode = $semester % 2 + 1;
                 $tahun_akademik = ''.$tahun.'-'.$periode;
@@ -44,15 +45,25 @@ class IrsKhsSeeder extends Seeder
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
-                    $bobot = ['A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'C', 'C', 'C', 'D', 'E'];
+                    $bobot = ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'C', 'C', 'C', 'D', 'E'];
+                    $nilai_huruf = $bobot[array_rand($bobot)];
+                    $bobot = match ($nilai_huruf) {
+                        'A' => 4,
+                        'B' => 3,
+                        'C' => 2,
+                        'D' => 1,
+                        'E' => 0,
+                        default => 0,
+                    };
+                    $nilai += $bobot * $kelasItem->sks;
                     Khs::create([
                         'nim' => $mahasiswa->nim,
                         'kode_mk' => $kelasItem->kode_mk,
                         'tahun' => $tahun,
                         'semester' => $semester,
                         'status' => 'Baru',
-                        'nilai_huruf' => $bobot[array_rand($bobot)],
-                        'bobot' => $kelasItem->sks,
+                        'nilai_huruf' => $nilai_huruf,
+                        'bobot' => $bobot,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -61,6 +72,7 @@ class IrsKhsSeeder extends Seeder
                 if ($semester % 2 == 0) $tahun++;
             }
             $mahasiswa->sks_kumulatif = $sks;
+            $mahasiswa->ipk = $sks == 0 ? 0 : $nilai / $sks;
             $mahasiswa->save();
         }
     }

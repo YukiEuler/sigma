@@ -43,13 +43,8 @@ class DataMahasiswaController extends Controller
         ->get();
 
     $ips = Khs::join('mahasiswa', 'khs.nim', '=', 'mahasiswa.nim')
-        ->select(DB::raw('SUM(khs.bobot * CASE 
-            WHEN khs.nilai_huruf = "A" THEN 4
-            WHEN khs.nilai_huruf = "B" THEN 3
-            WHEN khs.nilai_huruf = "C" THEN 2
-            WHEN khs.nilai_huruf = "D" THEN 1
-            ELSE 0
-        END) / SUM(khs.bobot) as IPS'), 'mahasiswa.nim')
+        ->join('mata_kuliah', 'khs.kode_mk', '=', 'mata_kuliah.kode_mk')
+        ->select(DB::raw('SUM(khs.bobot * mata_kuliah.sks) / SUM(mata_kuliah.sks) as IPS'), 'mahasiswa.nim')
         ->where('mahasiswa.id_prodi', $dosen->id_prodi)
         ->whereRaw('khs.semester + 1 = mahasiswa.semester')
         ->groupBy('mahasiswa.nim')
@@ -118,19 +113,16 @@ class DataMahasiswaController extends Controller
     }   
 
     $ips = Khs::join('mahasiswa', 'khs.nim', '=', 'mahasiswa.nim')
-        ->select(DB::raw('SUM(khs.bobot * CASE 
-            WHEN khs.nilai_huruf = "A" THEN 4
-            WHEN khs.nilai_huruf = "B" THEN 3
-            WHEN khs.nilai_huruf = "C" THEN 2
-            WHEN khs.nilai_huruf = "D" THEN 1
-            ELSE 0
-        END) / SUM(khs.bobot) as IPS'))
-        ->where('mahasiswa.nim', $mahasiswa->nim)
-        ->whereRaw('khs.semester + 1 = mahasiswa.semester')
-        ->groupBy('mahasiswa.nim')
-        ->first();
+            ->join('mata_kuliah', 'khs.kode_mk', '=', 'mata_kuliah.kode_mk')
+            ->select(DB::raw('SUM(khs.bobot * mata_kuliah.sks) / SUM(mata_kuliah.sks) as IPS'), 'mahasiswa.nim')
+            ->where('mahasiswa.nim', $id)
+            ->whereRaw('khs.semester + 1 = mahasiswa.semester')
+            ->groupBy('mahasiswa.nim')
+            ->get();
 
-        $ips = $ips ? $ips->IPS : 0;
+        error_log($ips);
+
+        $ips = $ips->isEmpty() ? 0 : $ips[0]->IPS;
         $mahasiswa->ips = round($ips, 2);
         $maxSks = 0;
         $semester = $mahasiswa->semester;
@@ -217,7 +209,7 @@ class DataMahasiswaController extends Controller
         
         
         // error_log($irs['1']['courses']);
-        error_log($irs);
+        // error_log($irs);
 
         $khs = Khs::where('nim', $mahasiswa->nim)
             ->join('mata_kuliah', 'mata_kuliah.kode_mk', '=', 'khs.kode_mk')
@@ -260,7 +252,7 @@ class DataMahasiswaController extends Controller
         
         
         // error_log($khs['1']['courses']);
-        error_log($khs);
+        // error_log($khs);
         
         return Inertia::render('(kaprodi)/data-mahasiswa/detail', [
             'dosen' => $dosen,
