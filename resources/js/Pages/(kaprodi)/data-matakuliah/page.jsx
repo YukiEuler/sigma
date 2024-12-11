@@ -33,7 +33,6 @@ const DataMataKuliah = ({ mataKuliah }) => {
 
     const handleOpenEditModal = (mk) => {
         setEditMataKuliah({
-            kode_lama: mk.kode_mk, // Menyimpan kode lama
             kode: mk.kode_mk,
             nama: mk.nama,
             sks: mk.sks.toString(),
@@ -72,7 +71,6 @@ const DataMataKuliah = ({ mataKuliah }) => {
         e.preventDefault();
 
         if (
-            !editMataKuliah.kode ||
             !editMataKuliah.nama ||
             !editMataKuliah.sks ||
             !editMataKuliah.semester
@@ -91,8 +89,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
         Swal.fire({
             title: "Edit Mata Kuliah",
             html: `Apakah Anda yakin ingin mengubah mata kuliah ini?<br><br>
-                  <b>Kode MK Lama:</b> ${editMataKuliah.kode_lama}<br>
-                  <b>Kode MK Baru:</b> ${editMataKuliah.kode}<br>
+                  <b>Kode MK:</b> ${editMataKuliah.kode}<br>
                   <b>Nama:</b> ${editMataKuliah.nama}<br>
                   <b>SKS:</b> ${editMataKuliah.sks}<br>
                   <b>Semester:</b> ${editMataKuliah.semester}<br>
@@ -110,7 +107,7 @@ const DataMataKuliah = ({ mataKuliah }) => {
             if (result.isConfirmed) {
                 axios
                     .put(
-                        `/kaprodi/data-matakuliah/update/${editMataKuliah.kode_lama}`,
+                        `/kaprodi/data-matakuliah/update/${editMataKuliah.kode}`,
                         editMataKuliah
                     )
                     .then((response) => {
@@ -631,15 +628,9 @@ const DataMataKuliah = ({ mataKuliah }) => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="kode"
                                         value={editMataKuliah.kode}
-                                        onChange={(e) =>
-                                            setEditMataKuliah((prev) => ({
-                                                ...prev,
-                                                kode: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full p-2 border rounded"
+                                        disabled
+                                        className="w-full p-2 border rounded bg-gray-100"
                                     />
                                 </div>
 
