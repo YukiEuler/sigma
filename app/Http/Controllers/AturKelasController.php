@@ -63,12 +63,19 @@ class AturKelasController extends Controller
         ->select('nip', 'nama')
         ->get();
 
+        $statusKelas = Kelas::where('tahun_akademik', $tahunAkademik)
+            ->select('kode_kelas', 'status')
+            ->get();
+        
+        $statusKelas = $statusKelas->isEmpty() ? 'belum' : $statusKelas[0]->status;
+
         // Mengirim data ke komponen React melalui Inertia
         return Inertia::render('(kaprodi)/atur-kelas/page', [
             'mataKuliah' => $mataKuliah,
             'kaprodi' => $kaprodi,
             'listDosen' => $listDosen,
-            'tahun_akademik' => $tahunAkademik
+            'tahun_akademik' => $tahunAkademik,
+            'status' => $statusKelas,
         ]);
     }
 

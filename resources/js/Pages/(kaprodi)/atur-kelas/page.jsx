@@ -27,6 +27,7 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [kelasValue, setKelasValue] = useState(1);
     const [kelasAwal, setKelasAwal] = useState({});
+    const [status, setStatus] = useState(props.status);
     const [filteredMataKuliah, setFilteredMataKuliah] = useState([]);
     const [adaUpdate, setAdaUpdate] = useState(false);
     const [scheduleForms, setScheduleForms] = useState([
@@ -169,7 +170,6 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
     const handleInputKelasChange = (e) => {
         setKelasValue(e.target.value);
     };
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -528,7 +528,7 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                                         key={formIndex}
                                     >
                                         <div className="grid grid-cols-2 gap-4">
-                                            <div className="flex items-center gap-2">
+                                            {status === 'belum' && (<div className="flex items-center gap-2">
                                                 <input
                                                     required
                                                     type="number"
@@ -545,7 +545,7 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                                                 >
                                                     <Plus size={20} />
                                                 </button>
-                                            </div>
+                                            </div>)}
                                             {/* <div>
                                                 <label className="block mb-1">
                                                     Kuota
@@ -592,6 +592,7 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                                                             min="1"
                                                             className="w-1/2 border rounded p-2"
                                                             value={course.kuota}
+                                                            disabled={status!=='belum'}
                                                             onChange={
                                                                 (e) => {
                                                                     const updatedKelas = selectedCourse.kelas.map((kelas, index) =>
@@ -605,7 +606,7 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                                                                 }
                                                             }
                                                         />
-                                                        {courseIndex === selectedCourse['kelas'].length - 1 ? (
+                                                        {courseIndex === selectedCourse['kelas'].length - 1 && status === 'belum' ? (
                                                             <button
                                                                 type="button"
                                                                 onClick={() => handleDelete(courseIndex)}
@@ -641,15 +642,16 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                                                             label: l.nama,
                                                         }))}
                                                         placeholder="Pilih Dosen"
+                                                        isDisabled={status !== 'belum'}
                                                     />
-                                                    <button
+                                                    {status === 'belum' && (<button
                                                         type="button"
                                                         onClick={() => handleAddLecturer(formIndex)}
                                                         className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
                                                     >
                                                         <Plus size={20} />
-                                                    </button>
-                                                    {listDosen.length > 1 && (
+                                                    </button>)}
+                                                    {listDosen.length > 1 && status === 'belum' && (
                                                         <button
                                                             type="button"
                                                             onClick={() => handleRemoveLecturer(formIndex, lecturerIndex)}
@@ -676,14 +678,14 @@ const DataMataKuliah = ({ kaprodi, mataKuliah }) => {
                                     </div>
                                 ))}
 
-                                <div className="flex justify-start">
+                                {status === 'belum' && (<div className="flex justify-start">
                                     <button
                                         type="submit"
                                         className="bg-blue-600 text-white px-4 py-2  mr-2 rounded hover:bg-blue-700"
                                     >
                                         Simpan
                                     </button>
-                                </div>
+                                </div>)}
                             </form>
                         </div>
                     </div>
