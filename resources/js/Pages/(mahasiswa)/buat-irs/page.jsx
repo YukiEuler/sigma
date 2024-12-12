@@ -370,7 +370,7 @@ const BuatIRSMahasiswa = () => {
                                                         } else if (maxSks) {
                                                             tooltipMessage = 'Melebihi batasan SKS';
                                                         }
-                                                        const idKelas = classInfo.id;
+                                                        const idKelas = classInfo.id_kelas;
 
                                                         return (
                                                             <div

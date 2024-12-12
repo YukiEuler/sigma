@@ -824,7 +824,7 @@ const RekapIRS = () => {
                                                                     }
                                                                 </td>
                                                                 <td className="px-4 py-2 text-[14px] text-center">
-                                                                    {item.ipk.toFixed(
+                                                                    {parseFloat(item.ip_lalu).toFixed(
                                                                         2
                                                                     )}
                                                                 </td>
@@ -1151,7 +1151,7 @@ const RekapIRS = () => {
                                                                     }
                                                                 </td>
                                                                 <td className="px-4 py-2 text-[14px] text-center">
-                                                                    {item.ipk.toFixed(
+                                                                    {parseFloat(item.ip_lalu).toFixed(
                                                                         2
                                                                     )}
                                                                 </td>

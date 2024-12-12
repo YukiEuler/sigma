@@ -196,6 +196,7 @@ const AturJadwal = () => {
     };
 
     const isRoomAvailable = (roomId, day, startTime, endTime, kode_kelas) => {
+        console.log(roomId, day, startTime, endTime, kode_kelas);
         if (roomId === '' || day === '' || startTime === '' || endTime === '') return true;
         startTime += ":00";
         endTime += ":00";
@@ -221,7 +222,7 @@ const AturJadwal = () => {
                 if (
                     jadwal.idRuang == roomId &&
                     jadwal.day === day &&
-                    parseTime(jadwal.startTime) <= parseTime(endTime) &&
+                    parseTime(jadwal.startTime+":00") <= parseTime(endTime) &&
                     parseTime(jadwal.endTime+":00") >= parseTime(startTime)
                 ) {
                     console.log(jadwal, roomId);
