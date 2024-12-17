@@ -528,100 +528,97 @@ const RekapIRS = () => {
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const selectedMahasiswa =
-                                                        filteredMahasiswa.filter(
-                                                            (_, index) =>
-                                                                checkedItems[index]
-                                                        );
-
+                                                    const selectedMahasiswa = filteredMahasiswa.filter(
+                                                        (_, index) => checkedItems[index]
+                                                    );
                                                     // Check if any selected student has status other than "Not Approved"
-                                                    const invalidSelection =
-                                                        selectedMahasiswa.some(
-                                                            (mhs) =>
-                                                                mhs.status_irs !==
-                                                                "Not Approved"
-                                                        );
-
+                                                    const invalidSelection = selectedMahasiswa.some(
+                                                        (mhs) => mhs.status_irs !== "Not Approved"
+                                                    );
                                                     if (invalidSelection) {
                                                         Swal.fire({
-                                                            icon: "warning",
+                                                            icon: "warning", 
                                                             title: "Peringatan",
                                                             text: "Mahasiswa belum mengajukan IRS atau IRS sudah disetujui",
                                                         });
                                                         return;
                                                     }
-
-                                                    Inertia.post(
-                                                        "/dosen/perwalian/setujui-irs",
-                                                        {
-                                                            checkedItems:
-                                                                selectedMahasiswa.map(
-                                                                    (m) => m.nim
-                                                                ),
+                                                 
+                                                    // Buat daftar nama mahasiswa
+                                                    const studentList = selectedMahasiswa
+                                                        .map(mhs => `${mhs.nama} (${mhs.nim})`)
+                                                        .join('\n');
+                                                 
+                                                    // Tambahkan konfirmasi sebelum melanjutkan
+                                                    Swal.fire({
+                                                        title: "Apakah anda yakin?",
+                                                        html: `IRS mahasiswa berikut akan disetujui:<br>${studentList.replace(/\n/g, '<br>')}</div>`,
+                                                        icon: "warning",
+                                                        showCancelButton: true,
+                                                        confirmButtonText: "Ya, setujui!",
+                                                        cancelButtonText: "Tidak, batalkan!",
+                                                        reverseButtons: true,
+                                                        customClass: {
+                                                            confirmButton: "btn btn-success mr-2",
+                                                            cancelButton: "btn btn-danger ml-2",
+                                                            actions: "gap-2",
                                                         },
-                                                        {
-                                                            onSuccess: () => {
-                                                                // Update status IRS untuk mahasiswa yang dipilih
-                                                                const updatedMahasiswa =
-                                                                    mahasiswa.map(
-                                                                        (mhs) => {
+                                                        buttonsStyling: true,
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            Inertia.post(
+                                                                "/dosen/perwalian/setujui-irs",
+                                                                {
+                                                                    checkedItems: selectedMahasiswa.map((m) => m.nim),
+                                                                },
+                                                                {
+                                                                    onSuccess: () => {
+                                                                        const updatedMahasiswa = mahasiswa.map((mhs) => {
                                                                             if (
                                                                                 selectedMahasiswa.find(
-                                                                                    (
-                                                                                        selected
-                                                                                    ) =>
-                                                                                        selected.nim ===
-                                                                                        mhs.nim
+                                                                                    (selected) => selected.nim === mhs.nim
                                                                                 )
                                                                             ) {
                                                                                 return {
                                                                                     ...mhs,
-                                                                                    status_irs:
-                                                                                        "Approved",
+                                                                                    status_irs: "Approved",
                                                                                     is_verified: 1,
                                                                                     diajukan: 1,
                                                                                 };
                                                                             }
                                                                             return mhs;
+                                                                        });
+                                                                        setMahasiswa(updatedMahasiswa);
+                                                                        updateFilteredMahasiswa(updatedMahasiswa);
+                                                                        Swal.fire({
+                                                                            title: "Sukses!",
+                                                                            text: "IRS berhasil disetujui",
+                                                                            icon: "success",
+                                                                            confirmButtonText: "OK",
+                                                                        });
+                                                                    },
+                                                                    onError: () => {
+                                                                        Swal.fire({
+                                                                            icon: "error",
+                                                                            title: "Gagal",
+                                                                            text: "Terdapat Kesalahan",
+                                                                        });
+                                                                    },
+                                                                    onBefore: () => {
+                                                                        if (selectedMahasiswa.length === 0) {
+                                                                            Swal.fire({
+                                                                                icon: "warning",
+                                                                                title: "Peringatan",
+                                                                                text: "Tidak ada IRS yang dipilih",
+                                                                            });
+                                                                            return false;
                                                                         }
-                                                                    );
-
-                                                                setMahasiswa(
-                                                                    updatedMahasiswa
-                                                                );
-                                                                updateFilteredMahasiswa(updatedMahasiswa);
-
-                                                                Swal.fire({
-                                                                    title: "Sukses!",
-                                                                    text: "IRS berhasil disetujui",
-                                                                    icon: "success",
-                                                                    confirmButtonText:
-                                                                        "OK",
-                                                                });
-                                                            },
-                                                            onError: () => {
-                                                                Swal.fire({
-                                                                    icon: "error",
-                                                                    title: "Gagal",
-                                                                    text: "Terdapat Kesalahan",
-                                                                });
-                                                            },
-                                                            onBefore: () => {
-                                                                if (
-                                                                    selectedMahasiswa.length ===
-                                                                    0
-                                                                ) {
-                                                                    Swal.fire({
-                                                                        icon: "warning",
-                                                                        title: "Peringatan",
-                                                                        text: "Tidak ada IRS yang dipilih",
-                                                                    });
-                                                                    return false;
+                                                                    },
                                                                 }
-                                                            },
+                                                            );
                                                         }
-                                                    );
-                                                }}
+                                                    });
+                                                 }}
                                                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-[12px] w-40"
                                             >
                                                 Setujui IRS
@@ -859,16 +856,10 @@ const RekapIRS = () => {
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const selectedMahasiswa =
-                                                        filteredMahasiswa.filter(
-                                                            (_, index) =>
-                                                                checkedItems[index]
-                                                        );
-
-                                                    if (
-                                                        selectedMahasiswa.length ===
-                                                        0
-                                                    ) {
+                                                    const selectedMahasiswa = filteredMahasiswa.filter(
+                                                        (_, index) => checkedItems[index]
+                                                    );
+                                                    if (selectedMahasiswa.length === 0) {
                                                         Swal.fire({
                                                             icon: "warning",
                                                             title: "Peringatan",
@@ -876,14 +867,10 @@ const RekapIRS = () => {
                                                         });
                                                         return;
                                                     }
-
                                                     // Check if any selected student has status other than "Approved"
-                                                    const invalidSelection =
-                                                        selectedMahasiswa.some(
-                                                            (mhs) =>
-                                                                mhs.is_verified !== 1 || mhs.diajukan !== 1
-                                                        );
-
+                                                    const invalidSelection = selectedMahasiswa.some(
+                                                        (mhs) => mhs.is_verified !== 1 || mhs.diajukan !== 1
+                                                    );
                                                     if (invalidSelection) {
                                                         Swal.fire({
                                                             icon: "warning",
@@ -892,28 +879,40 @@ const RekapIRS = () => {
                                                         });
                                                         return;
                                                     }
-
-                                                    Inertia.post(
-                                                        "/dosen/perwalian/batalkan-irs",
-                                                        {
-                                                            checkedItems:
-                                                                selectedMahasiswa.map(
-                                                                    (m) => m.nim
-                                                                ),
+                                                
+                                                    // Buat daftar nama mahasiswa
+                                                    const studentList = selectedMahasiswa
+                                                        .map(mhs => `${mhs.nama} (${mhs.nim})`)
+                                                        .join('\n');
+                                                
+                                                    // Tambahkan konfirmasi sebelum membatalkan
+                                                    Swal.fire({
+                                                        title: "Apakah anda yakin?",
+                                                        html: `IRS mahasiswa berikut akan dibatalkan:<br>${studentList.replace(/\n/g, '<br>')}</div>`,
+                                                        icon: "warning",
+                                                        showCancelButton: true,
+                                                        confirmButtonText: "Ya, batalkan!",
+                                                        cancelButtonText: "Tidak, kembali!",
+                                                        reverseButtons: true,
+                                                        customClass: {
+                                                            confirmButton: "btn btn-success mr-2",
+                                                            cancelButton: "btn btn-danger ml-2",
+                                                            actions: "gap-2",
                                                         },
-                                                        {
-                                                            onSuccess: () => {
-                                                                // Update status IRS untuk mahasiswa yang dipilih
-                                                                const updatedMahasiswa =
-                                                                    mahasiswa.map(
-                                                                        (mhs) => {
+                                                        buttonsStyling: true,
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            Inertia.post(
+                                                                "/dosen/perwalian/batalkan-irs",
+                                                                {
+                                                                    checkedItems: selectedMahasiswa.map((m) => m.nim),
+                                                                },
+                                                                {
+                                                                    onSuccess: () => {
+                                                                        const updatedMahasiswa = mahasiswa.map((mhs) => {
                                                                             if (
                                                                                 selectedMahasiswa.find(
-                                                                                    (
-                                                                                        selected
-                                                                                    ) =>
-                                                                                        selected.nim ===
-                                                                                        mhs.nim
+                                                                                    (selected) => selected.nim === mhs.nim
                                                                                 )
                                                                             ) {
                                                                                 return {
@@ -924,31 +923,27 @@ const RekapIRS = () => {
                                                                                 };
                                                                             }
                                                                             return mhs;
-                                                                        }
-                                                                    );
-
-                                                                setMahasiswa(
-                                                                    updatedMahasiswa
-                                                                );
-                                                                updateFilteredMahasiswa(updatedMahasiswa);
-
-                                                                Swal.fire({
-                                                                    title: "Sukses!",
-                                                                    text: "IRS berhasil dibatalkan",
-                                                                    icon: "success",
-                                                                    confirmButtonText:
-                                                                        "OK",
-                                                                });
-                                                            },
-                                                            onError: () => {
-                                                                Swal.fire({
-                                                                    icon: "error",
-                                                                    title: "Gagal",
-                                                                    text: "Terdapat Kesalahan",
-                                                                });
-                                                            },
+                                                                        });
+                                                                        setMahasiswa(updatedMahasiswa);
+                                                                        updateFilteredMahasiswa(updatedMahasiswa);
+                                                                        Swal.fire({
+                                                                            title: "Sukses!",
+                                                                            text: "IRS berhasil dibatalkan",
+                                                                            icon: "success",
+                                                                            confirmButtonText: "OK",
+                                                                        });
+                                                                    },
+                                                                    onError: () => {
+                                                                        Swal.fire({
+                                                                            icon: "error",
+                                                                            title: "Gagal",
+                                                                            text: "Terdapat Kesalahan",
+                                                                        });
+                                                                    },
+                                                                }
+                                                            );
                                                         }
-                                                    );
+                                                    });
                                                 }}
                                                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-[12px] w-40`"
                                             >
