@@ -32,21 +32,15 @@ const IRSMahasiswa = () => {
         doc.text(title, (pageWidth - titleWidth) / 2, 22);
 
         // Tambahkan informasi tambahan
-        const tahunAjaran = semesterData[semesterKey].title.split('|').pop();
+        const tahunAjaran = semesterData[semesterKey].title.split("|").pop();
         const nim = mahasiswaData.nim;
         const nama = mahasiswaData.nama;
         const programStudi = mahasiswaData.nama_prodi;
         const dosenWali = mahasiswaData.nama_dosen_wali;
 
         doc.setFontSize(12);
-        const tahunAjaranWidth = doc.getTextWidth(
-            `${tahunAjaran}`
-        );
-        doc.text(
-            `${tahunAjaran}`,
-            (pageWidth - tahunAjaranWidth) / 2,
-            28
-        );
+        const tahunAjaranWidth = doc.getTextWidth(`${tahunAjaran}`);
+        doc.text(`${tahunAjaran}`, (pageWidth - tahunAjaranWidth) / 2, 28);
 
         doc.setFontSize(10);
         doc.text(`NIM: ${nim}`, 14, 38);
@@ -116,9 +110,18 @@ const IRSMahasiswa = () => {
                                                 {openSemesters[semesterKey] && (
                                                     <div className="border border-gray-200 rounded-b p-4">
                                                         <h3 className="text-center font-bold mb-4">
-                                                            IRS MAHASISWA ({semesterInfo.courses[0].is_verified === 1 ? "SUDAH DISETUJUI WALI" : "BELUM DISETUJUI WALI"})
+                                                            IRS MAHASISWA (
+                                                            {semesterInfo
+                                                                .courses[0]
+                                                                .is_verified ===
+                                                            1
+                                                                ? "SUDAH DISETUJUI WALI"
+                                                                : "BELUM DISETUJUI WALI"}
+                                                            )
                                                         </h3>
-                                                        {console.log(semesterInfo)}
+                                                        {console.log(
+                                                            semesterInfo
+                                                        )}
                                                         <div className="overflow-x-auto">
                                                             <table
                                                                 className="w-full table-layout-fixed"
@@ -231,9 +234,8 @@ const IRSMahasiswa = () => {
                                                                             >
                                                                                 <tr className="border">
                                                                                     <td className="p-2 border text-center">
-                                                                                        {
-                                                                                            courseIndex + 1
-                                                                                        }
+                                                                                        {courseIndex +
+                                                                                            1}
                                                                                     </td>
                                                                                     <td className="p-2 border">
                                                                                         {
@@ -247,7 +249,9 @@ const IRSMahasiswa = () => {
                                                                                     </td>
                                                                                     <td className="p-2 border text-center">
                                                                                         {
-                                                                                            course.kelas.kode_kelas
+                                                                                            course
+                                                                                                .kelas
+                                                                                                .kode_kelas
                                                                                         }
                                                                                     </td>
                                                                                     <td className="p-2 border text-center">
@@ -256,11 +260,24 @@ const IRSMahasiswa = () => {
                                                                                         }
                                                                                     </td>
                                                                                     <td className="p-2 border">
-                                                                                        {course.jadwal_kuliah.map((jadwal, index) => (
-                                                                                            <div key={index}>
-                                                                                                {jadwal.ruangan.nama_ruang}
-                                                                                            </div>
-                                                                                        ))}
+                                                                                        {course.jadwal_kuliah.map(
+                                                                                            (
+                                                                                                jadwal,
+                                                                                                index
+                                                                                            ) => (
+                                                                                                <div
+                                                                                                    key={
+                                                                                                        index
+                                                                                                    }
+                                                                                                >
+                                                                                                    {
+                                                                                                        jadwal
+                                                                                                            .ruangan
+                                                                                                            .nama_ruang
+                                                                                                    }
+                                                                                                </div>
+                                                                                            )
+                                                                                        )}
                                                                                     </td>
                                                                                     <td className="p-2 border text-center">
                                                                                         {
@@ -268,11 +285,22 @@ const IRSMahasiswa = () => {
                                                                                         }
                                                                                     </td>
                                                                                     <td className="p-2 border">
-                                                                                        {course.mata_kuliah.dosen.map((elm, index) => (
-                                                                                            <div key={index}>
-                                                                                                {elm.nama}
-                                                                                            </div>
-                                                                                        ))}
+                                                                                        {course.mata_kuliah.dosen.map(
+                                                                                            (
+                                                                                                elm,
+                                                                                                index
+                                                                                            ) => (
+                                                                                                <div
+                                                                                                    key={
+                                                                                                        index
+                                                                                                    }
+                                                                                                >
+                                                                                                    {
+                                                                                                        elm.nama
+                                                                                                    }
+                                                                                                </div>
+                                                                                            )
+                                                                                        )}
                                                                                     </td>
                                                                                 </tr>
                                                                                 {course.jadwal_kuliah && (
@@ -282,22 +310,27 @@ const IRSMahasiswa = () => {
                                                                                             className="p-2 border text-gray-600 italic"
                                                                                         >
                                                                                             {course.jadwal_kuliah.map(
-                                                                                                      (
-                                                                                                          jadwal,
-                                                                                                          index
-                                                                                                      ) => (
-                                                                                                          <div
-                                                                                                              key={
-                                                                                                                  index
-                                                                                                              }
-                                                                                                          >
-                                                                                                              {
-                                                                                                                  `${jadwal.hari} pukul ${jadwal.waktu_mulai.slice(0, -3)} - ${jadwal.waktu_selesai.slice(0, -3)}`
-                                                                                                              }
-                                                                                                          </div>
-                                                                                                      )
-                                                                                                  )
-                                                                                            }
+                                                                                                (
+                                                                                                    jadwal,
+                                                                                                    index
+                                                                                                ) => (
+                                                                                                    <div
+                                                                                                        key={
+                                                                                                            index
+                                                                                                        }
+                                                                                                    >
+                                                                                                        {`${
+                                                                                                            jadwal.hari
+                                                                                                        } pukul ${jadwal.waktu_mulai.slice(
+                                                                                                            0,
+                                                                                                            -3
+                                                                                                        )} - ${jadwal.waktu_selesai.slice(
+                                                                                                            0,
+                                                                                                            -3
+                                                                                                        )}`}
+                                                                                                    </div>
+                                                                                                )
+                                                                                            )}
                                                                                         </td>
                                                                                     </tr>
                                                                                 )}
@@ -306,22 +339,31 @@ const IRSMahasiswa = () => {
                                                                     )}
                                                                 </tbody>
                                                             </table>
-                                                            <button
-                                                                onClick={() => handleDownloadPDF(semesterKey)}
-                                                                className="w-40 mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                                            >
-                                                                <div className="flex items-center justify-center">
-                                                                    <Icon
-                                                                        icon="material-symbols-light:print"
-                                                                        height="24"
-                                                                        width="24"
-                                                                    />
-                                                                    <span className="ml-2">
-                                                                        Cetak
-                                                                        IRS
-                                                                    </span>
-                                                                </div>
-                                                            </button>
+                                                            {semesterInfo
+                                                                .courses[0]
+                                                                .is_verified ===
+                                                                1 && (
+                                                                <button
+                                                                    onClick={() =>
+                                                                        handleDownloadPDF(
+                                                                            semesterKey
+                                                                        )
+                                                                    }
+                                                                    className="w-40 mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                                                                >
+                                                                    <div className="flex items-center justify-center">
+                                                                        <Icon
+                                                                            icon="material-symbols-light:print"
+                                                                            height="24"
+                                                                            width="24"
+                                                                        />
+                                                                        <span className="ml-2">
+                                                                            Cetak
+                                                                            IRS
+                                                                        </span>
+                                                                    </div>
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 )}

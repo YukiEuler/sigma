@@ -71,7 +71,7 @@ const AturJadwal = () => {
         timeSlots.push(`${i.toString().padStart(2, "0")}:00`);
     }
 
-    const HOURS = Array.from({ length: 15 }, (_, i) => {
+    const HOURS = Array.from({ length: 14 }, (_, i) => {
         const hour = i + 7;
         return hour.toString().padStart(2, "0");
     });
