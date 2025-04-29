@@ -82,5 +82,55 @@ class KalenderAkademikSeeder extends Seeder
             'tahun_akademik'=> '2024-2',
             'keterangan'=>'Periode Pembatalan',
         ]);
+
+        KalenderAkademik::create([
+            'id' => 20251,
+            'tanggal_mulai' => '2025-01-01',
+            'tanggal_selesai'=>'2025-06-30',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2025-1',
+            'keterangan'=>'Periode Tahun Akademik',
+        ]);
+        KalenderAkademik::create([
+            'tanggal_mulai' => '2025-01-15',
+            'tanggal_selesai'=>'2025-05-20',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2025-1',
+            'keterangan'=>'Pengisian IRS Periode 1',
+        ]);
+        KalenderAkademik::create([
+            'tanggal_mulai' => '2024-05-21',
+            'tanggal_selesai'=>'2024-05-30',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2025-1',
+            'keterangan'=>'Pengisian IRS Periode 2',
+        ]);
+        KalenderAkademik::create([
+            'tanggal_mulai' => '2025-06-01',
+            'tanggal_selesai'=>'2025-06-30',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2025-1',
+            'keterangan'=>'Masa Kuliah',
+        ]);
+        KalenderAkademik::create([
+            'tanggal_mulai' => '2025-06-01',
+            'tanggal_selesai'=>'2025-06-15',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2025-1',
+            'keterangan'=>'Periode Penggantian',
+        ]);
+        KalenderAkademik::create([
+            'tanggal_mulai' => '2025-06-16',
+            'tanggal_selesai'=>'2025-06-30',
+            'id_prodi'=> NULL,
+            'id_fakultas'=> NULL,
+            'tahun_akademik'=> '2025-1',
+            'keterangan'=>'Periode Pembatalan',
+        ]);
     }
 }

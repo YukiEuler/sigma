@@ -35,6 +35,7 @@
         "@mui/x-charts": "^7.22.2",
         "@radix-ui/react-alert-dialog": "^1.1.2",
         "bootstrap": "^5.3.3",
+        "cypress": "^14.3.2",
         "jspdf": "^2.5.2",
         "jspdf-autotable": "^3.8.4",
         "lucide-react": "^0.454.0",
