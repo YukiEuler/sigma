@@ -825,8 +825,18 @@ const BuatIRSMahasiswa = () => {
                                     {!isVerified && (
                                         <button
                                             onClick={() => {
+                                                if (registeredCourses.length === 0){
+                                                    Swal.fire({
+                                                        title: 'Tidak Terdapat Mata Kuliah Yang Di Ambil',
+                                                        icon: 'warning',
+                                                        confirmButtonColor: '#3085d6',
+                                                        confirmButtonText: 'OK'
+                                                    })
+                                                    return;
+                                                }
                                                 Swal.fire({
                                                     title: 'Apakah Anda yakin?',
+                                                    text: 'Melakukan pembatalan IRS',
                                                     icon: 'warning',
                                                     showCancelButton: true,
                                                     confirmButtonColor: '#3085d6',
